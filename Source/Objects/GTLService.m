@@ -63,7 +63,7 @@ static const NSUInteger kStandardUploadChunkSize = NSUIntegerMax;
 
 // Helper to get the ETag if it is defined on an object.
 static NSString *ETagIfPresent(GTLObject *obj) {
-  NSString *result = [obj.JSON objectForKey:@"etag"];
+  NSString *result = (obj.JSON)[@"etag"];
   return result;
 }
 
@@ -194,7 +194,7 @@ static NSString *ETagIfPresent(GTLObject *obj) {
   return [GTLServiceTicket class];
 }
 
-- (id)init {
+- (instancetype)init {
   self = [super init];
   if (self) {
 
@@ -727,15 +727,15 @@ static NSString *ETagIfPresent(GTLObject *obj) {
       [worker addEntriesFromDictionary:parameters];
     }
     if ((apiKeyLen > 0)
-        && ([worker objectForKey:kDeveloperAPIParamKey] == nil)) {
-      [worker setObject:apiKey forKey:kDeveloperAPIParamKey];
+        && (worker[kDeveloperAPIParamKey] == nil)) {
+      worker[kDeveloperAPIParamKey] = apiKey;
     }
     if (bodyObject != nil) {
-      GTL_DEBUG_ASSERT([parameters objectForKey:kBodyObjectParamKey] == nil,
+      GTL_DEBUG_ASSERT(parameters[kBodyObjectParamKey] == nil,
                        @"There was already something under the 'data' key?!");
       NSMutableDictionary *json = [bodyObject JSON];
       if (json != nil) {
-        [worker setObject:json forKey:kBodyObjectParamKey];
+        worker[kBodyObjectParamKey] = json;
       }
     }
     finalParams = worker;
@@ -755,11 +755,11 @@ static NSString *ETagIfPresent(GTLObject *obj) {
   // Google extension, provide the version of the api.
   NSString *apiVersion = self.apiVersion;
   if ([apiVersion length] > 0) {
-    [rpcPayload setObject:apiVersion forKey:@"apiVersion"];
+    rpcPayload[@"apiVersion"] = apiVersion;
   }
 
   if ([finalParams count] > 0) {
-    [rpcPayload setObject:finalParams forKey:@"params"];
+    rpcPayload[@"params"] = finalParams;
   }
 
   return rpcPayload;
@@ -1068,7 +1068,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
       NSData *responseData = fetcher.downloadedData;
       if ([responseData length] > 0) {
         NSDictionary *responseHeaders = fetcher.responseHeaders;
-        NSString *contentType = [responseHeaders objectForKey:@"Content-Type"];
+        NSString *contentType = responseHeaders[@"Content-Type"];
 
         if ([data length] > 0) {
           if ([contentType hasPrefix:@"application/json"]) {
@@ -1193,7 +1193,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
   [[ticket retain] autorelease];
 
   NSDictionary *responseHeaders = fetcher.responseHeaders;
-  NSString *contentType = [responseHeaders objectForKey:@"Content-Type"];
+  NSString *contentType = responseHeaders[@"Content-Type"];
   NSData *data = fetcher.downloadedData;
 
   NSOperation *parseOperation = ticket.parseOperation;
@@ -1455,11 +1455,11 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
       NSError *oneError = error;
       if (oneError == nil) {
         NSString *requestID = [oneQuery requestID];
-        GTLErrorObject *gtlError = [failures objectForKey:requestID];
+        GTLErrorObject *gtlError = failures[requestID];
         if (gtlError) {
           oneError = [gtlError foundationError];
         } else {
-          oneResult = [successes objectForKey:requestID];
+          oneResult = successes[requestID];
           if (oneResult == nil) {
             // We found neither a success nor a failure for this
             // query, unexpectedly
@@ -1721,7 +1721,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
     NSDictionary *successes = batchResult.successes;
 
     for (NSString *requestID in successes) {
-      GTLObject *singleObject = [successes objectForKey:requestID];
+      GTLObject *singleObject = successes[requestID];
       GTLQuery *singleQuery = [ticket queryForRequestID:requestID];
 
       GTLQuery *newQuery =
@@ -1820,21 +1820,21 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
       //
       // We can assume the objects are collections since they're present in
       // additional pages.
-      GTLCollectionObject *newObj = [newSuccesses objectForKey:requestID];
-      GTLCollectionObject *oldObj = [oldSuccesses objectForKey:requestID];
+      GTLCollectionObject *newObj = newSuccesses[requestID];
+      GTLCollectionObject *oldObj = oldSuccesses[requestID];
 
       NSMutableArray *items = [NSMutableArray arrayWithArray:oldObj.items];
       [items addObjectsFromArray:newObj.items];
       [newObj performSelector:@selector(setItems:) withObject:items];
 
       // Replace the old object with the new one
-      [oldSuccesses setObject:newObj forKey:requestID];
+      oldSuccesses[requestID] = newObj;
     }
 
     for (NSString *requestID in newFailures) {
       // Replace old successes or failures with the new failure
-      GTLErrorObject *newError = [newFailures objectForKey:requestID];
-      [oldFailures setObject:newError forKey:requestID];
+      GTLErrorObject *newError = newFailures[requestID];
+      oldFailures[requestID] = newError;
       [oldSuccesses removeObjectForKey:requestID];
     }
     return oldBatchResult;
@@ -2303,14 +2303,14 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
   } else {
     // be sure the property dictionary exists
     if (serviceProperties_ == nil) {
-      [self setServiceProperties:[NSDictionary dictionary]];
+      [self setServiceProperties:@{}];
     }
-    [serviceProperties_ setObject:obj forKey:key];
+    serviceProperties_[key] = obj;
   }
 }
 
 - (id)servicePropertyForKey:(NSString *)key {
-  id obj = [serviceProperties_ objectForKey:key];
+  id obj = serviceProperties_[key];
 
   // be sure the returned pointer has the life of the autorelease pool,
   // in case self is released immediately
@@ -2592,14 +2592,14 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
     // be sure the property dictionary exists
     if (ticketProperties_ == nil) {
       // call setProperties so observers are notified
-      [self setProperties:[NSDictionary dictionary]];
+      [self setProperties:@{}];
     }
-    [ticketProperties_ setObject:obj forKey:key];
+    ticketProperties_[key] = obj;
   }
 }
 
 - (id)propertyForKey:(NSString *)key {
-  id obj = [ticketProperties_ objectForKey:key];
+  id obj = ticketProperties_[key];
 
   // be sure the returned pointer has the life of the autorelease pool,
   // in case self is released immediately

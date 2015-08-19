@@ -70,7 +70,7 @@
 
 - (id)copyWithZone:(NSZone *)zone;
 
-- (NSString *)JSONString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *JSONString;
 
 // generic access to json; also creates it if necessary
 - (void)setJSONValue:(id)obj forKey:(NSString *)key  GTL_NONNULL((2));
@@ -78,13 +78,13 @@
 
 // Returns the list of keys in this object's JSON that aren't listed as
 // properties on the object.
-- (GTL_NSArrayOf(NSString *) *)additionalJSONKeys;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *additionalJSONKeys;
 
 // Any keys in the JSON that aren't listed as @properties on the object
 // are counted as "additional properties".  These allow you to get/set them.
 - (id)additionalPropertyForName:(NSString *)name;
 - (void)setAdditionalProperty:(id)obj forName:(NSString *)name GTL_NONNULL((2));
-- (GTL_NSDictionaryOf(NSString *, id) *)additionalProperties;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *additionalProperties;
 
 // User properties are supported for client convenience, but are not copied by
 // copyWithZone.  User Properties keys beginning with _ are reserved by the library.
@@ -94,15 +94,14 @@
 - (id)propertyForKey:(NSString *)key GTL_NONNULL((1));
 
 // userData is stored as a property with key "_userData"
-- (void)setUserData:(id)obj;
-- (id)userData;
+@property (NS_NONATOMIC_IOSONLY, strong) id userData;
 
 // Makes a partial query-compatible string describing the fields present
 // in this object. (Note: only the first element of any array is examined.)
 //
 // http://code.google.com/apis/tasks/v1/performance.html#partial
 //
-- (NSString *)fieldsDescription;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *fieldsDescription;
 
 // Makes an object containing only the changes needed to do a partial update
 // (patch), where the patch would be to change an object from the original
@@ -186,7 +185,7 @@
 @end
 
 @interface GTLCollectionObject (DynamicMethods)
-- (GTL_NSArrayOf(GTLObject *) *)items;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *items;
 @end
 
 // Base object use for when an service method directly returns an array instead

@@ -483,7 +483,7 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle);
 // GTMHTTPFetcher objects are used for async retrieval of an http get or post
 //
 // See additional comments at the beginning of this file
-@interface GTMHTTPFetcher : NSObject {
+@interface GTMHTTPFetcher : NSObject<NSCopying>  {
  @protected
   NSMutableURLRequest *request_;
   NSURLConnection *connection_;
@@ -575,7 +575,7 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle);
 + (GTMHTTPFetcher *)fetcherWithURLString:(NSString *)requestURLString;
 
 // Designated initializer
-- (id)initWithRequest:(NSURLRequest *)request;
+- (instancetype)initWithRequest:(NSURLRequest *)request NS_DESIGNATED_INITIALIZER;
 
 // Fetcher request
 //
@@ -754,7 +754,7 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle);
 
 
 // Returns YES if this is in the process of fetching a URL
-- (BOOL)isFetching;
+@property (NS_NONATOMIC_IOSONLY, getter=isFetching, readonly) BOOL fetching;
 
 // Cancel the fetch of the request that's currently in progress
 - (void)stopFetching;

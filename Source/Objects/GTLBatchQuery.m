@@ -86,7 +86,7 @@
 }
 
 - (GTLQuery *)queryForRequestID:(NSString *)requestID {
-  GTLQuery *result = [requestIDMap_ objectForKey:requestID];
+  GTLQuery *result = requestIDMap_[requestID];
   if (result) return result;
 
   // We've not before tried to look up a query, or the map is stale
@@ -94,10 +94,10 @@
   requestIDMap_ = [[NSMutableDictionary alloc] init];
 
   for (GTLQuery *query in queries_) {
-    [requestIDMap_ setObject:query forKey:query.requestID];
+    requestIDMap_[query.requestID] = query;
   }
 
-  result = [requestIDMap_ objectForKey:requestID];
+  result = requestIDMap_[requestID];
   return result;
 }
 

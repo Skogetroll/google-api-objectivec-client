@@ -59,6 +59,6 @@
 
 + (NSInputStream *)streamWithArray:(NSArray *)dataArray;
 
-- (id)initWithArray:(NSArray *)dataArray;
+- (instancetype)initWithArray:(NSArray *)dataArray;
 
 @end

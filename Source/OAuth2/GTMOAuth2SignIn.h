@@ -110,11 +110,11 @@
 // The delegate is retained until sign-in has completed or been canceled
 //
 // designated initializer
-- (id)initWithAuthentication:(GTMOAuth2Authentication *)auth
+- (instancetype)initWithAuthentication:(GTMOAuth2Authentication *)auth
             authorizationURL:(NSURL *)authorizationURL
                     delegate:(id)delegate
           webRequestSelector:(SEL)webRequestSelector
-            finishedSelector:(SEL)finishedSelector;
+            finishedSelector:(SEL)finishedSelector NS_DESIGNATED_INITIALIZER;
 
 // A default authentication object for signing in to Google services
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
@@ -126,7 +126,7 @@
 #pragma mark Methods used by the Window Controller
 
 // Start the sequence of fetches and sign-in window display for sign-in
-- (BOOL)startSigningIn;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL startSigningIn;
 
 // Stop any pending fetches, and close the window (but don't call the
 // delegate's finishedSelector)

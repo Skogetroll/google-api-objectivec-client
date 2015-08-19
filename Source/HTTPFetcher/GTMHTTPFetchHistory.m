@@ -34,7 +34,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
 
 @implementation GTMCookieStorage
 
-- (id)init {
+- (instancetype)init {
   self = [super init];
   if (self != nil) {
     cookies_ = [[NSMutableArray alloc] init];
@@ -120,7 +120,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
     NSUInteger numberOfCookies = [cookies_ count];
     for (NSUInteger idx = 0; idx < numberOfCookies; idx++) {
 
-      NSHTTPCookie *storedCookie = [cookies_ objectAtIndex:idx];
+      NSHTTPCookie *storedCookie = cookies_[idx];
 
       NSString *cookieDomain = [[storedCookie domain] lowercaseString];
       NSString *cookiePath = [storedCookie path];
@@ -170,7 +170,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
 
   for (NSUInteger idx = 0; idx < numberOfCookies; idx++) {
 
-    NSHTTPCookie *storedCookie = [cookies_ objectAtIndex:idx];
+    NSHTTPCookie *storedCookie = cookies_[idx];
 
     if ([[storedCookie name] isEqual:name]
         && [[storedCookie domain] isEqual:domain]
@@ -192,7 +192,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
   // count backwards since we're deleting items from the array
   for (NSInteger idx = (NSInteger)[cookies_ count] - 1; idx >= 0; idx--) {
 
-    NSHTTPCookie *storedCookie = [cookies_ objectAtIndex:(NSUInteger)idx];
+    NSHTTPCookie *storedCookie = cookies_[(NSUInteger)idx];
 
     NSDate *expiresDate = [storedCookie expiresDate];
     if (expiresDate && [expiresDate timeIntervalSinceNow] < 0) {
@@ -219,7 +219,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
 @synthesize reservationDate = reservationDate_;
 @synthesize useDate = useDate_;
 
-- (id)initWithResponse:(NSURLResponse *)response data:(NSData *)data {
+- (instancetype)initWithResponse:(NSURLResponse *)response data:(NSData *)data {
   self = [super init];
   if (self != nil) {
     response_ = [response retain];
@@ -243,7 +243,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
 
   return [NSString stringWithFormat:@"%@ %p: {bytes:%@ useDate:%@%@}",
           [self class], self,
-          data_ ? [NSNumber numberWithInt:(int)[data_ length]] : nil,
+          data_ ? @((int)[data_ length]) : nil,
           useDate_,
           reservationStr];
 }
@@ -262,11 +262,11 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
 
 @dynamic memoryCapacity;
 
-- (id)init {
+- (instancetype)init {
   return [self initWithMemoryCapacity:kGTMDefaultETaggedDataCacheMemoryCapacity];
 }
 
-- (id)initWithMemoryCapacity:(NSUInteger)totalBytes {
+- (instancetype)initWithMemoryCapacity:(NSUInteger)totalBytes {
   self = [super init];
   if (self != nil) {
     memoryCapacity_ = totalBytes;
@@ -303,7 +303,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
   // remove those (except ones still reserved) until the total data size is
   // reduced sufficiently
   for (NSURL *key in sortedKeys) {
-    GTMCachedURLResponse *response = [responses_ objectForKey:key];
+    GTMCachedURLResponse *response = responses_[key];
 
     NSDate *resDate = [response reservationDate];
     BOOL isResponseReserved = (resDate != nil)
@@ -332,7 +332,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
     if (storedSize < memoryCapacity_) {
 
       NSURL *key = [request URL];
-      [responses_ setObject:cachedResponse forKey:key];
+      responses_[key] = cachedResponse;
       totalDataSize_ += storedSize;
 
       [self pruneCacheResponses];
@@ -345,7 +345,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
 
   @synchronized(self) {
     NSURL *key = [request URL];
-    response = [[[responses_ objectForKey:key] retain] autorelease];
+    response = [[responses_[key] retain] autorelease];
 
     // Touch the date to indicate this was recently retrieved
     [response setUseDate:[NSDate date]];
@@ -356,7 +356,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
 - (void)removeCachedResponseForRequest:(NSURLRequest *)request {
   @synchronized(self) {
     NSURL *key = [request URL];
-    totalDataSize_ -= [[[responses_ objectForKey:key] data] length];
+    totalDataSize_ -= [[responses_[key] data] length];
     [responses_ removeObjectForKey:key];
   }
 }
@@ -415,12 +415,12 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
 @dynamic shouldCacheETaggedData;
 @dynamic memoryCapacity;
 
-- (id)init {
+- (instancetype)init {
  return [self initWithMemoryCapacity:kGTMDefaultETaggedDataCacheMemoryCapacity
               shouldCacheETaggedData:NO];
 }
 
-- (id)initWithMemoryCapacity:(NSUInteger)totalBytes
+- (instancetype)initWithMemoryCapacity:(NSUInteger)totalBytes
       shouldCacheETaggedData:(BOOL)shouldCacheETaggedData {
   self = [super init];
   if (self != nil) {
@@ -488,7 +488,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
       // entry for this URL. Also cache or delete the data, if appropriate
       // (when etaggedDataCache is non-nil.)
       NSDictionary *headers = [(NSHTTPURLResponse *)response allHeaderFields];
-      NSString* etag = [headers objectForKey:kGTMETagHeader];
+      NSString* etag = headers[kGTMETagHeader];
 
       if (etag != nil && statusCode < 300) {
 
@@ -515,7 +515,7 @@ const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity = 15 * 1024 * 1024;
 
   NSURLResponse *response = [cachedResponse response];
   NSDictionary *headers = [(NSHTTPURLResponse *)response allHeaderFields];
-  NSString *cachedETag = [headers objectForKey:kGTMETagHeader];
+  NSString *cachedETag = headers[kGTMETagHeader];
   if (cachedETag) {
     // Since the request having an ETag implies this request is about
     // to be fetched again, reserve the cached response to ensure that

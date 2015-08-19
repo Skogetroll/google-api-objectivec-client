@@ -262,7 +262,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   NSCalendar *cal = nil;
   @synchronized(gCalendarsForTimeZones) {
     id tzKey = (tz ? tz : [NSNull null]);
-    cal = [gCalendarsForTimeZones objectForKey:tzKey];
+    cal = gCalendarsForTimeZones[tzKey];
     if (cal == nil) {
 #if GTL_NEW_CALENDAR_ENUMS
       NSString *calendarID = NSCalendarIdentifierGregorian;
@@ -273,7 +273,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
       if (tz) {
         [cal setTimeZone:tz];
       }
-      [gCalendarsForTimeZones setObject:cal forKey:tzKey];
+      gCalendarsForTimeZones[tzKey] = cal;
     }
   }
   return cal;

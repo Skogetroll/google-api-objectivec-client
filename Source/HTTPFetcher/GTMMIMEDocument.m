@@ -63,7 +63,7 @@ static BOOL memsrch(const unsigned char* needle, NSUInteger needle_len,
     NSArray *sortedKeys = [[headers allKeys] sortedArrayUsingSelector:sortSel];
 
     for (NSString *key in sortedKeys) {
-      NSString* value = [headers objectForKey:key];
+      NSString* value = headers[key];
 
 #if DEBUG && !defined(NS_BLOCK_ASSERTIONS)
       // look for troublesome characters in the header keys & values
@@ -127,7 +127,7 @@ static BOOL memsrch(const unsigned char* needle, NSUInteger needle_len,
   return [[[self alloc] init] autorelease];
 }
 
-- (id)init {
+- (instancetype)init {
   if ((self = [super init]) != nil) {
 
     parts_ = [[NSMutableArray alloc] init];

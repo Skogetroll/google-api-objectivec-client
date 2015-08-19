@@ -46,7 +46,7 @@
             allowLocalhostRequest = allowLocalhostRequest_,
             fetchHistory = fetchHistory_;
 
-- (id)init {
+- (instancetype)init {
   self = [super init];
   if (self) {
     fetchHistory_ = [[GTMHTTPFetchHistory alloc] init];
@@ -127,10 +127,10 @@
                   forHost:(NSString *)host {
   // Add to the array of running fetchers for this host, creating the array
   // if needed
-  NSMutableArray *runningForHost = [runningHosts_ objectForKey:host];
+  NSMutableArray *runningForHost = runningHosts_[host];
   if (runningForHost == nil) {
     runningForHost = [NSMutableArray arrayWithObject:fetcher];
-    [runningHosts_ setObject:runningForHost forKey:host];
+    runningHosts_[host] = runningForHost;
   } else {
     [runningForHost addObject:fetcher];
   }
@@ -140,10 +140,10 @@
                   forHost:(NSString *)host {
   // Add to the array of delayed fetchers for this host, creating the array
   // if needed
-  NSMutableArray *delayedForHost = [delayedHosts_ objectForKey:host];
+  NSMutableArray *delayedForHost = delayedHosts_[host];
   if (delayedForHost == nil) {
     delayedForHost = [NSMutableArray arrayWithObject:fetcher];
-    [delayedHosts_ setObject:delayedForHost forKey:host];
+    delayedHosts_[host] = delayedForHost;
   } else {
     [delayedForHost addObject:fetcher];
   }
@@ -152,7 +152,7 @@
 - (BOOL)isDelayingFetcher:(GTMHTTPFetcher *)fetcher {
   @synchronized(self) {
     NSString *host = [[[fetcher mutableRequest] URL] host];
-    NSArray *delayedForHost = [delayedHosts_ objectForKey:host];
+    NSArray *delayedForHost = delayedHosts_[host];
     NSUInteger idx = [delayedForHost indexOfObjectIdenticalTo:fetcher];
     BOOL isDelayed = (delayedForHost != nil) && (idx != NSNotFound);
     return isDelayed;
@@ -178,7 +178,7 @@
       return YES;
     }
 
-    NSMutableArray *runningForHost = [runningHosts_ objectForKey:host];
+    NSMutableArray *runningForHost = runningHosts_[host];
     if (runningForHost != nil
         && [runningForHost indexOfObjectIdenticalTo:fetcher] != NSNotFound) {
 #if DEBUG
@@ -253,10 +253,10 @@
       return;
     }
 
-    NSMutableArray *runningForHost = [runningHosts_ objectForKey:host];
+    NSMutableArray *runningForHost = runningHosts_[host];
     [runningForHost removeObject:fetcher];
 
-    NSMutableArray *delayedForHost = [delayedHosts_ objectForKey:host];
+    NSMutableArray *delayedForHost = delayedHosts_[host];
     [delayedForHost removeObject:fetcher];
 
     while ([delayedForHost count] > 0
@@ -273,7 +273,7 @@
 
       if (nextFetcher) {
         [self addRunningFetcher:nextFetcher forHost:host];
-        runningForHost = [runningHosts_ objectForKey:host];
+        runningForHost = runningHosts_[host];
 
         [delayedForHost removeObjectIdenticalTo:nextFetcher];
         [self startFetcher:nextFetcher];
@@ -308,7 +308,7 @@
   @synchronized(self) {
     NSUInteger sum = 0;
     for (NSString *host in runningHosts_) {
-      NSArray *fetchers = [runningHosts_ objectForKey:host];
+      NSArray *fetchers = runningHosts_[host];
       sum += [fetchers count];
     }
     return sum;
@@ -319,7 +319,7 @@
   @synchronized(self) {
     NSUInteger sum = 0;
     for (NSString *host in delayedHosts_) {
-      NSArray *fetchers = [delayedHosts_ objectForKey:host];
+      NSArray *fetchers = delayedHosts_[host];
       sum += [fetchers count];
     }
     return sum;
@@ -334,7 +334,7 @@
 
     NSURL *absRequestURL = [requestURL absoluteURL];
 
-    NSArray *runningForHost = [runningHosts_ objectForKey:host];
+    NSArray *runningForHost = runningHosts_[host];
     for (GTMHTTPFetcher *fetcher in runningForHost) {
       NSURL *fetcherURL = [[[fetcher mutableRequest] URL] absoluteURL];
       if ([fetcherURL isEqual:absRequestURL]) {
@@ -345,7 +345,7 @@
       }
     }
 
-    NSArray *delayedForHost = [delayedHosts_ objectForKey:host];
+    NSArray *delayedForHost = delayedHosts_[host];
     for (GTMHTTPFetcher *fetcher in delayedForHost) {
       NSURL *fetcherURL = [[[fetcher mutableRequest] URL] absoluteURL];
       if ([fetcherURL isEqual:absRequestURL]) {

@@ -71,7 +71,7 @@ const char *kKeychainAccountName = "OAuth";
 
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
 // Create a controller for authenticating to Google services
-+ (id)controllerWithScope:(NSString *)scope
++ (instancetype)controllerWithScope:(NSString *)scope
                  clientID:(NSString *)clientID
              clientSecret:(NSString *)clientSecret
          keychainItemName:(NSString *)keychainItemName
@@ -83,7 +83,7 @@ const char *kKeychainAccountName = "OAuth";
                        resourceBundle:bundle] autorelease];
 }
 
-- (id)initWithScope:(NSString *)scope
+- (instancetype)initWithScope:(NSString *)scope
            clientID:(NSString *)clientID
        clientSecret:(NSString *)clientSecret
    keychainItemName:(NSString *)keychainItemName
@@ -102,7 +102,7 @@ const char *kKeychainAccountName = "OAuth";
 #endif
 
 // Create a controller for authenticating to any service
-+ (id)controllerWithAuthentication:(GTMOAuth2Authentication *)auth
++ (instancetype)controllerWithAuthentication:(GTMOAuth2Authentication *)auth
                   authorizationURL:(NSURL *)authorizationURL
                   keychainItemName:(NSString *)keychainItemName
                     resourceBundle:(NSBundle *)bundle {
@@ -112,7 +112,7 @@ const char *kKeychainAccountName = "OAuth";
                                resourceBundle:bundle] autorelease];
 }
 
-- (id)initWithAuthentication:(GTMOAuth2Authentication *)auth
+- (instancetype)initWithAuthentication:(GTMOAuth2Authentication *)auth
             authorizationURL:(NSURL *)authorizationURL
             keychainItemName:(NSString *)keychainItemName
               resourceBundle:(NSBundle *)bundle {
@@ -188,7 +188,7 @@ const char *kKeychainAccountName = "OAuth";
     [[self.webView mainFrame] performSelector:@selector(loadRequest:)
                                    withObject:self.initialRequest
                                    afterDelay:0.01
-                                      inModes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+                                      inModes:@[NSRunLoopCommonModes]];
   } else {
     // clock date is invalid, so signing in would fail with an unhelpful error
     // from the server. Warn the user in an html string showing a watch icon,
@@ -374,7 +374,7 @@ const char *kKeychainAccountName = "OAuth";
     [[self window] performSelector:@selector(close)
                         withObject:nil
                         afterDelay:0.1
-                           inModes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+                           inModes:@[NSRunLoopCommonModes]];
 
   }
   isWindowShown_ = NO;
@@ -565,7 +565,7 @@ decisionListener:(id<WebPolicyDecisionListener>)listener {
   NSArray *cookies = [cookieStorage_ cookiesForURL:[request URL]];
   if ([cookies count] > 0) {
     NSDictionary *headers = [NSHTTPCookie requestHeaderFieldsWithCookies:cookies];
-    NSString *cookieHeader = [headers objectForKey:@"Cookie"];
+    NSString *cookieHeader = headers[@"Cookie"];
     if (cookieHeader) {
       [mutableRequest setValue:cookieHeader forHTTPHeaderField:@"Cookie"];
     }
@@ -720,12 +720,12 @@ decisionListener:(id<WebPolicyDecisionListener>)listener {
     if (properties_ == nil) {
       [self setProperties:[NSMutableDictionary dictionary]];
     }
-    [properties_ setObject:obj forKey:key];
+    properties_[key] = obj;
   }
 }
 
 - (id)propertyForKey:(NSString *)key {
-  id obj = [properties_ objectForKey:key];
+  id obj = properties_[key];
 
   // Be sure the returned pointer has the life of the autorelease pool,
   // in case self is released immediately

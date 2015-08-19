@@ -105,7 +105,7 @@
                                      fetcherService:(GTMHTTPFetcherService *)fetcherServiceOrNil;
 - (void)pauseFetching;
 - (void)resumeFetching;
-- (BOOL)isPaused;
+@property (NS_NONATOMIC_IOSONLY, getter=isPaused, readonly) BOOL paused;
 
 @property (retain) NSURL *locationURL;
 @property (retain) NSData *uploadData;

@@ -62,17 +62,17 @@
   NSMutableDictionary *failures = [NSMutableDictionary dictionary];
 
   for (NSMutableDictionary *rpcResponse in jsonArray) {
-    NSString *responseID = [rpcResponse objectForKey:@"id"];
+    NSString *responseID = rpcResponse[@"id"];
 
-    NSMutableDictionary *errorJSON = [rpcResponse objectForKey:@"error"];
+    NSMutableDictionary *errorJSON = rpcResponse[@"error"];
     if (errorJSON) {
       GTLErrorObject *errorObject = [GTLErrorObject objectWithJSON:errorJSON];
       [failures setValue:errorObject forKey:responseID];
     } else {
-      NSMutableDictionary *resultJSON = [rpcResponse objectForKey:@"result"];
+      NSMutableDictionary *resultJSON = rpcResponse[@"result"];
 
       NSDictionary *surrogates = self.surrogates;
-      Class defaultClass = [batchClassMap objectForKey:responseID];
+      Class defaultClass = batchClassMap[responseID];
 
       id resultObject = [[self class] objectForJSON:resultJSON
                                        defaultClass:defaultClass

@@ -232,7 +232,7 @@
                                              cache:(NSMutableDictionary *)cache {
   NSDictionary *result;
   @synchronized(cache) {
-    result = [cache objectForKey:startClass];
+    result = cache[startClass];
     if (result == nil) {
       // Collect the class's dictionary.
       NSDictionary *classDict = [startClass performSelector:selector];
@@ -266,7 +266,7 @@
       result = [NSDictionary dictionaryWithDictionary:mergeDict];
 
       // Save it.
-      [cache setObject:result forKey:(id<NSCopying>)startClass];
+      cache[(id<NSCopying>)startClass] = result;
     }
   }
   return result;

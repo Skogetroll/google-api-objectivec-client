@@ -884,7 +884,7 @@ static IMP GTLRuntimeSetterIMP(SEL sel,
   }
 
   const char *propName = property_getName(prop);
-  NSString *propStr = [NSString stringWithUTF8String:propName];
+  NSString *propStr = @(propName);
 
   // replace the property name with the proper JSON key if it's
   // special-cased with a map in the found class; otherwise, the property
@@ -894,7 +894,7 @@ static IMP GTLRuntimeSetterIMP(SEL sel,
   // is first resolved, so eventually become wasted memory.
   NSDictionary *keyMap =
     [[foundClass ancestorClass] propertyToJSONKeyMapForClass:foundClass];
-  NSString *jsonKey = [keyMap objectForKey:propStr];
+  NSString *jsonKey = keyMap[propStr];
   if (jsonKey == nil) {
     jsonKey = propStr;
   }
@@ -904,7 +904,7 @@ static IMP GTLRuntimeSetterIMP(SEL sel,
   if (implInfo->propertyType == GTLPropertyTypeNSArray) {
     NSDictionary *classMap =
       [[foundClass ancestorClass] arrayPropertyToClassMapForClass:foundClass];
-    containedClass = [classMap objectForKey:jsonKey];
+    containedClass = classMap[jsonKey];
     if (containedClass == Nil) {
       GTL_DEBUG_LOG(@"GTLRuntimeCommon: expected array item class for "
                     "property \"%s\" of class \"%s\"",

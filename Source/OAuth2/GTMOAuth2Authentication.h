@@ -251,7 +251,7 @@ extern NSString *const kGTMOAuth2NetworkFound;
 @property (copy) NSString *authorizationTokenKey;
 
 // Convenience method for creating an authentication object
-+ (id)authenticationWithServiceProvider:(NSString *)serviceProvider
++ (instancetype)authenticationWithServiceProvider:(NSString *)serviceProvider
                                tokenURL:(NSURL *)tokenURL
                             redirectURI:(NSString *)redirectURI
                                clientID:(NSString *)clientID
@@ -319,7 +319,7 @@ extern NSString *const kGTMOAuth2NetworkFound;
 - (void)stopAuthorizationForRequest:(NSURLRequest *)request;
 
 // OAuth fetch user-agent header value
-- (NSString *)userAgent;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *userAgent;
 
 // Parse and set token and token secret from response data
 - (void)setKeysForResponseString:(NSString *)str;
@@ -331,7 +331,7 @@ extern NSString *const kGTMOAuth2NetworkFound;
 // easily alter what portions of the auth data are stored
 //
 // Use these methods for serialization
-- (NSString *)persistenceResponseString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *persistenceResponseString;
 - (void)setKeysForPersistenceResponseString:(NSString *)str;
 
 // method to begin fetching an access token, used by the sign-in object

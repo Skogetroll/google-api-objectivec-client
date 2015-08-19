@@ -226,13 +226,13 @@
 //
 // resourceBundle may be nil if the window is in the main bundle's nib
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
-+ (id)controllerWithScope:(NSString *)scope
++ (instancetype)controllerWithScope:(NSString *)scope
                  clientID:(NSString *)clientID
              clientSecret:(NSString *)clientSecret
          keychainItemName:(NSString *)keychainItemName  // may be nil
            resourceBundle:(NSBundle *)bundle;           // may be nil
 
-- (id)initWithScope:(NSString *)scope
+- (instancetype)initWithScope:(NSString *)scope
            clientID:(NSString *)clientID
        clientSecret:(NSString *)clientSecret
    keychainItemName:(NSString *)keychainItemName
@@ -241,13 +241,13 @@
 
 // Create a controller for authenticating to non-Google services, taking
 //   explicit endpoint URLs and an authentication object
-+ (id)controllerWithAuthentication:(GTMOAuth2Authentication *)auth
++ (instancetype)controllerWithAuthentication:(GTMOAuth2Authentication *)auth
                   authorizationURL:(NSURL *)authorizationURL
                   keychainItemName:(NSString *)keychainItemName  // may be nil
                     resourceBundle:(NSBundle *)bundle;           // may be nil
 
 // This is the designated initializer
-- (id)initWithAuthentication:(GTMOAuth2Authentication *)auth
+- (instancetype)initWithAuthentication:(GTMOAuth2Authentication *)auth
             authorizationURL:(NSURL *)authorizationURL
             keychainItemName:(NSString *)keychainItemName
               resourceBundle:(NSBundle *)bundle;

@@ -233,7 +233,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
 @dynamic canAuthorize;
 
-+ (id)authenticationWithServiceProvider:(NSString *)serviceProvider
++ (instancetype)authenticationWithServiceProvider:(NSString *)serviceProvider
                                tokenURL:(NSURL *)tokenURL
                             redirectURI:(NSString *)redirectURI
                                clientID:(NSString *)clientID
@@ -247,7 +247,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   return obj;
 }
 
-- (id)init {
+- (instancetype)init {
   self = [super init];
   if (self) {
     authorizationQueue_ = [[NSMutableArray alloc] init];
@@ -257,9 +257,8 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)description {
-  NSArray *props = [NSArray arrayWithObjects:@"accessToken", @"refreshToken",
-                    @"code", @"assertion", @"expirationDate", @"errorString",
-                    nil];
+  NSArray *props = @[@"accessToken", @"refreshToken",
+                    @"code", @"assertion", @"expirationDate", @"errorString"];
   NSMutableString *valuesStr = [NSMutableString string];
   NSString *separator = @"";
   for (NSString *prop in props) {
@@ -298,14 +297,14 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   if (dict == nil) return;
 
   // If a new code or access token is being set, remove the old expiration
-  NSString *newCode = [dict objectForKey:kOAuth2CodeKey];
-  NSString *newAccessToken = [dict objectForKey:kOAuth2AccessTokenKey];
+  NSString *newCode = dict[kOAuth2CodeKey];
+  NSString *newAccessToken = dict[kOAuth2AccessTokenKey];
   if (newCode || newAccessToken) {
     self.expiresIn = nil;
   }
 
   BOOL didRefreshTokenChange = NO;
-  NSString *refreshToken = [dict objectForKey:kOAuth2RefreshTokenKey];
+  NSString *refreshToken = dict[kOAuth2RefreshTokenKey];
   if (refreshToken) {
     NSString *priorRefreshToken = self.refreshToken;
 
@@ -495,8 +494,8 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
       noteName = kGTMOAuth2AccessTokenRefreshFailed;
       NSString *jsonErr = nil;
       if ([error code] == kGTMOAuth2StatusBadRequest) {
-        NSDictionary *json = [[error userInfo] objectForKey:kGTMOAuth2ErrorJSONKey];
-        jsonErr = [json objectForKey:kGTMOAuth2ErrorMessageKey];
+        NSDictionary *json = [error userInfo][kGTMOAuth2ErrorJSONKey];
+        jsonErr = json[kGTMOAuth2ErrorMessageKey];
       }
       // error and jsonErr may be nil
       userInfo = [NSMutableDictionary dictionary];
@@ -605,8 +604,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   } else if (args.error == nil) {
     NSDictionary *userInfo = nil;
     if (request) {
-      userInfo = [NSDictionary dictionaryWithObject:request
-                                             forKey:kGTMOAuth2ErrorRequestKey];
+      userInfo = @{kGTMOAuth2ErrorRequestKey: request};
     }
     NSInteger code = (isAuthorizableRequest ?
                       kGTMOAuth2ErrorAuthorizationFailed :
@@ -792,34 +790,34 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   if (refreshToken) {
     // We have a refresh token
     grantType = @"refresh_token";
-    [paramsDict setObject:refreshToken forKey:@"refresh_token"];
+    paramsDict[@"refresh_token"] = refreshToken;
 
     NSString *refreshScope = self.refreshScope;
     if ([refreshScope length] > 0) {
-      [paramsDict setObject:refreshScope forKey:@"scope"];
+      paramsDict[@"scope"] = refreshScope;
     }
 
     fetchType = kGTMOAuth2FetchTypeRefresh;
   } else if (code) {
     // We have a code string
     grantType = @"authorization_code";
-    [paramsDict setObject:code forKey:@"code"];
+    paramsDict[@"code"] = code;
 
     NSString *redirectURI = self.redirectURI;
     if ([redirectURI length] > 0) {
-      [paramsDict setObject:redirectURI forKey:@"redirect_uri"];
+      paramsDict[@"redirect_uri"] = redirectURI;
     }
     
     NSString *scope = self.scope;
     if ([scope length] > 0) {
-      [paramsDict setObject:scope forKey:@"scope"];
+      paramsDict[@"scope"] = scope;
     }
     
     fetchType = kGTMOAuth2FetchTypeToken;
   } else if (assertion) {
     // We have an assertion string
     grantType = @"http://oauth.net/grant_type/jwt/1.0/bearer";
-    [paramsDict setObject:assertion forKey:@"assertion"];
+    paramsDict[@"assertion"] = assertion;
     fetchType = kGTMOAuth2FetchTypeAssertion;
   } else {
 #if DEBUG
@@ -827,16 +825,16 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 #endif
     return nil;
   }
-  [paramsDict setObject:grantType forKey:@"grant_type"];
+  paramsDict[@"grant_type"] = grantType;
 
   NSString *clientID = self.clientID;
   if ([clientID length] > 0) {
-    [paramsDict setObject:clientID forKey:@"client_id"];
+    paramsDict[@"client_id"] = clientID;
   }
 
   NSString *clientSecret = self.clientSecret;
   if ([clientSecret length] > 0) {
-    [paramsDict setObject:clientSecret forKey:@"client_secret"];
+    paramsDict[@"client_secret"] = clientSecret;
   }
 
   NSDictionary *additionalParams = self.additionalTokenRequestParameters;
@@ -844,7 +842,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
     [paramsDict addEntriesFromDictionary:additionalParams];
   }
   NSDictionary *grantTypeParams =
-    [self.additionalGrantTypeRequestParameters objectForKey:grantType];
+    (self.additionalGrantTypeRequestParameters)[grantType];
   if (grantTypeParams) {
     [paramsDict addEntriesFromDictionary:grantTypeParams];
   }
@@ -982,10 +980,8 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 
   NSString *name = (isStarting ? kGTMOAuth2FetchStarted : kGTMOAuth2FetchStopped);
-  NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                        fetcher, kGTMOAuth2FetcherKey,
-                        fetchType, kGTMOAuth2FetchTypeKey, // fetchType may be nil
-                        nil];
+  NSDictionary *dict = @{kGTMOAuth2FetcherKey: fetcher,
+                        kGTMOAuth2FetchTypeKey: fetchType};
   [nc postNotificationName:name
                     object:self
                   userInfo:dict];
@@ -1059,7 +1055,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   NSString *authorizationToken;
   NSString *authTokenKey = self.authorizationTokenKey;
   if (authTokenKey != nil) {
-    authorizationToken = [self.parameters objectForKey:authTokenKey];
+    authorizationToken = (self.parameters)[authTokenKey];
   } else {
     authorizationToken = self.accessToken;
   }
@@ -1067,7 +1063,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)accessToken {
-  return [self.parameters objectForKey:kOAuth2AccessTokenKey];
+  return (self.parameters)[kOAuth2AccessTokenKey];
 }
 
 - (void)setAccessToken:(NSString *)str {
@@ -1075,7 +1071,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)refreshToken {
-  return [self.parameters objectForKey:kOAuth2RefreshTokenKey];
+  return (self.parameters)[kOAuth2RefreshTokenKey];
 }
 
 - (void)setRefreshToken:(NSString *)str {
@@ -1083,7 +1079,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)code {
-  return [self.parameters objectForKey:kOAuth2CodeKey];
+  return (self.parameters)[kOAuth2CodeKey];
 }
 
 - (void)setCode:(NSString *)str {
@@ -1091,7 +1087,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)assertion {
-  return [self.parameters objectForKey:kOAuth2AssertionKey];
+  return (self.parameters)[kOAuth2AssertionKey];
 }
 
 - (void)setAssertion:(NSString *)str {
@@ -1099,7 +1095,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)refreshScope {
-  return [self.parameters objectForKey:kOAuth2RefreshScopeKey];
+  return (self.parameters)[kOAuth2RefreshScopeKey];
 }
 
 - (void)setRefreshScope:(NSString *)str {
@@ -1107,7 +1103,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)errorString {
-  return [self.parameters objectForKey:kOAuth2ErrorKey];
+  return (self.parameters)[kOAuth2ErrorKey];
 }
 
 - (void)setErrorString:(NSString *)str {
@@ -1115,7 +1111,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)tokenType {
-  return [self.parameters objectForKey:kOAuth2TokenTypeKey];
+  return (self.parameters)[kOAuth2TokenTypeKey];
 }
 
 - (void)setTokenType:(NSString *)str {
@@ -1123,7 +1119,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)scope {
-  return [self.parameters objectForKey:kOAuth2ScopeKey];
+  return (self.parameters)[kOAuth2ScopeKey];
 }
 
 - (void)setScope:(NSString *)str {
@@ -1131,9 +1127,9 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSNumber *)expiresIn {
-  id value = [self.parameters objectForKey:kOAuth2ExpiresInKey];
+  id value = (self.parameters)[kOAuth2ExpiresInKey];
   if ([value isKindOfClass:[NSString class]]) {
-    value = [NSNumber numberWithInteger:[value integerValue]];
+    value = @([value integerValue]);
   }
   return value;
 }
@@ -1162,7 +1158,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 //
 
 - (NSString *)serviceProvider {
-  return [self.parameters objectForKey:kServiceProviderKey];
+  return (self.parameters)[kServiceProviderKey];
 }
 
 - (void)setServiceProvider:(NSString *)str {
@@ -1170,7 +1166,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)userID {
-  return [self.parameters objectForKey:kUserIDKey];
+  return (self.parameters)[kUserIDKey];
 }
 
 - (void)setUserID:(NSString *)str {
@@ -1178,7 +1174,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)userEmail {
-  return [self.parameters objectForKey:kUserEmailKey];
+  return (self.parameters)[kUserEmailKey];
 }
 
 - (void)setUserEmail:(NSString *)str {
@@ -1186,7 +1182,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 - (NSString *)userEmailIsVerified {
-  return [self.parameters objectForKey:kUserEmailIsVerifiedKey];
+  return (self.parameters)[kUserEmailIsVerifiedKey];
 }
 
 - (void)setUserEmailIsVerified:(NSString *)str {
@@ -1204,12 +1200,12 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
     if (properties_ == nil) {
       [self setProperties:[NSMutableDictionary dictionary]];
     }
-    [properties_ setObject:obj forKey:key];
+    properties_[key] = obj;
   }
 }
 
 - (id)propertyForKey:(NSString *)key {
-  id obj = [properties_ objectForKey:key];
+  id obj = properties_[key];
 
   // Be sure the returned pointer has the life of the autorelease pool,
   // in case self is released immediately
@@ -1255,7 +1251,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   NSArray *sortedKeys = [[dict allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
   NSString *joiner = @"";
   for (NSString *key in sortedKeys) {
-    NSString *value = [dict objectForKey:key];
+    NSString *value = dict[key];
     NSString *encodedValue = [self encodedOAuthValueForString:value];
     NSString *encodedKey = [self encodedOAuthValueForString:key];
     [result appendFormat:@"%@%@=%@", joiner, encodedKey, encodedValue];
@@ -1324,7 +1320,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
     NSString *plainKey = [[self class] unencodedOAuthParameterForString:key];
     NSString *plainValue = [[self class] unencodedOAuthParameterForString:value];
 
-    [responseDict setObject:plainValue forKey:plainKey];
+    responseDict[plainKey] = plainValue;
   }
 
   return responseDict;

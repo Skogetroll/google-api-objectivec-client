@@ -178,7 +178,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected;
   // type and total size to be delivered later in the chunk requests
   NSMutableURLRequest *mutableReq = [self mutableRequest];
 
-  NSNumber *lengthNum = [NSNumber numberWithUnsignedInteger:[self fullUploadLength]];
+  NSNumber *lengthNum = @([self fullUploadLength]);
   [mutableReq setValue:[lengthNum stringValue]
     forHTTPHeaderField:@"X-Upload-Content-Length"];
 
@@ -383,7 +383,7 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
 
   // we need to get the upload URL from the location header to continue
   NSDictionary *responseHeaders = [self responseHeaders];
-  NSString *locationURLStr = [responseHeaders objectForKey:@"Location"];
+  NSString *locationURLStr = responseHeaders[@"Location"];
 
   NSError *error = nil;
 
@@ -405,8 +405,7 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
     // We'll consider this status 501 Not Implemented rather than try to parse
     // the body to determine the actual error, but will provide the data
     // as userInfo for clients to inspect.
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:downloadedData
-                                                         forKey:kGTMHTTPFetcherStatusDataKey];
+    NSDictionary *userInfo = @{kGTMHTTPFetcherStatusDataKey: downloadedData};
     error = [NSError errorWithDomain:kGTMHTTPFetcherStatusDomain
                                 code:501
                             userInfo:userInfo];
@@ -687,7 +686,7 @@ totalBytesExpectedToSend:0];
   // want the next chunk to begin.
   //
   // lack of a range header means the server has no bytes stored for this upload
-  NSString *rangeStr = [responseHeaders objectForKey:@"Range"];
+  NSString *rangeStr = responseHeaders[@"Range"];
   NSUInteger newOffset = 0;
   if (rangeStr != nil) {
     // parse a content-range, like "bytes=0-999", to find where our new
@@ -710,7 +709,7 @@ totalBytesExpectedToSend:0];
   }
 
   // if the response specifies a location, use that for future chunks
-  NSString *locationURLStr = [responseHeaders objectForKey:@"Location"];
+  NSString *locationURLStr = responseHeaders[@"Location"];
   if ([locationURLStr length] > 0) {
     [self setLocationURL:[NSURL URLWithString:locationURLStr]];
   }

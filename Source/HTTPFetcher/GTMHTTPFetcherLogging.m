@@ -116,7 +116,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
     if ([arr count] > 0) {
       NSString *const kGTMLogFolderName = @"GTMHTTPDebugLogs";
 
-      NSString *desktopPath = [arr objectAtIndex:0];
+      NSString *desktopPath = arr[0];
       NSString *logsFolderPath = [desktopPath stringByAppendingPathComponent:kGTMLogFolderName];
 
       BOOL doesFolderExist = [[self class] fileOrDirExistsAtPath:logsFolderPath];
@@ -263,10 +263,10 @@ static NSString *gLogDirectoryForCurrentRun = nil;
         // for security and privacy, omit OAuth 2 response access and refresh
         // tokens
         if ([obj valueForKey:@"refresh_token"] != nil) {
-          [obj setObject:@"_snip_" forKey:@"refresh_token"];
+          obj[@"refresh_token"] = @"_snip_";
         }
         if ([obj valueForKey:@"access_token"] != nil) {
-          [obj setObject:@"_snip_" forKey:@"access_token"];
+          obj[@"access_token"] = @"_snip_";
         }
       }
       NSString *formatted = [[self class] stringWithJSONObject:obj];
@@ -295,8 +295,8 @@ static NSString *gLogDirectoryForCurrentRun = nil;
     [task setLaunchPath:kXMLLintPath];
 
     // use the dash argument to specify stdin as the source file
-    [task setArguments:[NSArray arrayWithObjects:@"--format", @"-", nil]];
-    [task setEnvironment:[NSDictionary dictionary]];
+    [task setArguments:@[@"--format", @"-"]];
+    [task setEnvironment:@{}];
 
     NSPipe *inputPipe = [NSPipe pipe];
     NSPipe *outputPipe = [NSPipe pipe];
@@ -641,7 +641,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   if (numberOfRequestHeaders > 0) {
     // Indicate if the request is authorized; warn if the request is
     // authorized but non-SSL
-    NSString *auth = [requestHeaders objectForKey:@"Authorization"];
+    NSString *auth = requestHeaders[@"Authorization"];
     NSString *headerDetails = @"";
     if (auth) {
       headerDetails = @"&nbsp;&nbsp;&nbsp;<i>authorized</i>";
@@ -651,17 +651,17 @@ static NSString *gLogDirectoryForCurrentRun = nil;
           "<FONT COLOR='#FF00FF'> &#x26A0;</FONT> "; // 26A0 = ⚠
       }
     }
-    NSString *cookiesHdr = [requestHeaders objectForKey:@"Cookie"];
+    NSString *cookiesHdr = requestHeaders[@"Cookie"];
     if (cookiesHdr) {
       headerDetails = [headerDetails stringByAppendingString:
                        @"&nbsp;&nbsp;&nbsp;<i>cookies</i>"];
     }
-    NSString *matchHdr = [requestHeaders objectForKey:@"If-Match"];
+    NSString *matchHdr = requestHeaders[@"If-Match"];
     if (matchHdr) {
       headerDetails = [headerDetails stringByAppendingString:
                        @"&nbsp;&nbsp;&nbsp;<i>if-match</i>"];
     }
-    matchHdr = [requestHeaders objectForKey:@"If-None-Match"];
+    matchHdr = requestHeaders[@"If-None-Match"];
     if (matchHdr) {
       headerDetails = [headerDetails stringByAppendingString:
                        @"&nbsp;&nbsp;&nbsp;<i>if-none-match</i>"];
@@ -727,7 +727,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
 
         // report any JSON-RPC error
         if ([responseJSON isKindOfClass:[NSDictionary class]]) {
-          NSDictionary *jsonError = [responseJSON objectForKey:@"error"];
+          NSDictionary *jsonError = responseJSON[@"error"];
           if ([jsonError isKindOfClass:[NSDictionary class]]) {
             NSString *jsonCode = [[jsonError valueForKey:@"code"] description];
             NSString *jsonMessage = [jsonError valueForKey:@"message"];

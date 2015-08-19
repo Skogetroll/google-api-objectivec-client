@@ -133,7 +133,7 @@ typedef void (^GTLQueryTestBlock)(GTLServiceTicket *testTicket, GTLQueryTestResp
 + (instancetype)queryWithMethodName:(NSString *)methodName GTL_NONNULL((1));
 
 // methodName is the RPC method name to use.
-- (instancetype)initWithMethodName:(NSString *)method GTL_NONNULL((1));
+- (instancetype)initWithMethodName:(NSString *)method GTL_NONNULL((1)) NS_DESIGNATED_INITIALIZER;
 
 // If you need to set a parameter that is not listed as a property for a
 // query class, you can do so via this api.  If you need to clear it after

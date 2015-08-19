@@ -78,8 +78,8 @@ extern const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity;
 
 @property (retain) GTMCookieStorage *cookieStorage;
 
-- (id)initWithMemoryCapacity:(NSUInteger)totalBytes
-      shouldCacheETaggedData:(BOOL)shouldCacheETaggedData;
+- (instancetype)initWithMemoryCapacity:(NSUInteger)totalBytes
+      shouldCacheETaggedData:(BOOL)shouldCacheETaggedData NS_DESIGNATED_INITIALIZER;
 
 - (void)updateRequest:(NSMutableURLRequest *)request isHTTPGet:(BOOL)isHTTPGet;
 
@@ -116,7 +116,7 @@ extern const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity;
 // date the response's ETag header was last used for a fetch request
 @property (retain) NSDate *reservationDate;
 
-- (id)initWithResponse:(NSURLResponse *)response data:(NSData *)data;
+- (instancetype)initWithResponse:(NSURLResponse *)response data:(NSData *)data NS_DESIGNATED_INITIALIZER;
 @end
 
 @interface GTMURLCache : NSObject {
@@ -128,7 +128,7 @@ extern const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity;
 
 @property (assign) NSUInteger memoryCapacity;
 
-- (id)initWithMemoryCapacity:(NSUInteger)totalBytes;
+- (instancetype)initWithMemoryCapacity:(NSUInteger)totalBytes NS_DESIGNATED_INITIALIZER;
 
 - (GTMCachedURLResponse *)cachedResponseForRequest:(NSURLRequest *)request;
 - (void)storeCachedResponse:(GTMCachedURLResponse *)cachedResponse forRequest:(NSURLRequest *)request;
@@ -137,8 +137,8 @@ extern const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity;
 
 // for unit testing
 - (void)setReservationInterval:(NSTimeInterval)secs;
-- (NSDictionary *)responses;
-- (NSUInteger)totalDataSize;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *responses;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger totalDataSize;
 @end
 
 @interface GTMCookieStorage : NSObject <GTMCookieStorageProtocol> {

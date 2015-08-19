@@ -174,7 +174,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 #endif
 
-- (id)initWithAuthentication:(GTMOAuth2Authentication *)auth
+- (instancetype)initWithAuthentication:(GTMOAuth2Authentication *)auth
             authorizationURL:(NSURL *)authorizationURL
                     delegate:(id)delegate
           webRequestSelector:(SEL)webRequestSelector
@@ -289,7 +289,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
                                      scope, @"scope", // scope may be nil
                                      nil];
   if (redirectURI) {
-    [paramsDict setObject:redirectURI forKey:@"redirect_uri"];
+    paramsDict[@"redirect_uri"] = redirectURI;
   }
   return paramsDict;
 }
@@ -448,8 +448,8 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
     NSDictionary *dict = [GTMOAuth2Authentication dictionaryWithResponseString:responseStr];
 
-    NSString *code = [dict objectForKey:@"code"];
-    NSString *error = [dict objectForKey:@"error"];
+    NSString *code = dict[@"code"];
+    NSString *error = dict[@"error"];
     if ([code length] > 0 || [error length] > 0) {
 
       if (!self.hasHandledCallback) {
@@ -539,8 +539,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
     NSString *errStr = auth.errorString;
     NSDictionary *userInfo = nil;
     if ([errStr length] > 0) {
-      userInfo = [NSDictionary dictionaryWithObject:errStr
-                                             forKey:kGTMOAuth2ErrorMessageKey];
+      userInfo = @{kGTMOAuth2ErrorMessageKey: errStr};
     }
 
     error = [NSError errorWithDomain:kGTMOAuth2ErrorDomain
@@ -613,7 +612,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
     // id_token, it may have the email and user ID so we won't need to fetch
     // them.
     GTMOAuth2Authentication *auth = self.authentication;
-    NSString *idToken = [auth.parameters objectForKey:@"id_token"];
+    NSString *idToken = (auth.parameters)[@"id_token"];
     if ([idToken length] > 0) {
       // The id_token has three dot-delimited parts. The second is the
       // JSON profile.
@@ -621,7 +620,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
       // http://www.tbray.org/ongoing/When/201x/2013/04/04/ID-Tokens
       NSArray *parts = [idToken componentsSeparatedByString:@"."];
       if ([parts count] == 3) {
-        NSString *part2 = [parts objectAtIndex:1];
+        NSString *part2 = parts[1];
         if ([part2 length] > 0) {
           NSData *data = [[self class] decodeWebSafeBase64:part2];
           if ([data length] > 0) {
@@ -687,11 +686,11 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
     self.userProfile = profileDict;
 
     // Save the ID into the auth object
-    NSString *subjectID = [profileDict objectForKey:@"sub"];
+    NSString *subjectID = profileDict[@"sub"];
     [auth setUserID:subjectID];
 
     // Save the email into the auth object
-    NSString *email = [profileDict objectForKey:@"email"];
+    NSString *email = profileDict[@"email"];
     [auth setUserEmail:email];
 
 #if DEBUG
@@ -703,9 +702,9 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
     // endpoint response, but it is a string like "true" in the id_token.
     // We want to consistently save it as a string of the boolean value,
     // like @"1".
-    id verified = [profileDict objectForKey:@"email_verified"];
+    id verified = profileDict[@"email_verified"];
     if ([verified isKindOfClass:[NSString class]]) {
-      verified = [NSNumber numberWithBool:[verified boolValue]];
+      verified = @([verified boolValue]);
     }
 
     [auth setUserEmailIsVerified:[verified stringValue]];

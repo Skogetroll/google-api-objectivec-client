@@ -144,7 +144,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
 }
 
 - (id)JSONValueForKey:(NSString *)key {
-  id obj = [self.JSON objectForKey:key];
+  id obj = (self.JSON)[key];
   return obj;
 }
 
@@ -194,7 +194,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
   NSArray *sortedKeys = [[targetJSON allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
   for (NSString *key in sortedKeys) {
     // We'll build a comma-separated list of fields
-    id value = [targetJSON objectForKey:key];
+    id value = targetJSON[key];
     if ([value isKindOfClass:[NSString class]]
         || [value isKindOfClass:[NSNumber class]]) {
       // Basic type (string, number), so the key is what we want
@@ -215,7 +215,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
       // all items in the array, rather than just get fields from the first
       // array object?
       if ([(NSArray *)value count] > 0) {
-        id firstObj = [value objectAtIndex:0];
+        id firstObj = value[0];
         if ([firstObj isKindOfClass:[NSDictionary class]]) {
           // An array of objects
           NSString *contentsStr = [self fieldsDescriptionForJSON:firstObj];
@@ -260,7 +260,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
   // Iterate through keys present in the old object
   NSArray *originalKeys = [originalJSON allKeys];
   for (NSString *key in originalKeys) {
-    id originalValue = [originalJSON objectForKey:key];
+    id originalValue = originalJSON[key];
     id newValue = [newJSON valueForKey:key];
     if (newValue == nil) {
       // There is no new value for this key, so set the value to NSNull
@@ -289,7 +289,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
   [newKeys removeObjectsInArray:originalKeys];
 
   for (NSString *key in newKeys) {
-    id value = [newJSON objectForKey:key];
+    id value = newJSON[key];
     [resultJSON setValue:value forKey:key];
   }
   return resultJSON;
@@ -341,7 +341,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
   NSArray *propertyNames = [self additionalJSONKeys];
   for (NSString *name in propertyNames) {
     id obj = [self additionalPropertyForName:name];
-    [result setObject:obj forKey:name];
+    result[name] = obj;
   }
 
   return result;
@@ -362,7 +362,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
 }
 
 - (id)cacheChildForKey:(NSString *)key {
-  id obj = [childCache_ objectForKey:key];
+  id obj = childCache_[key];
   return obj;
 }
 
@@ -387,12 +387,12 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
     if (userProperties_ == nil) {
       self.userProperties = [NSMutableDictionary dictionary];
     }
-    [userProperties_ setObject:obj forKey:key];
+    userProperties_[key] = obj;
   }
 }
 
 - (id)propertyForKey:(NSString *)key {
-  id obj = [userProperties_ objectForKey:key];
+  id obj = userProperties_[key];
 
   // be sure the returned pointer has the life of the autorelease pool,
   // in case self is released immediately
@@ -422,7 +422,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
         const char *dynamicMarker = strstr(attr, ",D");
         if (dynamicMarker &&
             (dynamicMarker[2] == 0 || dynamicMarker[2] == ',' )) {
-          [array addObject:[NSString stringWithUTF8String:propName]];
+          [array addObject:@(propName)];
         }
       }
       free(properties);
@@ -439,10 +439,9 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
 
   NSUInteger idx = 0;
   for (NSString *propName in allProps) {
-    NSString *jsonKey = [propMap objectForKey:propName];
+    NSString *jsonKey = propMap[propName];
     if (jsonKey) {
-      [knownKeys replaceObjectAtIndex:idx
-                           withObject:jsonKey];
+      knownKeys[idx] = jsonKey;
     }
     ++idx;
   }
@@ -495,7 +494,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
 static NSMutableDictionary *gKindMap = nil;
 
 + (Class)registeredObjectClassForKind:(NSString *)kind {
-  Class resultClass = [gKindMap objectForKey:kind];
+  Class resultClass = gKindMap[kind];
   return resultClass;
 }
 
@@ -511,9 +510,9 @@ static NSMutableDictionary *gKindMap = nil;
 
 #if DEBUG
     // ensure this is a unique registration
-    if ([gKindMap objectForKey:kind] != nil ) {
+    if (gKindMap[kind] != nil ) {
       GTL_DEBUG_LOG(@"%@ (%@) registration conflicts with %@",
-                    selfClass, kind, [gKindMap objectForKey:kind]);
+                    selfClass, kind, gKindMap[kind]);
     }
     if ([[gKindMap allKeysForObject:selfClass] count] != 0) {
       GTL_DEBUG_LOG(@"%@ (%@) registration conflicts with %@",
@@ -574,7 +573,7 @@ static NSMutableDictionary *gKindMap = nil;
 
   // See if the top-level class for the JSON is listed in the surrogates;
   // if so, instantiate the surrogate class instead
-  Class baseSurrogate = [surrogates objectForKey:classToCreate];
+  Class baseSurrogate = surrogates[classToCreate];
   if (baseSurrogate) {
     classToCreate = baseSurrogate;
   }
@@ -656,7 +655,7 @@ static NSMutableDictionary *gArrayPropertyToClassMapCache = nil;
 - (id)itemAtIndex:(NSUInteger)idx {
   NSArray *items = [self performSelector:@selector(items)];
   if (idx < [items count]) {
-    return [items objectAtIndex:idx];
+    return items[idx];
   }
   return nil;
 }
@@ -676,14 +675,14 @@ static NSMutableDictionary *gArrayPropertyToClassMapCache = nil;
     for (id item in items) {
       id identifier = [item valueForKey:@"identifier"];
       if (identifier != nil && identifier != [NSNull null]) {
-        if ([dict objectForKey:identifier] == nil) {
-          [dict setObject:item forKey:identifier];
+        if (dict[identifier] == nil) {
+          dict[identifier] = item;
         }
       }
     }
     identifierMap_ = [dict copy];
   }
-  return [identifierMap_ objectForKey:key];
+  return identifierMap_[key];
 }
 
 - (void)resetIdentifierMap {

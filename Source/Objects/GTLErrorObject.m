@@ -41,14 +41,12 @@
   NSString *reasonStr = self.message;
   if (reasonStr) {
     // We always store an error in the userInfo key "error"
-    [userInfo setObject:reasonStr
-                 forKey:kGTLServerErrorStringKey];
+    userInfo[kGTLServerErrorStringKey] = reasonStr;
 
     // Store a user-readable "reason" to show up when an error is logged,
     // in parentheses like NSError does it
     NSString *parenthesized = [NSString stringWithFormat:@"(%@)", reasonStr];
-    [userInfo setObject:parenthesized
-                 forKey:NSLocalizedFailureReasonErrorKey];
+    userInfo[NSLocalizedFailureReasonErrorKey] = parenthesized;
   }
 
   NSInteger code = [self.code integerValue];
@@ -60,7 +58,7 @@
 
 + (GTLErrorObject *)underlyingObjectForError:(NSError *)foundationError {
   NSDictionary *userInfo = [foundationError userInfo];
-  GTLErrorObject *errorObj = [userInfo objectForKey:kGTLStructuredErrorKey];
+  GTLErrorObject *errorObj = userInfo[kGTLStructuredErrorKey];
   return errorObj;
 }
 

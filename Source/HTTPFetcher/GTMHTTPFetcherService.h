@@ -83,9 +83,9 @@
 
 - (BOOL)isDelayingFetcher:(GTMHTTPFetcher *)fetcher;
 
-- (NSUInteger)numberOfFetchers;        // running + delayed fetchers
-- (NSUInteger)numberOfRunningFetchers;
-- (NSUInteger)numberOfDelayedFetchers;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger numberOfFetchers;        // running + delayed fetchers
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger numberOfRunningFetchers;
+@property (NS_NONATOMIC_IOSONLY, readonly) NSUInteger numberOfDelayedFetchers;
 
 // Search for running or delayed fetchers with the specified URL.
 //

@@ -145,11 +145,11 @@ static NSString *const kCallbackError = @"error";
   }
 }
 
-- (id)init {
+- (instancetype)init {
   return [self initWithRequest:nil];
 }
 
-- (id)initWithRequest:(NSURLRequest *)request {
+- (instancetype)initWithRequest:(NSURLRequest *)request {
   self = [super init];
   if (self) {
     request_ = [request mutableCopy];
@@ -537,7 +537,7 @@ CannotBeginFetch:
     // No delegate queue has been specified, so put the callback
     // on an appropriate run loop.
     NSArray *modes = (runLoopModes_ ? runLoopModes_ :
-                      [NSArray arrayWithObject:NSRunLoopCommonModes]);
+                      @[NSRunLoopCommonModes]);
     [self performSelector:@selector(failToBeginFetchWithError:)
                  onThread:[NSThread currentThread]
                withObject:error
@@ -696,7 +696,7 @@ CannotBeginFetch:
     if ([cookies count] > 0) {
 
       NSDictionary *headerFields = [NSHTTPCookie requestHeaderFieldsWithCookies:cookies];
-      NSString *cookieHeader = [headerFields objectForKey:@"Cookie"]; // key used in header dictionary
+      NSString *cookieHeader = headerFields[@"Cookie"]; // key used in header dictionary
       if (cookieHeader) {
         [request addValue:cookieHeader forHTTPHeaderField:@"Cookie"]; // header name
       }
@@ -921,7 +921,7 @@ CannotBeginFetch:
       // any headers in the redirect override headers in the original.
       NSDictionary *redirectHeaders = [redirectRequest allHTTPHeaderFields];
       for (NSString *key in redirectHeaders) {
-        NSString *value = [redirectHeaders objectForKey:key];
+        NSString *value = redirectHeaders[key];
         [newRequest setValue:value forHTTPHeaderField:key];
       }
 
@@ -1022,8 +1022,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
 #if DEBUG
     NSAssert(!isCancellingChallenge_, @"isCancellingChallenge_ unexpected");
 #endif
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:challenge
-                                                         forKey:kGTMHTTPFetcherErrorChallengeKey];
+    NSDictionary *userInfo = @{kGTMHTTPFetcherErrorChallengeKey: challenge};
     NSError *error = [NSError errorWithDomain:kGTMHTTPFetcherErrorDomain
                                          code:kGTMHTTPFetcherErrorAuthenticationChallengeFailed
                                      userInfo:userInfo];
@@ -1144,13 +1143,13 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
 }
 
 - (void)invokeOnQueueWithDictionary:(NSDictionary *)dict {
-  id target = [dict objectForKey:kCallbackTarget];
-  NSString *selStr = [dict objectForKey:kCallbackSelector];
+  id target = dict[kCallbackTarget];
+  NSString *selStr = dict[kCallbackSelector];
   SEL sel = selStr ? NSSelectorFromString(selStr) : NULL;
-  id block = [dict objectForKey:kCallbackBlock];
+  id block = dict[kCallbackBlock];
 
-  NSData *data = [dict objectForKey:kCallbackData];
-  NSError *error = [dict objectForKey:kCallbackError];
+  NSData *data = dict[kCallbackData];
+  NSError *error = dict[kCallbackError];
 
   [self invokeFetchCallbacksWithTarget:target
                               selector:sel
@@ -1241,8 +1240,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
       }
       @catch (NSException *exc) {
         // Couldn't write to file, probably due to a full disk
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[exc reason]
-                                                             forKey:NSLocalizedDescriptionKey];
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: [exc reason]};
         NSError *error = [NSError errorWithDomain:kGTMHTTPFetcherStatusDomain
                                              code:kGTMHTTPFetcherErrorFileHandleException
                                          userInfo:userInfo];
@@ -1384,8 +1382,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
       } else {
         NSDictionary *userInfo = nil;
         if ([downloadedData_ length] > 0) {
-          userInfo = [NSDictionary dictionaryWithObject:downloadedData_
-                                                 forKey:kGTMHTTPFetcherStatusDataKey];
+          userInfo = @{kGTMHTTPFetcherStatusDataKey: downloadedData_};
         }
         error = [NSError errorWithDomain:kGTMHTTPFetcherStatusDomain
                                     code:status
@@ -1561,8 +1558,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
       // Make an error for the status
       NSDictionary *userInfo = nil;
       if ([downloadedData_ length] > 0) {
-        userInfo = [NSDictionary dictionaryWithObject:downloadedData_
-                                               forKey:kGTMHTTPFetcherStatusDataKey];
+        userInfo = @{kGTMHTTPFetcherStatusDataKey: downloadedData_};
       }
       error = [NSError errorWithDomain:kGTMHTTPFetcherStatusDomain
                                   code:status
@@ -1888,7 +1884,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 
 - (id)propertyForKey:(NSString *)key {
   @synchronized(self) {
-    return [[[properties_ objectForKey:key] retain] autorelease];
+    return [[properties_[key] retain] autorelease];
   }
 }
 
@@ -2048,7 +2044,7 @@ NSString *GTMSystemVersionString(void) {
     // the system plist file.
     NSString *const kPath = @"/System/Library/CoreServices/SystemVersion.plist";
     NSDictionary *plist = [NSDictionary dictionaryWithContentsOfFile:kPath];
-    NSString *versString = [plist objectForKey:@"ProductVersion"];
+    NSString *versString = plist[@"ProductVersion"];
     if ([versString length] == 0) {
       versString = @"10.?.?";
     }
@@ -2117,7 +2113,7 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle) {
       bundleID = @"";
     }
 
-    NSString *identifier = [sAppIDMap objectForKey:bundleID];
+    NSString *identifier = sAppIDMap[bundleID];
     if (identifier) return identifier;
 
     // Apps may add a string to the info.plist to uniquely identify different builds.
@@ -2154,7 +2150,7 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle) {
     if (sAppIDMap == nil) {
       sAppIDMap = [[NSMutableDictionary alloc] init];
     }
-    [sAppIDMap setObject:identifier forKey:bundleID];
+    sAppIDMap[bundleID] = identifier;
     return identifier;
   }
 }

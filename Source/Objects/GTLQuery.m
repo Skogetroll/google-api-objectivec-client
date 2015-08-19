@@ -175,7 +175,7 @@
 }
 
 - (id)JSONValueForKey:(NSString *)key {
-  id obj = [self.JSON objectForKey:key];
+  id obj = (self.JSON)[key];
   return obj;
 }
 
@@ -192,7 +192,7 @@
 }
 
 - (id)cacheChildForKey:(NSString *)key {
-  id obj = [childCache_ objectForKey:key];
+  id obj = childCache_[key];
   return obj;
 }
 

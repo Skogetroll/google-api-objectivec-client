@@ -564,9 +564,9 @@ typedef BOOL (^GTLServiceRetryBlock)(GTLServiceTicket *ticket,
 
 + (instancetype)ticketForService:(GTLService *)service;
 
-- (instancetype)initWithService:(GTLService *)service;
+- (instancetype)initWithService:(GTLService *)service NS_DESIGNATED_INITIALIZER;
 
-- (id)service;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) id service;
 
 #pragma mark Execution Control
 // if cancelTicket is called, the fetch is stopped if it is in progress,
@@ -577,7 +577,7 @@ typedef BOOL (^GTLServiceRetryBlock)(GTLServiceTicket *ticket,
 // chunked upload tickets may be paused
 - (void)pauseUpload;
 - (void)resumeUpload;
-- (BOOL)isUploadPaused;
+@property (NS_NONATOMIC_IOSONLY, getter=isUploadPaused, readonly) BOOL uploadPaused;
 
 @property (nonatomic, retain) GTMBridgeFetcher *objectFetcher;
 @property (nonatomic, assign) SEL uploadProgressSelector;

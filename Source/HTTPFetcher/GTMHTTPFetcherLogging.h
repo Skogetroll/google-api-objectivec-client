@@ -82,7 +82,7 @@
 
 // internal; called by fetcher
 - (void)logFetchWithError:(NSError *)error;
-- (BOOL)logCapturePostStream;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL logCapturePostStream;
 
 // internal; accessors useful for viewing logs
 + (NSString *)processNameLogPrefix;
@@ -94,12 +94,9 @@
 // on, the response log will not be sent until deferring is turned off,
 // allowing the application to write the response body after the response
 // data has been parsed.
-- (void)setLogRequestBody:(NSString *)bodyString;
-- (NSString *)logRequestBody;
-- (void)setLogResponseBody:(NSString *)bodyString;
-- (NSString *)logResponseBody;
-- (void)setShouldDeferResponseBodyLogging:(BOOL)flag;
-- (BOOL)shouldDeferResponseBodyLogging;
+@property (NS_NONATOMIC_IOSONLY, copy) NSString *logRequestBody;
+@property (NS_NONATOMIC_IOSONLY, copy) NSString *logResponseBody;
+@property (NS_NONATOMIC_IOSONLY) BOOL shouldDeferResponseBodyLogging;
 
 @end
 
