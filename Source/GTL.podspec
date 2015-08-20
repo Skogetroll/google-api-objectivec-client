@@ -12,14 +12,14 @@ Pod::Spec.new do |s|
 
   s.homepage     = "https://code.google.com/p/google-api-objectivec-client/"
 
-  s.license      = { :type => "Apache License, Version 2.0", :file => "LICENSE.txt" }
+  s.license      = { :type => "Apache License, Version 2.0", :file => "Source/LICENSE.txt" }
 
   s.author       = { "grobbins" => "grobbins@google.com" }
 
   s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.1" }
 
   s.source_files  = "Source/GTLDefines.h", "Source/**/*.{h,m}"
-  s.exclude_files = "Sources/**/Mac/*.*", "Source/Tools/*.*", "Source/Tools/**/*.*", "Source/Tests/*.*", "Source/Tests/**/*.*", "Source/**/Tests/*.*"#, "Source/Services/**/**/*.*"
+  s.exclude_files = "Sources/**/Mac/*.*", "Source/*_Sources.*", "Source/**/*_Sources.*", "Source/Tools/*.*", "Source/Tools/**/*.*", "Source/Tests/*.*", "Source/Tests/**/*.*", "Source/**/Tests/*.*"#, "Source/Services/**/**/*.*"
 
   #s.platform = :osx
   s.platform = :ios
