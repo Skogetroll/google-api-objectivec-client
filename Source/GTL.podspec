@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "GTL"
-  s.version      = "2.0.1"
+  s.version      = "2.0.2"
   s.summary      = "Google APIs Client Library for Objective-C"
 
   s.description  = <<-DESC
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
 
   s.author       = { "grobbins" => "grobbins@google.com" }
 
-  s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.1" }
+  s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.2" }
 
   s.source_files  = "Source/GTLDefines.h", "Source/**/*.{h,m}"
   s.exclude_files = "Sources/**/Mac/*.*", "Source/*_Sources.*", "Source/**/*_Sources.*", "Source/Tools/*.*", "Source/Tools/**/*.*", "Source/Tests/*.*", "Source/Tests/**/*.*", "Source/**/Tests/*.*"#, "Source/Services/**/**/*.*"
@@ -24,12 +24,10 @@ Pod::Spec.new do |s|
   #s.platform = :osx
   s.platform = :ios
 
-  # s.framework  = "SomeFramework"
-  # s.frameworks = "SomeFramework", "AnotherFramework"
+  s.frameworks = "Foundation", "UIKit"
 
   # s.library   = "iconv"
   # s.libraries = "iconv", "xml2"
-
 
   s.requires_arc = false
 
