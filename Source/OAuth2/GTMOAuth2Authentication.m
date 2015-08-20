@@ -980,11 +980,16 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 
   NSString *name = (isStarting ? kGTMOAuth2FetchStarted : kGTMOAuth2FetchStopped);
-  NSDictionary *dict = @{kGTMOAuth2FetcherKey: fetcher,
-                        kGTMOAuth2FetchTypeKey: fetchType};
+  NSMutableDictionary *dict = @{kGTMOAuth2FetcherKey: fetcher}.mutableCopy;
+
+  if (fetchType != nil) {
+    dict[kGTMOAuth2FetchTypeKey] = fetchType;
+  }
+    
   [nc postNotificationName:name
                     object:self
                   userInfo:dict];
+  [dict release];
 }
 
 #pragma mark Persistent Response Strings
