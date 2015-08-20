@@ -18,13 +18,16 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.2" }
 
-  # s.source_files  = "Source/GTLDefines.h", "Source/**/*.{h,m}"
-  # s.exclude_files = "Sources/**/Mac/*.*", "Source/*_Sources.*", "Source/**/*_Sources.*", "Source/Tools/*.*", "Source/Tools/**/*.*", "Source/Tests/*.*", "Source/Tests/**/*.*", "Source/**/Tests/*.*", "Source/Services/**/**/*.*"
-
-  s.default_subspec = "Core", "YouTube", "Plus"
+  s.default_subspec = "Core", "OAuth2", "YouTube", "Plus"
   
   s.subspec "HTTPFetcher" do |hp|
     hp.source_files = "Source/HTTPFetcher/*.{h,m}"
+  end
+
+  s.subspec "OAuth2" do |oa|
+    oa.dependency "GTL/HTTPFetcher"
+
+    oa.source_files = "Source/OAuth2/*.{h,m}"
   end
 
   s.subspec "Core" do |core|
@@ -49,8 +52,6 @@ Pod::Spec.new do |s|
   
   s.platform = :osx, "10.7"
   s.platform = :ios, "5.0"
-
-  s.frameworks = "Foundation", "UIKit"
 
   s.requires_arc = false
 
