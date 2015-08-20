@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
   s.subspec "OAuth2" do |oa|
     oa.dependency "GTL/HTTPFetcher"
 
-    oa.source_files = "Source/OAuth2/*.{h,m}"
+    oa.source_files = "Source/OAuth2/*.{h,m}", "Source/OAuth2/**/*.{h,m}"
   end
 
   s.subspec "Core" do |core|
