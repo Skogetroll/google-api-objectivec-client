@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.2" }
 
   s.source_files  = "Source/GTLDefines.h", "Source/**/*.{h,m}"
-  s.exclude_files = "Sources/**/Mac/*.*", "Source/*_Sources.*", "Source/**/*_Sources.*", "Source/Tools/*.*", "Source/Tools/**/*.*", "Source/Tests/*.*", "Source/Tests/**/*.*", "Source/**/Tests/*.*", "Source/Services/**/**/*.*"
+  s.exclude_files = "Sources/**/Mac/*.*", "Source/*_Sources.*", "Source/**/*_Sources.*", "Source/Tools/*.*", "Source/Tools/**/*.*", "Source/Tests/*.*", "Source/Tests/**/*.*", "Source/**/Tests/*.*"#, "Source/Services/**/**/*.*"
 
   #s.platform = :osx
   s.platform = :ios
