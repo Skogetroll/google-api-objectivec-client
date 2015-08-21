@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "GTL"
-  s.version      = "2.0.2"
+  s.version      = "2.0.3"
   s.summary      = "Google APIs Client Library for Objective-C"
 
   s.description  = <<-DESC
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
 
   s.author       = { "grobbins" => "grobbins@google.com" }
 
-  s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.2" }
+  s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.3" }
 
   s.default_subspec = "Core", "OAuth2", "YouTube", "Plus"
   
@@ -28,6 +28,7 @@ Pod::Spec.new do |s|
     oa.dependency "GTL/HTTPFetcher"
 
     oa.source_files = "Source/OAuth2/*.{h,m}", "Source/OAuth2/**/*.{h,m}"
+    oa.resources = "Source/OAuth2/**/*.xib"
   end
 
   s.subspec "Core" do |core|

@@ -36,15 +36,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-extern NSString *const kGTMOAuth2KeychainErrorDomain;
-
-// Notifications that the view controller is swapping out and back in cookies.
-// Apps may use this to avoid relying on the cookie store while view controller
-// has them swapped out.
-extern NSString *const kGTMOAuth2CookiesWillSwapOut;
-extern NSString *const kGTMOAuth2CookiesDidSwapIn;
-
+  
+  extern NSString *__nonnull const kGTMOAuth2KeychainErrorDomain;
+  
+  // Notifications that the view controller is swapping out and back in cookies.
+  // Apps may use this to avoid relying on the cookie store while view controller
+  // has them swapped out.
+  extern NSString *__nonnull const kGTMOAuth2CookiesWillSwapOut;
+  extern NSString *__nonnull const kGTMOAuth2CookiesDidSwapIn;
+  
 #ifdef __cplusplus
 }
 #endif
@@ -52,102 +52,102 @@ extern NSString *const kGTMOAuth2CookiesDidSwapIn;
 @class GTMOAuth2SignIn;
 @class GTMOAuth2ViewControllerTouch;
 
-typedef void (^GTMOAuth2ViewControllerCompletionHandler)(GTMOAuth2ViewControllerTouch *viewController, GTMOAuth2Authentication *auth, NSError *error);
+typedef void (^GTMOAuth2ViewControllerCompletionHandler)(GTMOAuth2ViewControllerTouch *__nullable viewController, GTMOAuth2Authentication *__nullable auth, NSError *__nullable error);
 
 @interface GTMOAuth2ViewControllerTouch : UIViewController<UINavigationControllerDelegate, UIWebViewDelegate> {
- @private
+@private
   UIButton *backButton_;
   UIButton *forwardButton_;
   UIActivityIndicatorView *initialActivityIndicator_;
   UIView *navButtonsView_;
   UIBarButtonItem *rightBarButtonItem_;
   UIWebView *webView_;
-
+  
   // The object responsible for the sign-in networking sequence; it holds
   // onto the authentication object as well.
   GTMOAuth2SignIn *signIn_;
-
+  
   // the page request to load when awakeFromNib occurs
   NSURLRequest *request_;
-
+  
   // The user we're calling back
   //
   // The delegate is retained only until the callback is invoked
   // or the sign-in is canceled
   id delegate_;
   SEL finishedSelector_;
-
+  
 #if NS_BLOCKS_AVAILABLE
   GTMOAuth2ViewControllerCompletionHandler completionBlock_;
-
+  
   void (^popViewBlock_)(void);
 #endif
-
+  
   NSString *keychainItemName_;
   CFTypeRef keychainItemAccessibility_;
-
+  
   // if non-nil, the html string to be displayed immediately upon opening
   // of the web view
   NSString *initialHTMLString_;
-
+  
   // set to 1 or -1 if the user sets the showsInitialActivityIndicator
   // property
   int mustShowActivityIndicator_;
-
+  
   // if non-nil, the URL for which cookies will be deleted when the
   // browser view is dismissed
   NSURL *browserCookiesURL_;
-
+  
   id userData_;
   NSMutableDictionary *properties_;
-
+  
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < 60000
   // We delegate the decision to our owning NavigationController (if any).
   // But, the NavigationController will call us back, and ask us.
   // BOOL keeps us from infinite looping.
   BOOL isInsideShouldAutorotateToInterfaceOrientation_;
 #endif
-
+  
   // YES, when view first shown in this signIn session.
   BOOL isViewShown_;
-
+  
   // YES, after the view has fully transitioned in.
   BOOL didViewAppear_;
-
+  
   // YES between sends of start and stop notifications
   BOOL hasNotifiedWebViewStartedLoading_;
-
+  
   // To prevent us from calling our delegate's selector more than once.
   BOOL hasCalledFinished_;
-
+  
   // Set in a webView callback.
   BOOL hasDoneFinalRedirect_;
-
+  
   // Set during the pop initiated by the sign-in object; otherwise,
   // viewWillDisappear indicates that some external change of the view
   // has stopped the sign-in.
   BOOL didDismissSelf_;
-
+  
   // Work around default cookie policy bug in iOS 7; see comments in viewWillAppear.
   NSHTTPCookieAcceptPolicy savedCookiePolicy_;
 }
 
 // the application and service name to use for saving the auth tokens
 // to the keychain
-@property (nonatomic, copy) NSString *keychainItemName;
+@property (nonatomic, copy) NSString *__nullable keychainItemName;
 
 // the keychain item accessibility is a system constant for use
 // with kSecAttrAccessible.
 //
 // Since it's a system constant, we do not need to retain it.
-@property (nonatomic, assign) CFTypeRef keychainItemAccessibility;
+@property (nonatomic, assign) CFTypeRef __nonnull keychainItemAccessibility;
 
 // optional html string displayed immediately upon opening the web view
 //
 // This string is visible just until the sign-in web page loads, and
 // may be used for a "Loading..." type of message or to set the
 // initial view color
-@property (nonatomic, copy) NSString *initialHTMLString;
+@property (nonatomic, copy) NSString *__nullable initialHTMLString;
 
 // an activity indicator shows during initial webview load when no initial HTML
 // string is specified, but the activity indicator can be forced to be shown
@@ -156,23 +156,23 @@ typedef void (^GTMOAuth2ViewControllerCompletionHandler)(GTMOAuth2ViewController
 
 // the underlying object to hold authentication tokens and authorize http
 // requests
-@property (nonatomic, retain, readonly) GTMOAuth2Authentication *authentication;
+@property (nonatomic, retain, readonly) GTMOAuth2Authentication *__nonnull authentication;
 
 // the underlying object which performs the sign-in networking sequence
-@property (nonatomic, retain, readonly) GTMOAuth2SignIn *signIn;
+@property (nonatomic, retain, readonly) GTMOAuth2SignIn *__nonnull signIn;
 
 // user interface elements
-@property (nonatomic, retain) IBOutlet UIButton *backButton;
-@property (nonatomic, retain) IBOutlet UIButton *forwardButton;
-@property (nonatomic, retain) IBOutlet UIActivityIndicatorView *initialActivityIndicator;
-@property (nonatomic, retain) IBOutlet UIView *navButtonsView;
-@property (nonatomic, retain) IBOutlet UIBarButtonItem *rightBarButtonItem;
-@property (nonatomic, retain) IBOutlet UIWebView *webView;
+@property (nonatomic, retain) IBOutlet UIButton *__nullable backButton;
+@property (nonatomic, retain) IBOutlet UIButton *__nullable forwardButton;
+@property (nonatomic, retain) IBOutlet UIActivityIndicatorView *__nullable initialActivityIndicator;
+@property (nonatomic, retain) IBOutlet UIView *__nullable navButtonsView;
+@property (nonatomic, retain) IBOutlet UIBarButtonItem *__nullable rightBarButtonItem;
+@property (nonatomic, retain) IBOutlet UIWebView *__nullable webView;
 
 #if NS_BLOCKS_AVAILABLE
 // An optional block to be called when the view should be popped. If not set,
 // the view controller will use its navigation controller to pop the view.
-@property (nonatomic, copy) void (^popViewBlock)(void);
+@property (nonatomic, copy) void (^__nullable popViewBlock)(void);
 #endif
 
 // the default timeout for an unreachable network during display of the
@@ -183,16 +183,16 @@ typedef void (^GTMOAuth2ViewControllerCompletionHandler)(GTMOAuth2ViewController
 //
 // This is now vestigial and ignored; all cookies are temporarily removed
 // from cookie storage when sign-in begins.
-@property (nonatomic, retain) NSURL *browserCookiesURL;
+@property (nonatomic, retain) NSURL *__nullable browserCookiesURL;
 
 // userData is retained for the convenience of the caller
-@property (nonatomic, retain) id userData;
+@property (nonatomic, retain) id __nullable userData;
 
 // Stored property values are retained for the convenience of the caller
-- (void)setProperty:(id)obj forKey:(NSString *)key;
-- (id)propertyForKey:(NSString *)key;
+- (void)setProperty:(id __nullable)obj forKey:(NSString *__nonnull)key;
+- (nullable id)propertyForKey:(NSString *__nonnull)key;
 
-@property (nonatomic, retain) NSDictionary *properties;
+@property (nonatomic, retain) NSDictionary *__nonnull properties;
 
 // Method for creating a controller to authenticate to Google services
 //
@@ -217,67 +217,67 @@ typedef void (^GTMOAuth2ViewControllerCompletionHandler)(GTMOAuth2ViewController
 //                  error:(NSError *)error;
 //
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
-+ (id)controllerWithScope:(NSString *)scope
-                 clientID:(NSString *)clientID
-             clientSecret:(NSString *)clientSecret
-         keychainItemName:(NSString *)keychainItemName
-                 delegate:(id)delegate
-         finishedSelector:(SEL)finishedSelector;
++ (nonnull id)controllerWithScope:(NSString *__nonnull)scope
+                         clientID:(NSString *__nonnull)clientID
+                     clientSecret:(NSString *__nonnull)clientSecret
+                 keychainItemName:(NSString *__nullable)keychainItemName
+                         delegate:(id __nullable)delegate
+                 finishedSelector:(SEL __nullable)finishedSelector;
 
-- (id)initWithScope:(NSString *)scope
-           clientID:(NSString *)clientID
-       clientSecret:(NSString *)clientSecret
-   keychainItemName:(NSString *)keychainItemName
-           delegate:(id)delegate
-   finishedSelector:(SEL)finishedSelector;
+- (nonnull id)initWithScope:(NSString *__nonnull)scope
+                   clientID:(NSString *__nonnull)clientID
+               clientSecret:(NSString *__nonnull)clientSecret
+           keychainItemName:(NSString *__nullable)keychainItemName
+                   delegate:(id __nullable)delegate
+           finishedSelector:(SEL __nullable)finishedSelector;
 
 #if NS_BLOCKS_AVAILABLE
-+ (id)controllerWithScope:(NSString *)scope
-                 clientID:(NSString *)clientID
-             clientSecret:(NSString *)clientSecret
-         keychainItemName:(NSString *)keychainItemName
-        completionHandler:(GTMOAuth2ViewControllerCompletionHandler)handler;
++ (nonnull id)controllerWithScope:(NSString *__nonnull)scope
+                         clientID:(NSString *__nonnull)clientID
+                     clientSecret:(NSString *__nonnull)clientSecret
+                 keychainItemName:(NSString *__nullable)keychainItemName
+                completionHandler:(GTMOAuth2ViewControllerCompletionHandler __nullable)handler;
 
-- (id)initWithScope:(NSString *)scope
-           clientID:(NSString *)clientID
-       clientSecret:(NSString *)clientSecret
-   keychainItemName:(NSString *)keychainItemName
-  completionHandler:(GTMOAuth2ViewControllerCompletionHandler)handler;
+- (nonnull id)initWithScope:(NSString *__nonnull)scope
+                   clientID:(NSString *__nonnull)clientID
+               clientSecret:(NSString *__nonnull)clientSecret
+           keychainItemName:(NSString *__nullable)keychainItemName
+          completionHandler:(GTMOAuth2ViewControllerCompletionHandler __nullable)handler;
 #endif
 #endif
 
 // Create a controller for authenticating to non-Google services, taking
 //   explicit endpoint URLs and an authentication object
-+ (id)controllerWithAuthentication:(GTMOAuth2Authentication *)auth
-                  authorizationURL:(NSURL *)authorizationURL
-                  keychainItemName:(NSString *)keychainItemName  // may be nil
-                          delegate:(id)delegate
-                  finishedSelector:(SEL)finishedSelector;
++ (nonnull id)controllerWithAuthentication:(GTMOAuth2Authentication *__nonnull)auth
+                          authorizationURL:(NSURL *__nonnull)authorizationURL
+                          keychainItemName:(NSString *__nullable)keychainItemName  // may be nil
+                                  delegate:(id __nullable)delegate
+                          finishedSelector:(SEL __nullable)finishedSelector;
 
 // This is the designated initializer
-- (id)initWithAuthentication:(GTMOAuth2Authentication *)auth
-            authorizationURL:(NSURL *)authorizationURL
-            keychainItemName:(NSString *)keychainItemName
-                    delegate:(id)delegate
-            finishedSelector:(SEL)finishedSelector;
+- (nonnull id)initWithAuthentication:(GTMOAuth2Authentication *__nonnull)auth
+                    authorizationURL:(NSURL *__nonnull)authorizationURL
+                    keychainItemName:(NSString *__nullable)keychainItemName
+                            delegate:(id __nullable)delegate
+                    finishedSelector:(SEL __nullable)finishedSelector;
 
 #if NS_BLOCKS_AVAILABLE
-+ (id)controllerWithAuthentication:(GTMOAuth2Authentication *)auth
-                  authorizationURL:(NSURL *)authorizationURL
-                  keychainItemName:(NSString *)keychainItemName  // may be nil
-                 completionHandler:(GTMOAuth2ViewControllerCompletionHandler)handler;
++ (nonnull id)controllerWithAuthentication:(GTMOAuth2Authentication *__nonnull)auth
+                          authorizationURL:(NSURL *__nonnull)authorizationURL
+                          keychainItemName:(NSString *__nullable)keychainItemName  // may be nil
+                         completionHandler:(GTMOAuth2ViewControllerCompletionHandler __nullable)handler;
 
-- (id)initWithAuthentication:(GTMOAuth2Authentication *)auth
-            authorizationURL:(NSURL *)authorizationURL
-            keychainItemName:(NSString *)keychainItemName
-           completionHandler:(GTMOAuth2ViewControllerCompletionHandler)handler;
+- (nonnull id)initWithAuthentication:(GTMOAuth2Authentication *__nonnull)auth
+                    authorizationURL:(NSURL *__nonnull)authorizationURL
+                    keychainItemName:(NSString *__nullable)keychainItemName
+                   completionHandler:(GTMOAuth2ViewControllerCompletionHandler __nullable)handler;
 #endif
 
 // subclasses may override authNibName to specify a custom name
-+ (NSString *)authNibName;
++ (NSString *__nonnull)authNibName;
 
 // subclasses may override authNibBundle to specify a custom bundle
-+ (NSBundle *)authNibBundle;
++ (NSBundle *__nonnull)authNibBundle;
 
 // subclasses may override setUpNavigation to provide their own navigation
 // controls
@@ -299,14 +299,14 @@ typedef void (^GTMOAuth2ViewControllerCompletionHandler)(GTMOAuth2ViewController
 - (void)swapInCookies;
 
 // apps may replace the sign-in class with their own subclass of it
-+ (Class)signInClass;
-+ (void)setSignInClass:(Class)theClass;
++ (nonnull Class)signInClass;
++ (void)setSignInClass:(nonnull Class)theClass;
 
 - (void)cancelSigningIn;
 
 // revocation of an authorized token from Google
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
-+ (void)revokeTokenForGoogleAuthentication:(GTMOAuth2Authentication *)auth;
++ (void)revokeTokenForGoogleAuthentication:(GTMOAuth2Authentication *__nonnull)auth;
 #endif
 
 //
@@ -317,39 +317,39 @@ typedef void (^GTMOAuth2ViewControllerCompletionHandler)(GTMOAuth2ViewController
 // token and secret stored in the keychain; if no token is available, return
 // an unauthorized auth object. OK to pass NULL for the error parameter.
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
-+ (GTMOAuth2Authentication *)authForGoogleFromKeychainForName:(NSString *)keychainItemName
-                                                     clientID:(NSString *)clientID
-                                                 clientSecret:(NSString *)clientSecret
-                                                        error:(NSError **)error;
++ (GTMOAuth2Authentication *__nonnull)authForGoogleFromKeychainForName:(NSString *__nonnull)keychainItemName
+                                                              clientID:(NSString *__nonnull)clientID
+                                                          clientSecret:(NSString *__nonnull)clientSecret
+                                                                 error:(NSError *__nullable *__nullable)error;
 // Equivalent to calling the method above with a NULL error parameter.
-+ (GTMOAuth2Authentication *)authForGoogleFromKeychainForName:(NSString *)keychainItemName
-                                                     clientID:(NSString *)clientID
-                                                 clientSecret:(NSString *)clientSecret;
++ (GTMOAuth2Authentication *__nonnull)authForGoogleFromKeychainForName:(NSString *__nonnull)keychainItemName
+                                                              clientID:(NSString *__nonnull)clientID
+                                                          clientSecret:(NSString *__nonnull)clientSecret;
 #endif
 
 // add tokens from the keychain, if available, to the authentication object
 //
 // returns YES if the authentication object was authorized from the keychain
-+ (BOOL)authorizeFromKeychainForName:(NSString *)keychainItemName
-                      authentication:(GTMOAuth2Authentication *)auth
-                               error:(NSError **)error;
++ (BOOL)authorizeFromKeychainForName:(NSString *__nonnull)keychainItemName
+                      authentication:(GTMOAuth2Authentication *__nonnull)auth
+                               error:(NSError *__nullable *__nullable)error;
 
 // method for deleting the stored access token and secret, useful for "signing
 // out"
-+ (BOOL)removeAuthFromKeychainForName:(NSString *)keychainItemName;
++ (BOOL)removeAuthFromKeychainForName:(NSString *__nonnull)keychainItemName;
 
 // method for saving the stored access token and secret
 //
 // returns YES if the save was successful.  OK to pass NULL for the error
 // parameter.
-+ (BOOL)saveParamsToKeychainForName:(NSString *)keychainItemName
-                      accessibility:(CFTypeRef)accessibility
-                     authentication:(GTMOAuth2Authentication *)auth
-                              error:(NSError **)error;
++ (BOOL)saveParamsToKeychainForName:(NSString *__nonnull)keychainItemName
+                      accessibility:(CFTypeRef __nullable)accessibility
+                     authentication:(GTMOAuth2Authentication *__nonnull)auth
+                              error:(NSError *__nullable *__nullable)error;
 
 // older version, defaults to kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-+ (BOOL)saveParamsToKeychainForName:(NSString *)keychainItemName
-                     authentication:(GTMOAuth2Authentication *)auth;
++ (BOOL)saveParamsToKeychainForName:(NSString *__nonnull)keychainItemName
+                     authentication:(GTMOAuth2Authentication *__nonnull)auth;
 
 @end
 
@@ -366,30 +366,30 @@ enum {
 
 @interface GTMOAuth2Keychain : NSObject
 
-+ (GTMOAuth2Keychain *)defaultKeychain;
++ (GTMOAuth2Keychain *__nonnull)defaultKeychain;
 
 // OK to pass nil for the error parameter.
-- (NSString *)passwordForService:(NSString *)service
-                         account:(NSString *)account
-                           error:(NSError **)error;
+- (NSString *__nullable)passwordForService:(NSString *__nonnull)service
+                         account:(NSString *__nonnull)account
+                           error:(NSError *__nullable *__nullable)error;
 
 // OK to pass nil for the error parameter.
-- (BOOL)removePasswordForService:(NSString *)service
-                         account:(NSString *)account
-                           error:(NSError **)error;
+- (BOOL)removePasswordForService:(NSString *__nonnull)service
+                         account:(NSString *__nonnull)account
+                           error:(NSError *__nullable *__nullable)error;
 
 // OK to pass nil for the error parameter.
 //
 // accessibility should be one of the constants for kSecAttrAccessible
 // such as kSecAttrAccessibleWhenUnlocked
-- (BOOL)setPassword:(NSString *)password
-         forService:(NSString *)service
-      accessibility:(CFTypeRef)accessibility
-            account:(NSString *)account
-              error:(NSError **)error;
+- (BOOL)setPassword:(NSString *__nonnull)password
+         forService:(NSString *__nonnull)service
+      accessibility:(CFTypeRef __nullable)accessibility
+            account:(NSString *__nonnull)account
+              error:(NSError *__nullable *__nullable)error;
 
 // For unit tests: allow setting a mock object
-+ (void)setDefaultKeychain:(GTMOAuth2Keychain *)keychain;
++ (void)setDefaultKeychain:(GTMOAuth2Keychain *__nonnull)keychain;
 
 @end
 

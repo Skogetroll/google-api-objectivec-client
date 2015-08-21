@@ -29,9 +29,9 @@
 //   GTLQueryYouTube (62 custom class methods, 69 custom properties)
 
 #if GTL_BUILT_AS_FRAMEWORK
-  #import "GTL/GTLQuery.h"
+#import "GTL/GTLQuery.h"
 #else
-  #import "GTLQuery.h"
+#import "GTLQuery.h"
 #endif
 
 @class GTLYouTubeActivity;
@@ -57,80 +57,80 @@
 //
 
 // Selector specifying which fields to include in a partial response.
-@property (nonatomic, copy) NSString *fields;
+@property (nonatomic, copy) NSString *__nullable fields;
 
 //
 // Method-specific parameters; see the comments below for more information.
 //
-@property (nonatomic, copy) NSString *allThreadsRelatedToChannelId;
+@property (nonatomic, copy) NSString *__nullable allThreadsRelatedToChannelId;
 @property (nonatomic, assign) BOOL autoLevels;
 @property (nonatomic, assign) BOOL banAuthor;
-@property (nonatomic, copy) NSString *broadcastStatus;
-@property (nonatomic, copy) NSString *categoryId;
-@property (nonatomic, copy) NSString *channelId;
-@property (nonatomic, copy) NSString *channelType;
-@property (nonatomic, copy) NSString *chart;
+@property (nonatomic, copy) NSString *__nullable broadcastStatus;
+@property (nonatomic, copy) NSString *__nullable categoryId;
+@property (nonatomic, copy) NSString *__nullable channelId;
+@property (nonatomic, copy) NSString *__nullable channelType;
+@property (nonatomic, copy) NSString *__nullable chart;
 @property (nonatomic, assign) long long debugProjectIdOverride;
 @property (nonatomic, assign) BOOL displaySlate;
-@property (nonatomic, copy) NSString *eventType;
-@property (nonatomic, copy) NSString *forChannelId;
+@property (nonatomic, copy) NSString *__nullable eventType;
+@property (nonatomic, copy) NSString *__nullable forChannelId;
 @property (nonatomic, assign) BOOL forContentOwner;
 @property (nonatomic, assign) BOOL forDeveloper;
 @property (nonatomic, assign) BOOL forMine;
-@property (nonatomic, copy) NSString *forUsername;
-@property (nonatomic, copy) NSString *hl;
+@property (nonatomic, copy) NSString *__nullable forUsername;
+@property (nonatomic, copy) NSString *__nullable hl;
 @property (nonatomic, assign) BOOL home;
 // identifier property maps to 'id' in JSON (to avoid Objective C's 'id').
-@property (nonatomic, copy) NSString *identifier;
-@property (nonatomic, copy) NSString *locale;
-@property (nonatomic, copy) NSString *location;
-@property (nonatomic, copy) NSString *locationRadius;
+@property (nonatomic, copy) NSString *__nullable identifier;
+@property (nonatomic, copy) NSString *__nullable locale;
+@property (nonatomic, copy) NSString *__nullable location;
+@property (nonatomic, copy) NSString *__nullable locationRadius;
 @property (nonatomic, assign) BOOL managedByMe;
 @property (nonatomic, assign) NSUInteger maxResults;
 @property (nonatomic, assign) BOOL mine;
-@property (nonatomic, copy) NSString *moderationStatus;
-@property (nonatomic, copy) NSString *myRating;
+@property (nonatomic, copy) NSString *__nullable moderationStatus;
+@property (nonatomic, copy) NSString *__nullable myRating;
 @property (nonatomic, assign) BOOL mySubscribers;
 @property (nonatomic, assign) BOOL notifySubscribers;
 @property (nonatomic, assign) unsigned long long offsetTimeMs;
-@property (nonatomic, copy) NSString *onBehalfOf;
-@property (nonatomic, copy) NSString *onBehalfOfContentOwner;
-@property (nonatomic, copy) NSString *onBehalfOfContentOwnerChannel;
-@property (nonatomic, copy) NSString *order;
-@property (nonatomic, copy) NSString *pageToken;
-@property (nonatomic, copy) NSString *parentId;
-@property (nonatomic, copy) NSString *part;
-@property (nonatomic, copy) NSString *playlistId;
-@property (nonatomic, retain) GTLDateTime *publishedAfter;
-@property (nonatomic, retain) GTLDateTime *publishedBefore;
-@property (nonatomic, copy) NSString *q;
-@property (nonatomic, copy) NSString *rating;
-@property (nonatomic, copy) NSString *regionCode;
-@property (nonatomic, copy) NSString *relatedToVideoId;
-@property (nonatomic, copy) NSString *relevanceLanguage;
-@property (nonatomic, retain) GTLYouTubeVideoAbuseReport *report;
-@property (nonatomic, copy) NSString *safeSearch;
-@property (nonatomic, copy) NSString *searchTerms;
+@property (nonatomic, copy) NSString *__nullable onBehalfOf;
+@property (nonatomic, copy) NSString *__nullable onBehalfOfContentOwner;
+@property (nonatomic, copy) NSString *__nullable onBehalfOfContentOwnerChannel;
+@property (nonatomic, copy) NSString *__nullable order;
+@property (nonatomic, copy) NSString *__nullable pageToken;
+@property (nonatomic, copy) NSString *__nullable parentId;
+@property (nonatomic, copy) NSString *__nullable part;
+@property (nonatomic, copy) NSString *__nullable playlistId;
+@property (nonatomic, retain) GTLDateTime *__nullable publishedAfter;
+@property (nonatomic, retain) GTLDateTime *__nullable publishedBefore;
+@property (nonatomic, copy) NSString *__nullable q;
+@property (nonatomic, copy) NSString *__nullable rating;
+@property (nonatomic, copy) NSString *__nullable regionCode;
+@property (nonatomic, copy) NSString *__nullable relatedToVideoId;
+@property (nonatomic, copy) NSString *__nullable relevanceLanguage;
+@property (nonatomic, retain) GTLYouTubeVideoAbuseReport *__nullable report;
+@property (nonatomic, copy) NSString *__nullable safeSearch;
+@property (nonatomic, copy) NSString *__nullable searchTerms;
 @property (nonatomic, assign) BOOL shareOnGooglePlus;
 @property (nonatomic, assign) BOOL stabilize;
-@property (nonatomic, copy) NSString *streamId;
+@property (nonatomic, copy) NSString *__nullable streamId;
 @property (nonatomic, assign) BOOL sync;
-@property (nonatomic, copy) NSString *textFormat;
-@property (nonatomic, copy) NSString *tfmt;
-@property (nonatomic, copy) NSString *tlang;
-@property (nonatomic, copy) NSString *topicId;
-@property (nonatomic, copy) NSString *type;
-@property (nonatomic, copy) NSString *videoCaption;
-@property (nonatomic, copy) NSString *videoCategoryId;
-@property (nonatomic, copy) NSString *videoDefinition;
-@property (nonatomic, copy) NSString *videoDimension;
-@property (nonatomic, copy) NSString *videoDuration;
-@property (nonatomic, copy) NSString *videoEmbeddable;
-@property (nonatomic, copy) NSString *videoId;
-@property (nonatomic, copy) NSString *videoLicense;
-@property (nonatomic, copy) NSString *videoSyndicated;
-@property (nonatomic, copy) NSString *videoType;
-@property (nonatomic, retain) GTLDateTime *walltime;
+@property (nonatomic, copy) NSString *__nullable textFormat;
+@property (nonatomic, copy) NSString *__nullable tfmt;
+@property (nonatomic, copy) NSString *__nullable tlang;
+@property (nonatomic, copy) NSString *__nullable topicId;
+@property (nonatomic, copy) NSString *__nullable type;
+@property (nonatomic, copy) NSString *__nullable videoCaption;
+@property (nonatomic, copy) NSString *__nullable videoCategoryId;
+@property (nonatomic, copy) NSString *__nullable videoDefinition;
+@property (nonatomic, copy) NSString *__nullable videoDimension;
+@property (nonatomic, copy) NSString *__nullable videoDuration;
+@property (nonatomic, copy) NSString *__nullable videoEmbeddable;
+@property (nonatomic, copy) NSString *__nullable videoId;
+@property (nonatomic, copy) NSString *__nullable videoLicense;
+@property (nonatomic, copy) NSString *__nullable videoSyndicated;
+@property (nonatomic, copy) NSString *__nullable videoType;
+@property (nonatomic, retain) GTLDateTime *__nullable walltime;
 
 #pragma mark - "activities" methods
 // These create a GTLQueryYouTube object.
@@ -151,8 +151,8 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeActivity.
-+ (instancetype)queryForActivitiesInsertWithObject:(GTLYouTubeActivity *)object
-                                              part:(NSString *)part;
++ (nonnull instancetype)queryForActivitiesInsertWithObject:(GTLYouTubeActivity *__nonnull)object
+                                                      part:(NSString *__nonnull)part;
 
 // Method: youtube.activities.list
 // Returns a list of channel activity events that match the request criteria.
@@ -202,7 +202,7 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeReadonly
 // Fetches a GTLYouTubeActivityListResponse.
-+ (instancetype)queryForActivitiesListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForActivitiesListWithPart:(NSString *__nonnull)part;
 
 #pragma mark - "captions" methods
 // These create a GTLQueryYouTube object.
@@ -232,7 +232,7 @@
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForCaptionsDeleteWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForCaptionsDeleteWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.captions.download
 // Downloads a caption track. The caption track is returned in its original
@@ -275,7 +275,7 @@
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForCaptionsDownloadWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForCaptionsDownloadWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.captions.insert
 // Uploads a caption track.
@@ -312,9 +312,9 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeCaption.
-+ (instancetype)queryForCaptionsInsertWithObject:(GTLYouTubeCaption *)object
-                                            part:(NSString *)part
-                                uploadParameters:(GTLUploadParameters *)uploadParametersOrNil;
++ (nonnull instancetype)queryForCaptionsInsertWithObject:(GTLYouTubeCaption *__nonnull)object
+                                                    part:(NSString *__nonnull)part
+                                        uploadParameters:(GTLUploadParameters *__nullable)uploadParametersOrNil;
 
 // Method: youtube.captions.list
 // Returns a list of caption tracks that are associated with a specified video.
@@ -349,8 +349,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeCaptionListResponse.
-+ (instancetype)queryForCaptionsListWithPart:(NSString *)part
-                                     videoId:(NSString *)videoId;
++ (nonnull instancetype)queryForCaptionsListWithPart:(NSString *__nonnull)part
+                                             videoId:(NSString *__nonnull)videoId;
 
 // Method: youtube.captions.update
 // Updates a caption track. When updating a caption track, you can change the
@@ -390,9 +390,9 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeCaption.
-+ (instancetype)queryForCaptionsUpdateWithObject:(GTLYouTubeCaption *)object
-                                            part:(NSString *)part
-                                uploadParameters:(GTLUploadParameters *)uploadParametersOrNil;
++ (nonnull instancetype)queryForCaptionsUpdateWithObject:(GTLYouTubeCaption *__nonnull)object
+                                                    part:(NSString *__nonnull)part
+                                        uploadParameters:(GTLUploadParameters *__nullable)uploadParametersOrNil;
 
 #pragma mark - "channelBanners" methods
 // These create a GTLQueryYouTube object.
@@ -428,8 +428,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeUpload
 // Fetches a GTLYouTubeChannelBannerResource.
-+ (instancetype)queryForChannelBannersInsertWithObject:(GTLYouTubeChannelBannerResource *)object
-                                      uploadParameters:(GTLUploadParameters *)uploadParametersOrNil;
++ (nonnull instancetype)queryForChannelBannersInsertWithObject:(GTLYouTubeChannelBannerResource *__nonnull)object
+                                              uploadParameters:(GTLUploadParameters *__nullable)uploadParametersOrNil;
 
 #pragma mark - "channelSections" methods
 // These create a GTLQueryYouTube object.
@@ -456,7 +456,7 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForChannelSectionsDeleteWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForChannelSectionsDeleteWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.channelSections.insert
 // Adds a channelSection for the authenticated user's channel.
@@ -500,8 +500,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeChannelSection.
-+ (instancetype)queryForChannelSectionsInsertWithObject:(GTLYouTubeChannelSection *)object
-                                                   part:(NSString *)part;
++ (nonnull instancetype)queryForChannelSectionsInsertWithObject:(GTLYouTubeChannelSection *__nonnull)object
+                                                           part:(NSString *__nonnull)part;
 
 // Method: youtube.channelSections.list
 // Returns channelSection resources that match the API request criteria.
@@ -549,7 +549,7 @@
 //   kGTLAuthScopeYouTubeReadonly
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeChannelSectionListResponse.
-+ (instancetype)queryForChannelSectionsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForChannelSectionsListWithPart:(NSString *__nonnull)part;
 
 // Method: youtube.channelSections.update
 // Update a channelSection.
@@ -576,8 +576,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeChannelSection.
-+ (instancetype)queryForChannelSectionsUpdateWithObject:(GTLYouTubeChannelSection *)object
-                                                   part:(NSString *)part;
++ (nonnull instancetype)queryForChannelSectionsUpdateWithObject:(GTLYouTubeChannelSection *__nonnull)object
+                                                           part:(NSString *__nonnull)part;
 
 #pragma mark - "channels" methods
 // These create a GTLQueryYouTube object.
@@ -639,7 +639,7 @@
 //   kGTLAuthScopeYouTubeYoutubepartner
 //   kGTLAuthScopeYouTubeYoutubepartnerChannelAudit
 // Fetches a GTLYouTubeChannelListResponse.
-+ (instancetype)queryForChannelsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForChannelsListWithPart:(NSString *__nonnull)part;
 
 // Method: youtube.channels.update
 // Updates a channel's metadata. Note that this method currently only supports
@@ -670,8 +670,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeChannel.
-+ (instancetype)queryForChannelsUpdateWithObject:(GTLYouTubeChannel *)object
-                                            part:(NSString *)part;
++ (nonnull instancetype)queryForChannelsUpdateWithObject:(GTLYouTubeChannel *__nonnull)object
+                                                    part:(NSString *__nonnull)part;
 
 #pragma mark - "comments" methods
 // These create a GTLQueryYouTube object.
@@ -683,7 +683,7 @@
 //     is being deleted.
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
-+ (instancetype)queryForCommentsDeleteWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForCommentsDeleteWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.comments.insert
 // Creates a reply to an existing comment. Note: To create a top-level comment,
@@ -695,8 +695,8 @@
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeComment.
-+ (instancetype)queryForCommentsInsertWithObject:(GTLYouTubeComment *)object
-                                            part:(NSString *)part;
++ (nonnull instancetype)queryForCommentsInsertWithObject:(GTLYouTubeComment *__nonnull)object
+                                                    part:(NSString *__nonnull)part;
 
 // Method: youtube.comments.list
 // Returns a list of comments that match the API request parameters.
@@ -729,7 +729,7 @@
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeCommentListResponse.
-+ (instancetype)queryForCommentsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForCommentsListWithPart:(NSString *__nonnull)part;
 
 // Method: youtube.comments.markAsSpam
 // Expresses the caller's opinion that one or more comments should be flagged as
@@ -739,7 +739,7 @@
 //     comments that the caller believes should be classified as spam.
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
-+ (instancetype)queryForCommentsMarkAsSpamWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForCommentsMarkAsSpamWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.comments.setModerationStatus
 // Sets the moderation status of one or more comments. The API request must be
@@ -769,8 +769,8 @@
 //     also set to rejected. (Default false)
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
-+ (instancetype)queryForCommentsSetModerationStatusWithIdentifier:(NSString *)identifier
-                                                 moderationStatus:(NSString *)moderationStatus;
++ (nonnull instancetype)queryForCommentsSetModerationStatusWithIdentifier:(NSString *__nonnull)identifier
+                                                         moderationStatus:(NSString *__nonnull)moderationStatus;
 
 // Method: youtube.comments.update
 // Modifies a comment.
@@ -782,8 +782,8 @@
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeComment.
-+ (instancetype)queryForCommentsUpdateWithObject:(GTLYouTubeComment *)object
-                                            part:(NSString *)part;
++ (nonnull instancetype)queryForCommentsUpdateWithObject:(GTLYouTubeComment *__nonnull)object
+                                                    part:(NSString *__nonnull)part;
 
 #pragma mark - "commentThreads" methods
 // These create a GTLQueryYouTube object.
@@ -802,8 +802,8 @@
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeCommentThread.
-+ (instancetype)queryForCommentThreadsInsertWithObject:(GTLYouTubeCommentThread *)object
-                                                  part:(NSString *)part;
++ (nonnull instancetype)queryForCommentThreadsInsertWithObject:(GTLYouTubeCommentThread *__nonnull)object
+                                                          part:(NSString *__nonnull)part;
 
 // Method: youtube.commentThreads.list
 // Returns a list of comment threads that match the API request parameters.
@@ -870,7 +870,7 @@
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeCommentThreadListResponse.
-+ (instancetype)queryForCommentThreadsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForCommentThreadsListWithPart:(NSString *__nonnull)part;
 
 // Method: youtube.commentThreads.update
 // Modifies the top-level comment in a comment thread.
@@ -882,8 +882,8 @@
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeCommentThread.
-+ (instancetype)queryForCommentThreadsUpdateWithObject:(GTLYouTubeCommentThread *)object
-                                                  part:(NSString *)part;
++ (nonnull instancetype)queryForCommentThreadsUpdateWithObject:(GTLYouTubeCommentThread *__nonnull)object
+                                                          part:(NSString *__nonnull)part;
 
 #pragma mark - "guideCategories" methods
 // These create a GTLQueryYouTube object.
@@ -909,7 +909,7 @@
 //   kGTLAuthScopeYouTubeReadonly
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeGuideCategoryListResponse.
-+ (instancetype)queryForGuideCategoriesListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForGuideCategoriesListWithPart:(NSString *__nonnull)part;
 
 #pragma mark - "i18nLanguages" methods
 // These create a GTLQueryYouTube object.
@@ -928,7 +928,7 @@
 //   kGTLAuthScopeYouTubeReadonly
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeI18nLanguageListResponse.
-+ (instancetype)queryForI18nLanguagesListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForI18nLanguagesListWithPart:(NSString *__nonnull)part;
 
 #pragma mark - "i18nRegions" methods
 // These create a GTLQueryYouTube object.
@@ -947,7 +947,7 @@
 //   kGTLAuthScopeYouTubeReadonly
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeI18nRegionListResponse.
-+ (instancetype)queryForI18nRegionsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForI18nRegionsListWithPart:(NSString *__nonnull)part;
 
 #pragma mark - "liveBroadcasts" methods
 // These create a GTLQueryYouTube object.
@@ -1000,8 +1000,8 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeLiveBroadcast.
-+ (instancetype)queryForLiveBroadcastsBindWithIdentifier:(NSString *)identifier
-                                                    part:(NSString *)part;
++ (nonnull instancetype)queryForLiveBroadcastsBindWithIdentifier:(NSString *__nonnull)identifier
+                                                            part:(NSString *__nonnull)part;
 
 // Method: youtube.liveBroadcasts.bind_direct
 // Binds a YouTube broadcast to a stream or removes an existing binding between
@@ -1051,8 +1051,8 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeLiveBroadcast.
-+ (instancetype)queryForLiveBroadcastsBindDirectWithIdentifier:(NSString *)identifier
-                                                          part:(NSString *)part;
++ (nonnull instancetype)queryForLiveBroadcastsBindDirectWithIdentifier:(NSString *__nonnull)identifier
+                                                                  part:(NSString *__nonnull)part;
 
 // Method: youtube.liveBroadcasts.control
 // Controls the settings for a slate that can be displayed in the broadcast
@@ -1114,8 +1114,8 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeLiveBroadcast.
-+ (instancetype)queryForLiveBroadcastsControlWithIdentifier:(NSString *)identifier
-                                                       part:(NSString *)part;
++ (nonnull instancetype)queryForLiveBroadcastsControlWithIdentifier:(NSString *__nonnull)identifier
+                                                               part:(NSString *__nonnull)part;
 
 // Method: youtube.liveBroadcasts.delete
 // Deletes a broadcast.
@@ -1154,7 +1154,7 @@
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
-+ (instancetype)queryForLiveBroadcastsDeleteWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForLiveBroadcastsDeleteWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.liveBroadcasts.insert
 // Creates a broadcast.
@@ -1197,8 +1197,8 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeLiveBroadcast.
-+ (instancetype)queryForLiveBroadcastsInsertWithObject:(GTLYouTubeLiveBroadcast *)object
-                                                  part:(NSString *)part;
++ (nonnull instancetype)queryForLiveBroadcastsInsertWithObject:(GTLYouTubeLiveBroadcast *__nonnull)object
+                                                          part:(NSString *__nonnull)part;
 
 // Method: youtube.liveBroadcasts.list
 // Returns a list of YouTube broadcasts that match the API request parameters.
@@ -1260,7 +1260,7 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeReadonly
 // Fetches a GTLYouTubeLiveBroadcastListResponse.
-+ (instancetype)queryForLiveBroadcastsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForLiveBroadcastsListWithPart:(NSString *__nonnull)part;
 
 // Method: youtube.liveBroadcasts.transition
 // Changes the status of a YouTube live broadcast and initiates any processes
@@ -1323,9 +1323,9 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeLiveBroadcast.
-+ (instancetype)queryForLiveBroadcastsTransitionWithBroadcastStatus:(NSString *)broadcastStatus
-                                                         identifier:(NSString *)identifier
-                                                               part:(NSString *)part;
++ (nonnull instancetype)queryForLiveBroadcastsTransitionWithBroadcastStatus:(NSString *__nonnull)broadcastStatus
+                                                                 identifier:(NSString *__nonnull)identifier
+                                                                       part:(NSString *__nonnull)part;
 
 // Method: youtube.liveBroadcasts.update
 // Updates a broadcast. For example, you could modify the broadcast settings
@@ -1378,8 +1378,8 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeLiveBroadcast.
-+ (instancetype)queryForLiveBroadcastsUpdateWithObject:(GTLYouTubeLiveBroadcast *)object
-                                                  part:(NSString *)part;
++ (nonnull instancetype)queryForLiveBroadcastsUpdateWithObject:(GTLYouTubeLiveBroadcast *__nonnull)object
+                                                          part:(NSString *__nonnull)part;
 
 #pragma mark - "liveStreams" methods
 // These create a GTLQueryYouTube object.
@@ -1421,7 +1421,7 @@
 //  Authorization scope(s):
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
-+ (instancetype)queryForLiveStreamsDeleteWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForLiveStreamsDeleteWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.liveStreams.insert
 // Creates a video stream. The stream enables you to send your video to YouTube,
@@ -1465,8 +1465,8 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeLiveStream.
-+ (instancetype)queryForLiveStreamsInsertWithObject:(GTLYouTubeLiveStream *)object
-                                               part:(NSString *)part;
++ (nonnull instancetype)queryForLiveStreamsInsertWithObject:(GTLYouTubeLiveStream *__nonnull)object
+                                                       part:(NSString *__nonnull)part;
 
 // Method: youtube.liveStreams.list
 // Returns a list of video streams that match the API request parameters.
@@ -1520,7 +1520,7 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeReadonly
 // Fetches a GTLYouTubeLiveStreamListResponse.
-+ (instancetype)queryForLiveStreamsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForLiveStreamsListWithPart:(NSString *__nonnull)part;
 
 // Method: youtube.liveStreams.update
 // Updates a video stream. If the properties that you want to change cannot be
@@ -1568,8 +1568,8 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 // Fetches a GTLYouTubeLiveStream.
-+ (instancetype)queryForLiveStreamsUpdateWithObject:(GTLYouTubeLiveStream *)object
-                                               part:(NSString *)part;
++ (nonnull instancetype)queryForLiveStreamsUpdateWithObject:(GTLYouTubeLiveStream *__nonnull)object
+                                                       part:(NSString *__nonnull)part;
 
 #pragma mark - "playlistItems" methods
 // These create a GTLQueryYouTube object.
@@ -1584,7 +1584,7 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForPlaylistItemsDeleteWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForPlaylistItemsDeleteWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.playlistItems.insert
 // Adds a resource to a playlist.
@@ -1609,8 +1609,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubePlaylistItem.
-+ (instancetype)queryForPlaylistItemsInsertWithObject:(GTLYouTubePlaylistItem *)object
-                                                 part:(NSString *)part;
++ (nonnull instancetype)queryForPlaylistItemsInsertWithObject:(GTLYouTubePlaylistItem *__nonnull)object
+                                                         part:(NSString *__nonnull)part;
 
 // Method: youtube.playlistItems.list
 // Returns a collection of playlist items that match the API request parameters.
@@ -1657,7 +1657,7 @@
 //   kGTLAuthScopeYouTubeReadonly
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubePlaylistItemListResponse.
-+ (instancetype)queryForPlaylistItemsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForPlaylistItemsListWithPart:(NSString *__nonnull)part;
 
 // Method: youtube.playlistItems.update
 // Modifies a playlist item. For example, you could update the item's position
@@ -1682,8 +1682,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubePlaylistItem.
-+ (instancetype)queryForPlaylistItemsUpdateWithObject:(GTLYouTubePlaylistItem *)object
-                                                 part:(NSString *)part;
++ (nonnull instancetype)queryForPlaylistItemsUpdateWithObject:(GTLYouTubePlaylistItem *__nonnull)object
+                                                         part:(NSString *__nonnull)part;
 
 #pragma mark - "playlists" methods
 // These create a GTLQueryYouTube object.
@@ -1710,7 +1710,7 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForPlaylistsDeleteWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForPlaylistsDeleteWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.playlists.insert
 // Creates a playlist.
@@ -1752,8 +1752,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubePlaylist.
-+ (instancetype)queryForPlaylistsInsertWithObject:(GTLYouTubePlaylist *)object
-                                             part:(NSString *)part;
++ (nonnull instancetype)queryForPlaylistsInsertWithObject:(GTLYouTubePlaylist *__nonnull)object
+                                                     part:(NSString *__nonnull)part;
 
 // Method: youtube.playlists.list
 // Returns a collection of playlists that match the API request parameters. For
@@ -1817,7 +1817,7 @@
 //   kGTLAuthScopeYouTubeReadonly
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubePlaylistListResponse.
-+ (instancetype)queryForPlaylistsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForPlaylistsListWithPart:(NSString *__nonnull)part;
 
 // Method: youtube.playlists.update
 // Modifies a playlist. For example, you could change a playlist's title,
@@ -1849,8 +1849,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubePlaylist.
-+ (instancetype)queryForPlaylistsUpdateWithObject:(GTLYouTubePlaylist *)object
-                                             part:(NSString *)part;
++ (nonnull instancetype)queryForPlaylistsUpdateWithObject:(GTLYouTubePlaylist *__nonnull)object
+                                                     part:(NSString *__nonnull)part;
 
 #pragma mark - "search" methods
 // These create a GTLQueryYouTube object.
@@ -2072,7 +2072,7 @@
 //   kGTLAuthScopeYouTubeReadonly
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeSearchListResponse.
-+ (instancetype)queryForSearchListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForSearchListWithPart:(NSString *__nonnull)part;
 
 #pragma mark - "subscriptions" methods
 // These create a GTLQueryYouTube object.
@@ -2087,7 +2087,7 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForSubscriptionsDeleteWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForSubscriptionsDeleteWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.subscriptions.insert
 // Adds a subscription for the authenticated user's channel.
@@ -2100,8 +2100,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeSubscription.
-+ (instancetype)queryForSubscriptionsInsertWithObject:(GTLYouTubeSubscription *)object
-                                                 part:(NSString *)part;
++ (nonnull instancetype)queryForSubscriptionsInsertWithObject:(GTLYouTubeSubscription *__nonnull)object
+                                                         part:(NSString *__nonnull)part;
 
 // Method: youtube.subscriptions.list
 // Returns subscription resources that match the API request criteria.
@@ -2171,7 +2171,7 @@
 //   kGTLAuthScopeYouTubeReadonly
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeSubscriptionListResponse.
-+ (instancetype)queryForSubscriptionsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForSubscriptionsListWithPart:(NSString *__nonnull)part;
 
 #pragma mark - "thumbnails" methods
 // These create a GTLQueryYouTube object.
@@ -2202,8 +2202,8 @@
 //   kGTLAuthScopeYouTubeUpload
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeThumbnailSetResponse.
-+ (instancetype)queryForThumbnailsSetWithVideoId:(NSString *)videoId
-                                uploadParameters:(GTLUploadParameters *)uploadParametersOrNil;
++ (nonnull instancetype)queryForThumbnailsSetWithVideoId:(NSString *__nonnull)videoId
+                                        uploadParameters:(GTLUploadParameters *__nullable)uploadParametersOrNil;
 
 #pragma mark - "videoAbuseReportReasons" methods
 // These create a GTLQueryYouTube object.
@@ -2222,7 +2222,7 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeReadonly
 // Fetches a GTLYouTubeVideoAbuseReportReasonListResponse.
-+ (instancetype)queryForVideoAbuseReportReasonsListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForVideoAbuseReportReasonsListWithPart:(NSString *__nonnull)part;
 
 #pragma mark - "videoCategories" methods
 // These create a GTLQueryYouTube object.
@@ -2246,7 +2246,7 @@
 //   kGTLAuthScopeYouTubeReadonly
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeVideoCategoryListResponse.
-+ (instancetype)queryForVideoCategoriesListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForVideoCategoriesListWithPart:(NSString *__nonnull)part;
 
 #pragma mark - "videos" methods
 // These create a GTLQueryYouTube object.
@@ -2273,7 +2273,7 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForVideosDeleteWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForVideosDeleteWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.videos.getRating
 // Retrieves the ratings that the authorized user gave to a list of specified
@@ -2300,7 +2300,7 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeVideoGetRatingResponse.
-+ (instancetype)queryForVideosGetRatingWithIdentifier:(NSString *)identifier;
++ (nonnull instancetype)queryForVideosGetRatingWithIdentifier:(NSString *__nonnull)identifier;
 
 // Method: youtube.videos.insert
 // Uploads a video to YouTube and optionally sets the video's metadata.
@@ -2363,9 +2363,9 @@
 //   kGTLAuthScopeYouTubeUpload
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeVideo.
-+ (instancetype)queryForVideosInsertWithObject:(GTLYouTubeVideo *)object
-                                          part:(NSString *)part
-                              uploadParameters:(GTLUploadParameters *)uploadParametersOrNil;
++ (nonnull instancetype)queryForVideosInsertWithObject:(GTLYouTubeVideo *__nonnull)object
+                                                  part:(NSString *__nonnull)part
+                                      uploadParameters:(GTLUploadParameters *__nullable)uploadParametersOrNil;
 
 // Method: youtube.videos.list
 // Returns a list of videos that match the API request parameters.
@@ -2437,7 +2437,7 @@
 //   kGTLAuthScopeYouTubeReadonly
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeVideoListResponse.
-+ (instancetype)queryForVideosListWithPart:(NSString *)part;
++ (nonnull instancetype)queryForVideosListWithPart:(NSString *__nonnull)part;
 
 // Method: youtube.videos.rate
 // Add a like or dislike rating to a video or remove a rating from a video.
@@ -2455,8 +2455,8 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForVideosRateWithIdentifier:(NSString *)identifier
-                                          rating:(NSString *)rating;
++ (nonnull instancetype)queryForVideosRateWithIdentifier:(NSString *__nonnull)identifier
+                                                  rating:(NSString *__nonnull)rating;
 
 // Method: youtube.videos.reportAbuse
 // Report abuse for a video.
@@ -2477,7 +2477,7 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForVideosReportAbuse;
++ (nonnull instancetype)queryForVideosReportAbuse;
 
 // Method: youtube.videos.update
 // Updates a video's metadata.
@@ -2517,8 +2517,8 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
 // Fetches a GTLYouTubeVideo.
-+ (instancetype)queryForVideosUpdateWithObject:(GTLYouTubeVideo *)object
-                                          part:(NSString *)part;
++ (nonnull instancetype)queryForVideosUpdateWithObject:(GTLYouTubeVideo *__nonnull)object
+                                                  part:(NSString *__nonnull)part;
 
 #pragma mark - "watermarks" methods
 // These create a GTLQueryYouTube object.
@@ -2548,9 +2548,9 @@
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeUpload
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForWatermarksSetWithObject:(GTLYouTubeInvideoBranding *)object
-                                      channelId:(NSString *)channelId
-                               uploadParameters:(GTLUploadParameters *)uploadParametersOrNil;
++ (nonnull instancetype)queryForWatermarksSetWithObject:(GTLYouTubeInvideoBranding *__nonnull)object
+                                              channelId:(NSString *__nonnull)channelId
+                                       uploadParameters:(GTLUploadParameters *__nullable)uploadParametersOrNil;
 
 // Method: youtube.watermarks.unset
 // Deletes a channel's watermark image.
@@ -2573,6 +2573,6 @@
 //   kGTLAuthScopeYouTube
 //   kGTLAuthScopeYouTubeForceSsl
 //   kGTLAuthScopeYouTubeYoutubepartner
-+ (instancetype)queryForWatermarksUnsetWithChannelId:(NSString *)channelId;
++ (nonnull instancetype)queryForWatermarksUnsetWithChannelId:(NSString *__nonnull)channelId;
 
 @end
