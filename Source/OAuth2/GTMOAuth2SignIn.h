@@ -80,17 +80,17 @@
   id userData_;
 }
 
-@property (nonatomic, retain) GTMOAuth2Authentication *authentication;
+@property (nonatomic, retain) GTMOAuth2Authentication *__nonnull authentication;
 
-@property (nonatomic, retain) NSURL *authorizationURL;
-@property (nonatomic, retain) NSDictionary *additionalAuthorizationParameters;
+@property (nonatomic, retain) NSURL *__nonnull authorizationURL;
+@property (nonatomic, retain) NSDictionary *__nonnull additionalAuthorizationParameters;
 
 // The delegate is released when signing in finishes or is cancelled
-@property (nonatomic, retain) id delegate;
-@property (nonatomic, assign) SEL webRequestSelector;
-@property (nonatomic, assign) SEL finishedSelector;
+@property (nonatomic, retain) id __nullable delegate;
+@property (nonatomic, assign) SEL __nullable webRequestSelector;
+@property (nonatomic, assign) SEL __nullable finishedSelector;
 
-@property (nonatomic, retain) id userData;
+@property (nonatomic, retain) id __nullable userData;
 
 // By default, signing in to Google will fetch the user's email, but will not
 // fetch the user's profile.
@@ -100,7 +100,7 @@
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
 @property (nonatomic, assign) BOOL shouldFetchGoogleUserEmail;
 @property (nonatomic, assign) BOOL shouldFetchGoogleUserProfile;
-@property (nonatomic, retain, readonly) NSDictionary *userProfile;
+@property (nonatomic, retain, readonly) NSDictionary *__nonnull userProfile;
 #endif
 
 // The default timeout for an unreachable network during display of the
@@ -110,17 +110,17 @@
 // The delegate is retained until sign-in has completed or been canceled
 //
 // designated initializer
-- (instancetype)initWithAuthentication:(GTMOAuth2Authentication *)auth
-            authorizationURL:(NSURL *)authorizationURL
-                    delegate:(id)delegate
-          webRequestSelector:(SEL)webRequestSelector
-            finishedSelector:(SEL)finishedSelector NS_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithAuthentication:(GTMOAuth2Authentication *__nonnull )auth
+            authorizationURL:(NSURL *__nonnull)authorizationURL
+                    delegate:(id __nullable)delegate
+          webRequestSelector:(SEL __nullable)webRequestSelector
+            finishedSelector:(SEL __nullable)finishedSelector NS_DESIGNATED_INITIALIZER;
 
 // A default authentication object for signing in to Google services
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
-+ (GTMOAuth2Authentication *)standardGoogleAuthenticationForScope:(NSString *)scope
-                                                         clientID:(NSString *)clientID
-                                                     clientSecret:(NSString *)clientSecret;
++ (GTMOAuth2Authentication *__nonnull)standardGoogleAuthenticationForScope:(NSString *__nonnull)scope
+                                                         clientID:(NSString *__nonnull)clientID
+                                                     clientSecret:(NSString *__nonnull)clientSecret;
 #endif
 
 #pragma mark Methods used by the Window Controller
@@ -139,10 +139,10 @@
 // sign-in object (typically by closing the window) and should be ignored by
 // the window controller's web view
 
-- (BOOL)requestRedirectedToRequest:(NSURLRequest *)redirectedRequest;
-- (BOOL)titleChanged:(NSString *)title;
-- (BOOL)cookiesChanged:(NSHTTPCookieStorage *)cookieStorage;
-- (BOOL)loadFailedWithError:(NSError *)error;
+- (BOOL)requestRedirectedToRequest:(NSURLRequest *__nonnull)redirectedRequest;
+- (BOOL)titleChanged:(NSString *__nonnull)title;
+- (BOOL)cookiesChanged:(NSHTTPCookieStorage *__nonnull)cookieStorage;
+- (BOOL)loadFailedWithError:(NSError *__nonnull)error;
 
 // Window controllers must tell the sign-in object if the window was closed
 // prematurely by the user (but not by the sign-in object); this calls the
@@ -158,7 +158,7 @@
 
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
 // Revocation of an authorized token from Google
-+ (void)revokeTokenForGoogleAuthentication:(GTMOAuth2Authentication *)auth;
++ (void)revokeTokenForGoogleAuthentication:(GTMOAuth2Authentication *__nonnull)auth;
 
 // Create a fetcher for obtaining the user's Google email address or profile,
 // according to the current auth scopes.
@@ -166,20 +166,20 @@
 // The auth object must have been created with appropriate scopes.
 //
 // The fetcher's response data can be parsed with NSJSONSerialization.
-+ (GTMOAuth2Fetcher *)userInfoFetcherWithAuth:(GTMOAuth2Authentication *)auth;
++ (GTMOAuth2Fetcher *__nonnull)userInfoFetcherWithAuth:(GTMOAuth2Authentication *__nonnull)auth;
 
 // Decode a web-safe Base64 encoded string.
-+ (NSData *)decodeWebSafeBase64:(NSString *)base64Str;
++ (NSData *__nonnull)decodeWebSafeBase64:(NSString *__nonnull)base64Str;
 #endif
 
 #pragma mark -
 
 // Standard authentication values
-+ (NSString *)nativeClientRedirectURI;
++ (NSString *__nonnull)nativeClientRedirectURI;
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
-+ (NSURL *)googleAuthorizationURL;
-+ (NSURL *)googleTokenURL;
-+ (NSURL *)googleUserInfoURL;
++ (NSURL *__nonnull)googleAuthorizationURL;
++ (NSURL *__nonnull)googleTokenURL;
++ (NSURL *__nonnull)googleUserInfoURL;
 #endif
 
 @end
