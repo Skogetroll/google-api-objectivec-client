@@ -59,56 +59,56 @@
 
 // The auditionDetails object encapsulates channel data that is relevant for
 // YouTube Partners during the audition process.
-@property (nonatomic, retain) GTLYouTubeChannelAuditDetails *auditDetails;
+@property (nonatomic, retain) GTLYouTubeChannelAuditDetails *__nullable auditDetails;
 
 // The brandingSettings object encapsulates information about the branding of
 // the channel.
-@property (nonatomic, retain) GTLYouTubeChannelBrandingSettings *brandingSettings;
+@property (nonatomic, retain) GTLYouTubeChannelBrandingSettings *__nullable brandingSettings;
 
 // The contentDetails object encapsulates information about the channel's
 // content.
-@property (nonatomic, retain) GTLYouTubeChannelContentDetails *contentDetails;
+@property (nonatomic, retain) GTLYouTubeChannelContentDetails *__nullable contentDetails;
 
 // The contentOwnerDetails object encapsulates channel data that is relevant for
 // YouTube Partners linked with the channel.
-@property (nonatomic, retain) GTLYouTubeChannelContentOwnerDetails *contentOwnerDetails;
+@property (nonatomic, retain) GTLYouTubeChannelContentOwnerDetails *__nullable contentOwnerDetails;
 
 // The conversionPings object encapsulates information about conversion pings
 // that need to be respected by the channel.
-@property (nonatomic, retain) GTLYouTubeChannelConversionPings *conversionPings;
+@property (nonatomic, retain) GTLYouTubeChannelConversionPings *__nullable conversionPings;
 
 // Etag of this resource.
-@property (nonatomic, copy) NSString *ETag;
+@property (nonatomic, copy) NSString *__nonnull ETag;
 
 // The ID that YouTube uses to uniquely identify the channel.
 // identifier property maps to 'id' in JSON (to avoid Objective C's 'id').
-@property (nonatomic, copy) NSString *identifier;
+@property (nonatomic, copy) NSString *__nonnull identifier;
 
 // The invideoPromotion object encapsulates information about promotion campaign
 // associated with the channel.
-@property (nonatomic, retain) GTLYouTubeInvideoPromotion *invideoPromotion;
+@property (nonatomic, retain) GTLYouTubeInvideoPromotion *__nullable invideoPromotion;
 
 // Identifies what kind of resource this is. Value: the fixed string
 // "youtube#channel".
-@property (nonatomic, copy) NSString *kind;
+@property (nonatomic, copy) NSString *__nonnull kind;
 
 // Localizations for different languages
-@property (nonatomic, retain) GTLYouTubeChannelLocalizations *localizations;
+@property (nonatomic, retain) GTLYouTubeChannelLocalizations *__nullable localizations;
 
 // The snippet object contains basic details about the channel, such as its
 // title, description, and thumbnail images.
-@property (nonatomic, retain) GTLYouTubeChannelSnippet *snippet;
+@property (nonatomic, retain) GTLYouTubeChannelSnippet *__nullable snippet;
 
 // The statistics object encapsulates statistics for the channel.
-@property (nonatomic, retain) GTLYouTubeChannelStatistics *statistics;
+@property (nonatomic, retain) GTLYouTubeChannelStatistics *__nullable statistics;
 
 // The status object encapsulates information about the privacy status of the
 // channel.
-@property (nonatomic, retain) GTLYouTubeChannelStatus *status;
+@property (nonatomic, retain) GTLYouTubeChannelStatus *__nullable status;
 
 // The topicDetails object encapsulates information about Freebase topics
 // associated with the channel.
-@property (nonatomic, retain) GTLYouTubeChannelTopicDetails *topicDetails;
+@property (nonatomic, retain) GTLYouTubeChannelTopicDetails *__nullable topicDetails;
 
 @end
 
