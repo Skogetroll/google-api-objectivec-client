@@ -48,38 +48,38 @@
 
 // The ID that YouTube uses to uniquely identify the user that added the item to
 // the playlist.
-@property (nonatomic, copy) NSString *channelId;
+@property (nonatomic, copy) NSString *__nonnull channelId;
 
 // Channel title for the channel that the playlist item belongs to.
-@property (nonatomic, copy) NSString *channelTitle;
+@property (nonatomic, copy) NSString *__nonnull channelTitle;
 
 // The item's description.
 // Remapped to 'descriptionProperty' to avoid NSObject's 'description'.
-@property (nonatomic, copy) NSString *descriptionProperty;
+@property (nonatomic, copy) NSString *__nonnull descriptionProperty;
 
 // The ID that YouTube uses to uniquely identify the playlist that the playlist
 // item is in.
-@property (nonatomic, copy) NSString *playlistId;
+@property (nonatomic, copy) NSString *__nonnull playlistId;
 
 // The order in which the item appears in the playlist. The value uses a
 // zero-based index, so the first item has a position of 0, the second item has
 // a position of 1, and so forth.
-@property (nonatomic, retain) NSNumber *position;  // unsignedIntValue
+@property (nonatomic, retain) NSNumber *__nonnull position;  // unsignedIntValue
 
 // The date and time that the item was added to the playlist. The value is
 // specified in ISO 8601 (YYYY-MM-DDThh:mm:ss.sZ) format.
-@property (nonatomic, retain) GTLDateTime *publishedAt;
+@property (nonatomic, retain) GTLDateTime *__nonnull publishedAt;
 
 // The id object contains information that can be used to uniquely identify the
 // resource that is included in the playlist as the playlist item.
-@property (nonatomic, retain) GTLYouTubeResourceId *resourceId;
+@property (nonatomic, retain) GTLYouTubeResourceId *__nonnull resourceId;
 
 // A map of thumbnail images associated with the playlist item. For each object
 // in the map, the key is the name of the thumbnail image, and the value is an
 // object that contains other information about the thumbnail.
-@property (nonatomic, retain) GTLYouTubeThumbnailDetails *thumbnails;
+@property (nonatomic, retain) GTLYouTubeThumbnailDetails *__nonnull thumbnails;
 
 // The item's title.
-@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSString *__nonnull title;
 
 @end

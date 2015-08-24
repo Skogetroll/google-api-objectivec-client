@@ -44,6 +44,6 @@
 @interface GTLYouTubePlaylistItemStatus : GTLObject
 
 // This resource's privacy status.
-@property (nonatomic, copy) NSString *privacyStatus;
+@property (nonatomic, copy) NSString *__nonnull privacyStatus;
 
 @end

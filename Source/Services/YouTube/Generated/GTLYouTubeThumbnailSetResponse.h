@@ -47,19 +47,19 @@
 @interface GTLYouTubeThumbnailSetResponse : GTLCollectionObject
 
 // Etag of this resource.
-@property (nonatomic, copy) NSString *ETag;
+@property (nonatomic, copy) NSString *__nonnull ETag;
 
 // Serialized EventId of the request which produced this response.
-@property (nonatomic, copy) NSString *eventId;
+@property (nonatomic, copy) NSString *__nullable eventId;
 
 // A list of thumbnails.
-@property (nonatomic, retain) NSArray *items;  // of GTLYouTubeThumbnailDetails
+@property (nonatomic, retain) NSArray *__nonnull items;  // of GTLYouTubeThumbnailDetails
 
 // Identifies what kind of resource this is. Value: the fixed string
 // "youtube#thumbnailSetResponse".
-@property (nonatomic, copy) NSString *kind;
+@property (nonatomic, copy) NSString *__nonnull kind;
 
 // The visitorId identifies the visitor.
-@property (nonatomic, copy) NSString *visitorId;
+@property (nonatomic, copy) NSString *__nullable visitorId;
 
 @end

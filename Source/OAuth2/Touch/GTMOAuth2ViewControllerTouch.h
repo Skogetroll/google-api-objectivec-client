@@ -52,7 +52,7 @@ extern "C" {
 @class GTMOAuth2SignIn;
 @class GTMOAuth2ViewControllerTouch;
 
-typedef void (^GTMOAuth2ViewControllerCompletionHandler)(GTMOAuth2ViewControllerTouch *__nullable viewController, GTMOAuth2Authentication *__nullable auth, NSError *__nullable error);
+typedef void (^GTMOAuth2ViewControllerCompletionHandler)(GTMOAuth2ViewControllerTouch *__nonnull viewController, GTMOAuth2Authentication *__nullable auth, NSError *__nullable error);
 
 @interface GTMOAuth2ViewControllerTouch : UIViewController<UINavigationControllerDelegate, UIWebViewDelegate> {
 @private
