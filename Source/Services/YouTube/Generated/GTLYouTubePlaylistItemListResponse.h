@@ -49,31 +49,31 @@
 @interface GTLYouTubePlaylistItemListResponse : GTLCollectionObject
 
 // Etag of this resource.
-@property (nonatomic, copy) NSString *ETag;
+@property (nonatomic, copy) NSString *__nonnull ETag;
 
 // Serialized EventId of the request which produced this response.
-@property (nonatomic, copy) NSString *eventId;
+@property (nonatomic, copy) NSString *__nullable eventId;
 
 // A list of playlist items that match the request criteria.
-@property (nonatomic, retain) NSArray *items;  // of GTLYouTubePlaylistItem
+@property (nonatomic, retain) NSArray *__nonnull items;  // of GTLYouTubePlaylistItem
 
 // Identifies what kind of resource this is. Value: the fixed string
 // "youtube#playlistItemListResponse".
-@property (nonatomic, copy) NSString *kind;
+@property (nonatomic, copy) NSString *__nonnull kind;
 
 // The token that can be used as the value of the pageToken parameter to
 // retrieve the next page in the result set.
-@property (nonatomic, copy) NSString *nextPageToken;
+@property (nonatomic, copy) NSString *__nullable nextPageToken;
 
-@property (nonatomic, retain) GTLYouTubePageInfo *pageInfo;
+@property (nonatomic, retain) GTLYouTubePageInfo *__nullable pageInfo;
 
 // The token that can be used as the value of the pageToken parameter to
 // retrieve the previous page in the result set.
-@property (nonatomic, copy) NSString *prevPageToken;
+@property (nonatomic, copy) NSString *__nullable prevPageToken;
 
-@property (nonatomic, retain) GTLYouTubeTokenPagination *tokenPagination;
+@property (nonatomic, retain) GTLYouTubeTokenPagination *__nullable tokenPagination;
 
 // The visitorId identifies the visitor.
-@property (nonatomic, copy) NSString *visitorId;
+@property (nonatomic, copy) NSString *__nullable visitorId;
 
 @end
