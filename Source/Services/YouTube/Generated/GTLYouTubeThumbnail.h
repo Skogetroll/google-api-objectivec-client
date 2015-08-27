@@ -44,12 +44,12 @@
 @interface GTLYouTubeThumbnail : GTLObject
 
 // (Optional) Height of the thumbnail image.
-@property (nonatomic, retain) NSNumber *height;  // unsignedIntValue
+@property (nonatomic, retain) NSNumber *__nonnull height;  // unsignedIntValue
 
 // The thumbnail image's URL.
-@property (nonatomic, copy) NSString *url;
+@property (nonatomic, copy) NSString *__nonnull url;
 
 // (Optional) Width of the thumbnail image.
-@property (nonatomic, retain) NSNumber *width;  // unsignedIntValue
+@property (nonatomic, retain) NSNumber *__nonnull width;  // unsignedIntValue
 
 @end

@@ -48,9 +48,9 @@
 
 // The googlePlusUserId object identifies the Google+ profile ID associated with
 // this channel.
-@property (nonatomic, copy) NSString *googlePlusUserId;
+@property (nonatomic, copy) NSString *__nonnull googlePlusUserId;
 
-@property (nonatomic, retain) GTLYouTubeChannelContentDetailsRelatedPlaylists *relatedPlaylists;
+@property (nonatomic, retain) GTLYouTubeChannelContentDetailsRelatedPlaylists *__nonnull relatedPlaylists;
 @end
 
 
@@ -64,26 +64,26 @@
 // The ID of the playlist that contains the channel"s favorite videos. Use the
 // playlistItems.insert and playlistItems.delete to add or remove items from
 // that list.
-@property (nonatomic, copy) NSString *favorites;
+@property (nonatomic, copy) NSString *__nonnull favorites;
 
 // The ID of the playlist that contains the channel"s liked videos. Use the
 // playlistItems.insert and playlistItems.delete to add or remove items from
 // that list.
-@property (nonatomic, copy) NSString *likes;
+@property (nonatomic, copy) NSString *__nonnull likes;
 
 // The ID of the playlist that contains the channel"s uploaded videos. Use the
 // videos.insert method to upload new videos and the videos.delete method to
 // delete previously uploaded videos.
-@property (nonatomic, copy) NSString *uploads;
+@property (nonatomic, copy) NSString *__nonnull uploads;
 
 // The ID of the playlist that contains the channel"s watch history. Use the
 // playlistItems.insert and playlistItems.delete to add or remove items from
 // that list.
-@property (nonatomic, copy) NSString *watchHistory;
+@property (nonatomic, copy) NSString *__nonnull watchHistory;
 
 // The ID of the playlist that contains the channel"s watch later playlist. Use
 // the playlistItems.insert and playlistItems.delete to add or remove items from
 // that list.
-@property (nonatomic, copy) NSString *watchLater;
+@property (nonatomic, copy) NSString *__nonnull watchLater;
 
 @end

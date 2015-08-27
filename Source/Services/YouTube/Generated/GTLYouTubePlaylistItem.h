@@ -67,25 +67,25 @@
 
 // The contentDetails object is included in the resource if the included item is
 // a YouTube video. The object contains additional information about the video.
-@property (nonatomic, retain) GTLYouTubePlaylistItemContentDetails *contentDetails;
+@property (nonatomic, retain) GTLYouTubePlaylistItemContentDetails *__nullable contentDetails;
 
 // Etag of this resource.
-@property (nonatomic, copy) NSString *ETag;
+@property (nonatomic, copy) NSString *__nonnull ETag;
 
 // The ID that YouTube uses to uniquely identify the playlist item.
 // identifier property maps to 'id' in JSON (to avoid Objective C's 'id').
-@property (nonatomic, copy) NSString *identifier;
+@property (nonatomic, copy) NSString *__nonnull identifier;
 
 // Identifies what kind of resource this is. Value: the fixed string
 // "youtube#playlistItem".
-@property (nonatomic, copy) NSString *kind;
+@property (nonatomic, copy) NSString *__nonnull kind;
 
 // The snippet object contains basic details about the playlist item, such as
 // its title and position in the playlist.
-@property (nonatomic, retain) GTLYouTubePlaylistItemSnippet *snippet;
+@property (nonatomic, retain) GTLYouTubePlaylistItemSnippet *__nullable snippet;
 
 // The status object contains information about the playlist item's privacy
 // status.
-@property (nonatomic, retain) GTLYouTubePlaylistItemStatus *status;
+@property (nonatomic, retain) GTLYouTubePlaylistItemStatus *__nonnull status;
 
 @end

@@ -30,33 +30,33 @@
 
 @protocol GTLCollectionProtocol
 @optional
-@property (retain) GTL_NSArrayOf(GTLObject *) *items;
+@property (retain) GTL_NSArrayOf(GTLObject *) *__nonnull items;
 @end
 
 @protocol GTLBatchItemCreationProtocol
-- (void)createItemsWithClassMap:(NSDictionary *)batchClassMap;
+- (void)createItemsWithClassMap:(NSDictionary *__nonnull)batchClassMap;
 @end
 
 @interface GTLObject : NSObject <NSCopying, NSSecureCoding> {
- @private
+@private
   NSMutableDictionary *json_;
-
+  
   // Used when creating the subobjects from this one.
   NSDictionary *surrogates_;
-
+  
   // Any complex object hung off this object goes into the cache so the
   // next fetch will get the same object back instead of having to recreate
   // it.
   NSMutableDictionary *childCache_;
-
+  
   // Anything defined by the client; retained but not used internally; not
   // copied by copyWithZone:
   NSMutableDictionary *userProperties_;
 }
 
-@property (nonatomic, retain) GTL_NSMutableDictionaryOf(id, id) *JSON;
-@property (nonatomic, retain) GTL_NSDictionaryOf(Class, Class) *surrogates;
-@property (nonatomic, retain) GTL_NSMutableDictionaryOf(NSString *, id) *userProperties;
+@property (nonatomic, retain) GTL_NSMutableDictionaryOf(id, id) *__nullable JSON;
+@property (nonatomic, retain) GTL_NSDictionaryOf(Class, Class) *__nullable surrogates;
+@property (nonatomic, retain) GTL_NSMutableDictionaryOf(NSString *, id) *__nullable userProperties;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -65,43 +65,43 @@
 // These methods are intended for users of the library
 //
 
-+ (instancetype)object;
-+ (instancetype)objectWithJSON:(NSMutableDictionary *)dict;
++ (nonnull instancetype)object;
++ (nonnull instancetype)objectWithJSON:(NSMutableDictionary *__nonnull)dict;
 
-- (id)copyWithZone:(NSZone *)zone;
+- (nullable id)copyWithZone:(NSZone *__nullable)zone;
 
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *JSONString;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *__nullable JSONString;
 
 // generic access to json; also creates it if necessary
-- (void)setJSONValue:(id)obj forKey:(NSString *)key  GTL_NONNULL((2));
-- (id)JSONValueForKey:(NSString *)key;
+- (void)setJSONValue:(id __nullable)obj forKey:(NSString *__nonnull)key  GTL_NONNULL((2));
+- (__nullable id)JSONValueForKey:(NSString *__nonnull)key;
 
 // Returns the list of keys in this object's JSON that aren't listed as
 // properties on the object.
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *additionalJSONKeys;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *__nullable additionalJSONKeys;
 
 // Any keys in the JSON that aren't listed as @properties on the object
 // are counted as "additional properties".  These allow you to get/set them.
-- (id)additionalPropertyForName:(NSString *)name;
-- (void)setAdditionalProperty:(id)obj forName:(NSString *)name GTL_NONNULL((2));
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *additionalProperties;
+- (nullable id)additionalPropertyForName:(NSString *__nonnull)name;
+- (void)setAdditionalProperty:(id __nullable)obj forName:(NSString *__nonnull)name GTL_NONNULL((2));
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *__nullable additionalProperties;
 
 // User properties are supported for client convenience, but are not copied by
 // copyWithZone.  User Properties keys beginning with _ are reserved by the library.
 //
 // Set nil for obj to remove the property.
-- (void)setProperty:(id)obj forKey:(NSString *)key GTL_NONNULL((2));
-- (id)propertyForKey:(NSString *)key GTL_NONNULL((1));
+- (void)setProperty:(id __nullable)obj forKey:(NSString *__nonnull)key GTL_NONNULL((2));
+- (nullable id)propertyForKey:(NSString *__nonnull)key GTL_NONNULL((1));
 
 // userData is stored as a property with key "_userData"
-@property (NS_NONATOMIC_IOSONLY, strong) id userData;
+@property (NS_NONATOMIC_IOSONLY, strong) id __nullable userData;
 
 // Makes a partial query-compatible string describing the fields present
 // in this object. (Note: only the first element of any array is examined.)
 //
 // http://code.google.com/apis/tasks/v1/performance.html#partial
 //
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *fieldsDescription;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *__nullable fieldsDescription;
 
 // Makes an object containing only the changes needed to do a partial update
 // (patch), where the patch would be to change an object from the original
@@ -113,12 +113,12 @@
 //
 // NOTE: this method returns nil if there are no changes between the original
 // and the receiver.
-- (id)patchObjectFromOriginal:(GTLObject *)original;
+- (nullable id)patchObjectFromOriginal:(GTLObject *__nonnull)original;
 
 // Method creating a null value to set object properties for patch queries that
 // delete fields.  Do not use this except when setting an object property for
 // a patch query.
-+ (id)nullValue;
++ (nonnull id)nullValue;
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -128,23 +128,23 @@
 //
 
 // class registration ("kind" strings) for subclasses
-+ (Class)registeredObjectClassForKind:(NSString *)kind;
-+ (void)registerObjectClassForKind:(NSString *)kind;
++ (nullable Class)registeredObjectClassForKind:(NSString *__nonnull)kind;
++ (void)registerObjectClassForKind:(NSString *__nonnull)kind;
 
 // creation of objects from a JSON dictionary
-+ (GTLObject *)objectForJSON:(NSMutableDictionary *)json
-                defaultClass:(Class)defaultClass
-                  surrogates:(NSDictionary *)surrogates
-               batchClassMap:(NSDictionary *)batchClassMap;
++ (GTLObject *__nonnull)objectForJSON:(NSMutableDictionary *__nonnull)json
+                         defaultClass:(Class __nonnull)defaultClass
+                           surrogates:(NSDictionary *__nullable)surrogates
+                        batchClassMap:(NSDictionary *__nullable)batchClassMap;
 
 // property-to-key mapping (for JSON keys which are not used as method names)
-+ (NSDictionary *)propertyToJSONKeyMap;
++ (NSDictionary *__nullable)propertyToJSONKeyMap;
 
 // property-to-Class mapping for array properties (to say what is in the array)
-+ (NSDictionary *)arrayPropertyToClassMap;
++ (NSDictionary *__nullable)arrayPropertyToClassMap;
 
 // The default class for additional JSON keys
-+ (Class)classForAdditionalProperties;
++ (nullable Class)classForAdditionalProperties;
 
 @end
 
@@ -154,15 +154,15 @@
 //
 // Subclasses must implement the items method dynamically.
 @interface GTLCollectionObject : GTLObject <GTLCollectionProtocol, NSFastEnumeration> {
- @private
+@private
   NSDictionary *identifierMap_;
 }
 
 // itemAtIndex: and objectAtIndexedSubscript: return nil when the index exceeds
 // the bounds of the items array.
-- (id)itemAtIndex:(NSUInteger)idx;
+- (nullable id)itemAtIndex:(NSUInteger)idx;
 
-- (id)objectAtIndexedSubscript:(NSInteger)idx;
+- (nullable id)objectAtIndexedSubscript:(NSInteger)idx;
 
 // itemForIdentifier: looks up items from the collection object by identifier,
 // and returns the first one.
@@ -175,7 +175,7 @@
 // identifiers to items.  If the items list for the instance somehow changes,
 // use the reset method below to force a new cache to be created for this
 // collection.
-- (id)itemForIdentifier:(NSString *)key GTL_NONNULL((1));
+- (nullable id)itemForIdentifier:(NSString *__nonnull)key GTL_NONNULL((1));
 
 // Identifiers for all items are cached when the first one is obtained.
 // This method resets the cache.  It is needed only if the item list has
@@ -185,7 +185,7 @@
 @end
 
 @interface GTLCollectionObject (DynamicMethods)
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *items;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *__nonnull items;
 @end
 
 // Base object use for when an service method directly returns an array instead
@@ -193,5 +193,5 @@
 // property, but this exists for the methods not up to spec.
 @interface GTLResultArray : GTLCollectionObject
 // This method should only be called by subclasses.
-- (NSArray *)itemsWithItemClass:(Class)itemClass;
+- (NSArray *__nullable)itemsWithItemClass:(Class __nonnull)itemClass;
 @end

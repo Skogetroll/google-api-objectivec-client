@@ -47,18 +47,18 @@
 
 // The default image for this resource.
 // Remapped to 'defaultProperty' to avoid language reserved word 'default'.
-@property (nonatomic, retain) GTLYouTubeThumbnail *defaultProperty;
+@property (nonatomic, retain) GTLYouTubeThumbnail *__nonnull defaultProperty;
 
 // The high quality image for this resource.
-@property (nonatomic, retain) GTLYouTubeThumbnail *high;
+@property (nonatomic, retain) GTLYouTubeThumbnail *__nonnull high;
 
 // The maximum resolution quality image for this resource.
-@property (nonatomic, retain) GTLYouTubeThumbnail *maxres;
+@property (nonatomic, retain) GTLYouTubeThumbnail *__nonnull maxres;
 
 // The medium quality image for this resource.
-@property (nonatomic, retain) GTLYouTubeThumbnail *medium;
+@property (nonatomic, retain) GTLYouTubeThumbnail *__nonnull medium;
 
 // The standard quality image for this resource.
-@property (nonatomic, retain) GTLYouTubeThumbnail *standard;
+@property (nonatomic, retain) GTLYouTubeThumbnail *__nonnull standard;
 
 @end
