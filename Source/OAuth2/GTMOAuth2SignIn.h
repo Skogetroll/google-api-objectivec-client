@@ -51,32 +51,32 @@
 #import "GTMOAuth2Authentication.h"
 
 @interface GTMOAuth2SignIn : NSObject {
-@private
+ @private
   GTMOAuth2Authentication *auth_;
-  
+
   // the endpoint for displaying the sign-in page
   NSURL *authorizationURL_;
   NSDictionary *additionalAuthorizationParameters_;
-  
+
   id delegate_;
   SEL webRequestSelector_;
   SEL finishedSelector_;
-  
+
   BOOL hasHandledCallback_;
-  
+
   GTMOAuth2Fetcher *pendingFetcher_;
-  
+
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
   BOOL shouldFetchGoogleUserEmail_;
   BOOL shouldFetchGoogleUserProfile_;
   NSDictionary *userProfile_;
 #endif
-  
+
   SCNetworkReachabilityRef reachabilityRef_;
   NSTimer *networkLossTimer_;
   NSTimeInterval networkLossTimeoutInterval_;
   BOOL hasNotifiedNetworkLoss_;
-  
+
   id userData_;
 }
 
@@ -111,16 +111,16 @@
 //
 // designated initializer
 - (nonnull instancetype)initWithAuthentication:(GTMOAuth2Authentication *__nonnull )auth
-                              authorizationURL:(NSURL *__nonnull)authorizationURL
-                                      delegate:(id __nullable)delegate
-                            webRequestSelector:(SEL __nonnull)webRequestSelector
-                              finishedSelector:(SEL __nonnull)finishedSelector NS_DESIGNATED_INITIALIZER;
+            authorizationURL:(NSURL *__nonnull)authorizationURL
+                    delegate:(id __nullable)delegate
+          webRequestSelector:(SEL __nullable)webRequestSelector
+            finishedSelector:(SEL __nullable)finishedSelector NS_DESIGNATED_INITIALIZER;
 
 // A default authentication object for signing in to Google services
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
 + (GTMOAuth2Authentication *__nonnull)standardGoogleAuthenticationForScope:(NSString *__nonnull)scope
-                                                                  clientID:(NSString *__nonnull)clientID
-                                                              clientSecret:(NSString *__nonnull)clientSecret;
+                                                         clientID:(NSString *__nonnull)clientID
+                                                     clientSecret:(NSString *__nonnull)clientSecret;
 #endif
 
 #pragma mark Methods used by the Window Controller

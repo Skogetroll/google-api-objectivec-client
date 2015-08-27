@@ -46,19 +46,19 @@
 // The ID that YouTube uses to uniquely identify the referred resource, if that
 // resource is a channel. This property is only present if the resourceId.kind
 // value is youtube#channel.
-@property (nonatomic, copy) NSString *__nullable channelId;
+@property (nonatomic, copy) NSString *channelId;
 
 // The type of the API resource.
-@property (nonatomic, copy) NSString *__nonnull kind;
+@property (nonatomic, copy) NSString *kind;
 
 // The ID that YouTube uses to uniquely identify the referred resource, if that
 // resource is a playlist. This property is only present if the resourceId.kind
 // value is youtube#playlist.
-@property (nonatomic, copy) NSString *__nullable playlistId;
+@property (nonatomic, copy) NSString *playlistId;
 
 // The ID that YouTube uses to uniquely identify the referred resource, if that
 // resource is a video. This property is only present if the resourceId.kind
 // value is youtube#video.
-@property (nonatomic, copy) NSString *__nullable videoId;
+@property (nonatomic, copy) NSString *videoId;
 
 @end
