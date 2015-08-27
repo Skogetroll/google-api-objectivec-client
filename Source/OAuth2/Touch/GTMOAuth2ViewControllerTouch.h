@@ -317,14 +317,14 @@ typedef void (^GTMOAuth2ViewControllerCompletionHandler)(GTMOAuth2ViewController
 // token and secret stored in the keychain; if no token is available, return
 // an unauthorized auth object. OK to pass NULL for the error parameter.
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
-+ (GTMOAuth2Authentication *__nullable)authForGoogleFromKeychainForName:(NSString *__nonnull)keychainItemName
-                                                               clientID:(NSString *__nonnull)clientID
-                                                           clientSecret:(NSString *__nonnull)clientSecret
-                                                                  error:(NSError *__nullable *__nullable)error;
++ (GTMOAuth2Authentication *__nonnull)authForGoogleFromKeychainForName:(NSString *__nonnull)keychainItemName
+                                                              clientID:(NSString *__nonnull)clientID
+                                                          clientSecret:(NSString *__nonnull)clientSecret
+                                                                 error:(NSError *__nullable *__nullable)error;
 // Equivalent to calling the method above with a NULL error parameter.
-+ (GTMOAuth2Authentication *__nullable)authForGoogleFromKeychainForName:(NSString *__nonnull)keychainItemName
-                                                               clientID:(NSString *__nonnull)clientID
-                                                           clientSecret:(NSString *__nonnull)clientSecret;
++ (GTMOAuth2Authentication *__nonnull)authForGoogleFromKeychainForName:(NSString *__nonnull)keychainItemName
+                                                              clientID:(NSString *__nonnull)clientID
+                                                          clientSecret:(NSString *__nonnull)clientSecret;
 #endif
 
 // add tokens from the keychain, if available, to the authentication object
@@ -370,8 +370,8 @@ enum {
 
 // OK to pass nil for the error parameter.
 - (NSString *__nullable)passwordForService:(NSString *__nonnull)service
-                                   account:(NSString *__nonnull)account
-                                     error:(NSError *__nullable *__nullable)error;
+                         account:(NSString *__nonnull)account
+                           error:(NSError *__nullable *__nullable)error;
 
 // OK to pass nil for the error parameter.
 - (BOOL)removePasswordForService:(NSString *__nonnull)service
