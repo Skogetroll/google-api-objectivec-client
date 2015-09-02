@@ -22,6 +22,9 @@ Pod::Spec.new do |s|
   
   s.subspec "HTTPFetcher" do |hp|
     hp.source_files = "Source/HTTPFetcher/*.{h,m}"
+
+    hp.header_mappings_dir = "HTTPFetcher"
+    hp.header_dir = "HTTPFetcher"
   end
 
   s.subspec "OAuth2" do |oa|
@@ -29,6 +32,9 @@ Pod::Spec.new do |s|
 
     oa.source_files = "Source/OAuth2/*.{h,m}", "Source/OAuth2/**/*.{h,m}"
     oa.resources = "Source/OAuth2/**/*.xib"
+
+    oa.header_mappings_dir = "OAuth2"
+    oa.header_dir = "OAuth2"
   end
 
   s.subspec "Core" do |core|
@@ -42,6 +48,9 @@ Pod::Spec.new do |s|
     
     yt.exclude_files = "Source/Services/YouTube/**/*_Sources.m"
     yt.source_files  = "Source/Services/YouTube/**/*.{h,m}"
+
+    yt.header_mappings_dir = "YouTube"
+    yt.header_dir = "YouTube"
   end
 
   s.subspec "Plus" do |pl|
@@ -49,6 +58,9 @@ Pod::Spec.new do |s|
   
     pl.exclude_files = "Source/Services/Plus/**/*_Sources.m"
     pl.source_files  = "Source/Services/Plus/**/*.{h,m}"
+
+    pl.header_mappings_dir = "Plus"
+    pl.header_dir = "Plus"
   end
   
   s.platform = :osx, "10.7"
