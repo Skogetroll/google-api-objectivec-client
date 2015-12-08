@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "GTL"
-  s.version      = "2.0.4"
+  s.version      = "2.0.5"
   s.summary      = "Google APIs Client Library for Objective-C"
 
   s.description  = <<-DESC
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
 
   s.author       = { "grobbins" => "grobbins@google.com" }
 
-  s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.4" }
+  s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.5" }
 
   s.default_subspec = "Core", "OAuth2", "YouTube", "Plus"
   
@@ -30,8 +30,11 @@ Pod::Spec.new do |s|
   s.subspec "OAuth2" do |oa|
     oa.dependency "GTL/HTTPFetcher"
 
-    oa.source_files = "Source/OAuth2/*.{h,m}", "Source/OAuth2/**/*.{h,m}"
-    oa.resources = "Source/OAuth2/**/*.xib"
+    oa.source_files     = "Source/OAuth2/*.{h,m}"
+    oa.ios.source_files = "Source/OAuth2/Touch/*.{h,m}"
+    oa.ios.resources    = "Source/OAuth2/Touch/*.xib"
+    oa.osx.source_files = "Source/OAuth2/Mac/*.{h,m}"
+    oa.osx.resources    = "Source/OAuth2/Mac/*.xib"
 
     oa.header_mappings_dir = "OAuth2"
     oa.header_dir = "OAuth2"
