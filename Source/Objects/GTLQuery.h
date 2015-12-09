@@ -25,10 +25,10 @@
 
 @protocol GTLQueryProtocol <NSObject, NSCopying>
 @property (NS_NONATOMIC_IOSONLY, getter=isBatchQuery, readonly) BOOL batchQuery;
-@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldSkipAuthorization;
+@property (NS_NONATOMIC_IOSONLY) BOOL shouldSkipAuthorization;
 - (void)executionDidStop;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary<NSString *,NSString *> *additionalHTTPHeaders;
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary<NSString *,NSString *> *urlQueryParameters;
+@property (NS_NONATOMIC_IOSONLY, copy) NSDictionary<NSString *,NSString *> *additionalHTTPHeaders;
+@property (NS_NONATOMIC_IOSONLY, copy) NSDictionary<NSString *,NSString *> *urlQueryParameters;
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) GTLUploadParameters *uploadParameters;
 @end
 
@@ -92,21 +92,21 @@ typedef void (^GTLQueryTestBlock)(GTLServiceTicket *testTicket, GTLQueryTestResp
 
 // Any URL query parameters to add to the query (useful for debugging with some
 // services).
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary<NSString *,NSString *> *urlQueryParameters;
+@property (NS_NONATOMIC_IOSONLY, copy) NSDictionary<NSString *,NSString *> *urlQueryParameters;
 
 // Any additional HTTP headers for this query.  Not valid when this query
 // is added to a batch.
 //
 // These headers override the same keys from the service object's
 // additionalHTTPHeaders.
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary<NSString *,NSString *> *additionalHTTPHeaders;
+@property (NS_NONATOMIC_IOSONLY, copy) NSDictionary<NSString *,NSString *> *additionalHTTPHeaders;
 
 // The GTLObject subclass expected for results (used if the result doesn't
 // include a kind attribute).
 @property (assign) Class expectedObjectClass;
 
 // Clients may set this to YES to disallow authorization. Defaults to NO.
-@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldSkipAuthorization;
+@property (NS_NONATOMIC_IOSONLY) BOOL shouldSkipAuthorization;
 
 // Clients may provide an optional callback block to be called immediately
 // before the executeQuery: callback.
