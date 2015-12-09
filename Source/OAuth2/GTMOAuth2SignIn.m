@@ -174,6 +174,17 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 #endif
 
+- (instancetype)init {
+    GTMOAuth2Authentication *auth = [[GTMOAuth2Authentication alloc] init];
+    NSURL *url = [NSURL URLWithString:@"http://example.com"];
+    
+    return [self initWithAuthentication:auth
+                       authorizationURL:url
+                               delegate:nil
+                     webRequestSelector:nil
+                       finishedSelector:nil];
+}
+
 - (instancetype)initWithAuthentication:(GTMOAuth2Authentication *)auth
             authorizationURL:(NSURL *)authorizationURL
                     delegate:(id)delegate
@@ -197,7 +208,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
     // for Google authentication, we want to automatically fetch user info
 #if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
-    NSString *host = [authorizationURL host];
+    NSString *host = authorizationURL.host;
     if ([host hasSuffix:@".google.com"]) {
       shouldFetchGoogleUserEmail_ = YES;
     }
@@ -265,8 +276,8 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
   NSString *clientID = auth.clientID;
   NSString *redirectURI = auth.redirectURI;
 
-  BOOL hasClientID = ([clientID length] > 0);
-  BOOL hasRedirect = ([redirectURI length] > 0
+  BOOL hasClientID = (clientID.length > 0);
+  BOOL hasRedirect = (redirectURI.length > 0
                       || redirectURI == [[self class] nativeClientRedirectURI]);
   if (!hasClientID || !hasRedirect) {
 #if DEBUG
@@ -281,7 +292,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
   // add params to the authorization URL
   NSString *scope = auth.scope;
-  if ([scope length] == 0) scope = nil;
+  if (scope.length == 0) scope = nil;
 
   NSMutableDictionary *paramsDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                      @"code", @"response_type",
@@ -322,27 +333,27 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 // utility for making a request from an old URL with some additional parameters
 + (NSMutableURLRequest *)mutableURLRequestWithURL:(NSURL *)oldURL
                                       paramString:(NSString *)paramStr {
-  if ([paramStr length] == 0) {
+  if (paramStr.length == 0) {
     return [NSMutableURLRequest requestWithURL:oldURL];
   }
 
-  NSString *query = [oldURL query];
-  if ([query length] > 0) {
+  NSString *query = oldURL.query;
+  if (query.length > 0) {
     query = [query stringByAppendingFormat:@"&%@", paramStr];
   } else {
     query = paramStr;
   }
 
   NSString *portStr = @"";
-  NSString *oldPort = [[oldURL port] stringValue];
-  if ([oldPort length] > 0) {
+  NSString *oldPort = oldURL.port.stringValue;
+  if (oldPort.length > 0) {
     portStr = [@":" stringByAppendingString:oldPort];
   }
 
-  NSString *qMark = [query length] > 0 ? @"?" : @"";
+  NSString *qMark = query.length > 0 ? @"?" : @"";
   NSString *newURLStr = [NSString stringWithFormat:@"%@://%@%@%@%@%@",
-                         [oldURL scheme], [oldURL host], portStr,
-                         [oldURL path], qMark, query];
+                         oldURL.scheme, oldURL.host, portStr,
+                         oldURL.path, qMark, query];
   NSURL *newURL = [NSURL URLWithString:newURLStr];
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:newURL];
   return request;
@@ -388,16 +399,16 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
   // compare the redirectURI, which tells us when the web sign-in is done,
   // to the actual redirection
   NSURL *redirectURL = [NSURL URLWithString:redirectURI];
-  NSURL *requestURL = [redirectedRequest URL];
+  NSURL *requestURL = redirectedRequest.URL;
 
   // avoid comparing to nil host and path values (such as when redirected to
   // "about:blank")
-  NSString *requestHost = [requestURL host];
-  NSString *requestPath = [requestURL path];
+  NSString *requestHost = requestURL.host;
+  NSString *requestPath = requestURL.path;
   BOOL isCallback;
   if (requestHost && requestPath) {
-    isCallback = [[redirectURL host] isEqual:[requestURL host]]
-                 && [[redirectURL path] isEqual:[requestURL path]];
+    isCallback = [redirectURL.host isEqual:requestURL.host]
+                 && [redirectURL.path isEqual:requestURL.path];
   } else if (requestURL) {
     // handle "about:blank"
     isCallback = [redirectURL isEqual:requestURL];
@@ -414,7 +425,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
   // try to get the access code
   if (!self.hasHandledCallback) {
-    NSString *responseStr = [[redirectedRequest URL] query];
+    NSString *responseStr = redirectedRequest.URL.query;
     [self.authentication setKeysForResponseString:responseStr];
 
 #if DEBUG
@@ -450,7 +461,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
     NSString *code = dict[@"code"];
     NSString *error = dict[@"error"];
-    if ([code length] > 0 || [error length] > 0) {
+    if (code.length > 0 || error.length > 0) {
 
       if (!self.hasHandledCallback) {
         [self.authentication setKeysForResponseDictionary:dict];
@@ -475,10 +486,10 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 // see an empty webview
 - (BOOL)loadFailedWithError:(NSError *)error {
   NSURL *authorizationURL = self.authorizationURL;
-  NSURL *failedURL = [[error userInfo] valueForKey:@"NSErrorFailingURLKey"]; // NSURLErrorFailingURLErrorKey defined in 10.6
+  NSURL *failedURL = [error.userInfo valueForKey:@"NSErrorFailingURLKey"]; // NSURLErrorFailingURLErrorKey defined in 10.6
 
-  BOOL isAuthURL = [[failedURL host] isEqual:[authorizationURL host]]
-    && [[failedURL path] isEqual:[authorizationURL path]];
+  BOOL isAuthURL = [failedURL.host isEqual:authorizationURL.host]
+    && [failedURL.path isEqual:authorizationURL.path];
 
   if (isAuthURL) {
     // We can assume that we have no pending fetchers, since we only
@@ -516,7 +527,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
   GTMOAuth2Authentication *auth = self.authentication;
   NSString *code = auth.code;
-  if ([code length] > 0) {
+  if (code.length > 0) {
     // exchange the code for a token
     SEL sel = @selector(auth:finishedWithFetcher:error:);
     GTMOAuth2Fetcher *fetcher = [auth beginTokenFetchWithDelegate:self
@@ -538,7 +549,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
     // the callback lacked an auth code
     NSString *errStr = auth.errorString;
     NSDictionary *userInfo = nil;
-    if ([errStr length] > 0) {
+    if (errStr.length > 0) {
       userInfo = @{kGTMOAuth2ErrorMessageKey: errStr};
     }
 
@@ -579,7 +590,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:infoURL];
 
   if ([auth respondsToSelector:@selector(userAgent)]) {
-    NSString *userAgent = [auth userAgent];
+    NSString *userAgent = auth.userAgent;
     [request setValue:userAgent forHTTPHeaderField:@"User-Agent"];
   }
   [request setValue:@"no-cache" forHTTPHeaderField:@"Cache-Control"];
@@ -613,19 +624,19 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
     // them.
     GTMOAuth2Authentication *auth = self.authentication;
     NSString *idToken = (auth.parameters)[@"id_token"];
-    if ([idToken length] > 0) {
+    if (idToken.length > 0) {
       // The id_token has three dot-delimited parts. The second is the
       // JSON profile.
       //
       // http://www.tbray.org/ongoing/When/201x/2013/04/04/ID-Tokens
       NSArray *parts = [idToken componentsSeparatedByString:@"."];
-      if ([parts count] == 3) {
+      if (parts.count == 3) {
         NSString *part2 = parts[1];
-        if ([part2 length] > 0) {
+        if (part2.length > 0) {
           NSData *data = [[self class] decodeWebSafeBase64:part2];
-          if ([data length] > 0) {
+          if (data.length > 0) {
             [self updateGoogleUserInfoWithData:data];
-            if ([[auth userID] length] > 0 && [[auth userEmail] length] > 0) {
+            if (auth.userID.length > 0 && auth.userEmail.length > 0) {
               // We obtained user ID and email from the ID token.
               [self finishSignInWithError:nil];
               return;
@@ -687,11 +698,11 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
     // Save the ID into the auth object
     NSString *subjectID = profileDict[@"sub"];
-    [auth setUserID:subjectID];
+    auth.userID = subjectID;
 
     // Save the email into the auth object
     NSString *email = profileDict[@"email"];
-    [auth setUserEmail:email];
+    auth.userEmail = email;
 
 #if DEBUG
     NSAssert([subjectID length] > 0 && [email length] > 0,
@@ -707,7 +718,7 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
       verified = @([verified boolValue]);
     }
 
-    [auth setUserEmailIsVerified:[verified stringValue]];
+    auth.userEmailIsVerified = [verified stringValue];
   }
 }
 
@@ -724,8 +735,8 @@ finishedWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
     NSMethodSignature *sig = [delegate_ methodSignatureForSelector:finishedSelector_];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:sig];
-    [invocation setSelector:finishedSelector_];
-    [invocation setTarget:delegate_];
+    invocation.selector = finishedSelector_;
+    invocation.target = delegate_;
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&auth atIndex:3];
     [invocation setArgument:&error atIndex:4];
@@ -762,7 +773,7 @@ static void ReachabilityCallBack(SCNetworkReachabilityRef target,
   // create a reachability target from the authorization URL, add our callback,
   // and schedule it on the run loop so we'll be notified if the network drops
   NSURL *url = self.authorizationURL;
-  const char* host = [[url host] UTF8String];
+  const char* host = url.host.UTF8String;
   reachabilityRef_ = SCNetworkReachabilityCreateWithName(kCFAllocatorSystemDefault,
                                                          host);
   if (reachabilityRef_) {
@@ -869,10 +880,10 @@ static void ReachabilityCallBack(SCNetworkReachabilityRef target,
     if (encoded != nil) {
       NSString *body = [@"token=" stringByAppendingString:encoded];
 
-      [request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
-      [request setHTTPMethod:@"POST"];
+      request.HTTPBody = [body dataUsingEncoding:NSUTF8StringEncoding];
+      request.HTTPMethod = @"POST";
 
-      NSString *userAgent = [auth userAgent];
+      NSString *userAgent = auth.userAgent;
       [request setValue:userAgent forHTTPHeaderField:@"User-Agent"];
 
       // there's nothing to be done if revocation succeeds or fails
@@ -939,7 +950,7 @@ static void ReachabilityCallBack(SCNetworkReachabilityRef target,
 
   NSInteger outputLength = inputLength * 3 / 4;
   NSMutableData* data = [NSMutableData dataWithLength:(NSUInteger)outputLength];
-  uint8_t *output = [data mutableBytes];
+  uint8_t *output = data.mutableBytes;
 
   NSInteger inputPoint = 0;
   NSInteger outputPoint = 0;

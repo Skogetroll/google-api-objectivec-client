@@ -49,7 +49,7 @@
     userInfo[NSLocalizedFailureReasonErrorKey] = parenthesized;
   }
 
-  NSInteger code = [self.code integerValue];
+  NSInteger code = (self.code).integerValue;
   NSError *error = [NSError errorWithDomain:kGTLJSONRPCErrorDomain
                                        code:code
                                    userInfo:userInfo];
@@ -57,7 +57,7 @@
 }
 
 + (GTLErrorObject *)underlyingObjectForError:(NSError *)foundationError {
-  NSDictionary *userInfo = [foundationError userInfo];
+  NSDictionary *userInfo = foundationError.userInfo;
   GTLErrorObject *errorObj = userInfo[kGTLStructuredErrorKey];
   return errorObj;
 }

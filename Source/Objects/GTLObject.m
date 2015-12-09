@@ -77,7 +77,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
 
   // What we're not comparing here:
   //   properties
-  return GTL_AreEqualOrBothNil(json_, [other JSON]);
+  return GTL_AreEqualOrBothNil(json_, other.JSON);
 }
 
 // By definition, for two objects to potentially be considered equal,
@@ -103,7 +103,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
 }
 
 - (NSString *)descriptionWithLocale:(id)locale {
-  return [self description];
+  return self.description;
 }
 
 - (void)dealloc {
@@ -150,21 +150,21 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
 
 - (NSString *)JSONString {
   NSError *error = nil;
-  NSString *str = [GTLJSONParser stringWithObject:[self JSON]
+  NSString *str = [GTLJSONParser stringWithObject:self.JSON
                                     humanReadable:YES
                                             error:&error];
   if (error) {
-    return [error description];
+    return error.description;
   }
   return str;
 }
 
 - (NSArray *)additionalJSONKeys {
   NSArray *knownKeys = [[self class] allKnownKeys];
-  NSMutableArray *result = [NSMutableArray arrayWithArray:[json_ allKeys]];
+  NSMutableArray *result = [NSMutableArray arrayWithArray:json_.allKeys];
   [result removeObjectsInArray:knownKeys];
   // Return nil instead of an empty array.
-  if ([result count] == 0) {
+  if (result.count == 0) {
     result = nil;
   }
   return result;
@@ -191,7 +191,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
   NSMutableArray *resultFields = [NSMutableArray array];
 
   // Sorting the dictionary keys gives us deterministic results when iterating
-  NSArray *sortedKeys = [[targetJSON allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+  NSArray *sortedKeys = [targetJSON.allKeys sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
   for (NSString *key in sortedKeys) {
     // We'll build a comma-separated list of fields
     id value = targetJSON[key];
@@ -214,7 +214,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
       // Open question: should this instead create the union of elements for
       // all items in the array, rather than just get fields from the first
       // array object?
-      if ([(NSArray *)value count] > 0) {
+      if (((NSArray *)value).count > 0) {
         id firstObj = value[0];
         if ([firstObj isKindOfClass:[NSDictionary class]]) {
           // An array of objects
@@ -241,7 +241,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
   id resultObj;
   NSMutableDictionary *resultJSON = [GTLObject patchDictionaryForJSON:self.JSON
                                                      fromOriginalJSON:original.JSON];
-  if ([resultJSON count] > 0) {
+  if (resultJSON.count > 0) {
     resultObj = [[self class] objectWithJSON:resultJSON];
   } else {
     // Client apps should not attempt to patch with an object containing
@@ -258,7 +258,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
   NSMutableDictionary *resultJSON = [NSMutableDictionary dictionary];
 
   // Iterate through keys present in the old object
-  NSArray *originalKeys = [originalJSON allKeys];
+  NSArray *originalKeys = originalJSON.allKeys;
   for (NSString *key in originalKeys) {
     id originalValue = originalJSON[key];
     id newValue = [newJSON valueForKey:key];
@@ -285,7 +285,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
 
   // Iterate through keys present only in the new object, and add them to the
   // result
-  NSMutableArray *newKeys = [NSMutableArray arrayWithArray:[newJSON allKeys]];
+  NSMutableArray *newKeys = [NSMutableArray arrayWithArray:newJSON.allKeys];
   [newKeys removeObjectsInArray:originalKeys];
 
   for (NSString *key in newKeys) {
@@ -338,7 +338,7 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
 - (NSDictionary *)additionalProperties {
   NSMutableDictionary *result = [NSMutableDictionary dictionary];
 
-  NSArray *propertyNames = [self additionalJSONKeys];
+  NSArray *propertyNames = self.additionalJSONKeys;
   for (NSString *name in propertyNames) {
     id obj = [self additionalPropertyForName:name];
     result[name] = obj;
@@ -466,12 +466,12 @@ static NSString *const kGTLObjectJSONCoderKey = @"json";
     if ([rawValue isKindOfClass:[NSDictionary class]]) {
       // for dictionaries, show the list of keys:
       //   {key1,key2,key3}
-      NSString *subkeyList = [[(NSDictionary *)rawValue allKeys] componentsJoinedByString:@","];
+      NSString *subkeyList = [((NSDictionary *)rawValue).allKeys componentsJoinedByString:@","];
       value = [NSString stringWithFormat:@"{%@}", subkeyList];
     } else if ([rawValue isKindOfClass:[NSArray class]]) {
       // for arrays, show the number of items in the array:
       //   [3]
-      value = [NSString stringWithFormat:@"[%lu]", (unsigned long)[(NSArray *)rawValue count]];
+      value = [NSString stringWithFormat:@"[%lu]", (unsigned long)((NSArray *)rawValue).count];
     } else if ([rawValue isKindOfClass:[NSString class]]) {
       // for strings, show the string in quotes:
       //   "Hi mom."
@@ -514,7 +514,7 @@ static NSMutableDictionary *gKindMap = nil;
       GTL_DEBUG_LOG(@"%@ (%@) registration conflicts with %@",
                     selfClass, kind, gKindMap[kind]);
     }
-    if ([[gKindMap allKeysForObject:selfClass] count] != 0) {
+    if ([gKindMap allKeysForObject:selfClass].count != 0) {
       GTL_DEBUG_LOG(@"%@ (%@) registration conflicts with %@",
                     selfClass, kind, [gKindMap allKeysForObject:selfClass]);
     }
@@ -530,7 +530,7 @@ static NSMutableDictionary *gKindMap = nil;
                 defaultClass:(Class)defaultClass
                   surrogates:(NSDictionary *)surrogates
                batchClassMap:(NSDictionary *)batchClassMap {
-  if ([json isEqual:[NSNull null]] || [json count] == 0) {
+  if ([json isEqual:[NSNull null]] || json.count == 0) {
     if (json != nil && defaultClass != Nil) {
       // The JSON included an empty dictionary, and a return class
       // was specified.
@@ -551,7 +551,7 @@ static NSMutableDictionary *gKindMap = nil;
   NSString *kind = nil;
   if ([json isKindOfClass:[NSDictionary class]]) {
     kind = [json valueForKey:@"kind"];
-    if ([kind isKindOfClass:[NSString class]] && [kind length] > 0) {
+    if ([kind isKindOfClass:[NSString class]] && kind.length > 0) {
       Class dynamicClass = [GTLObject registeredObjectClassForKind:kind];
       if (dynamicClass) {
         classToCreate = dynamicClass;
@@ -654,7 +654,7 @@ static NSMutableDictionary *gArrayPropertyToClassMapCache = nil;
 
 - (id)itemAtIndex:(NSUInteger)idx {
   NSArray *items = [self performSelector:@selector(items)];
-  if (idx < [items count]) {
+  if (idx < items.count) {
     return items[idx];
   }
   return nil;
@@ -671,7 +671,7 @@ static NSMutableDictionary *gArrayPropertyToClassMapCache = nil;
   if (identifierMap_ == nil) {
     NSArray *items = [self performSelector:@selector(items)];
     NSMutableDictionary *dict =
-      [NSMutableDictionary dictionaryWithCapacity:[items count]];
+      [NSMutableDictionary dictionaryWithCapacity:items.count];
     for (id item in items) {
       id identifier = [item valueForKey:@"identifier"];
       if (identifier != nil && identifier != [NSNull null]) {
@@ -713,7 +713,7 @@ static NSMutableDictionary *gArrayPropertyToClassMapCache = nil;
     return cachedArray;
   }
   NSArray *result = nil;
-  NSArray *array = (NSArray *)[self JSON];
+  NSArray *array = (NSArray *)self.JSON;
   if (array != nil) {
     if ([array isKindOfClass:[NSArray class]]) {
       NSDictionary *surrogates = self.surrogates;

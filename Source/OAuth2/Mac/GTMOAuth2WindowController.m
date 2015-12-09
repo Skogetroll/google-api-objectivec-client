@@ -123,9 +123,10 @@ const char *kKeychainAccountName = "OAuth";
   NSString *nibName = [[self class] authNibName];
   NSString *nibPath = [bundle pathForResource:nibName
                                        ofType:@"nib"];
+  
 
-  self = [super initWithWindowNibPath:nibPath
-                                owner:self];
+  NSWindowController *windowController = [[NSWindowController alloc] initWithWindowNibPath:nibPath owner:self];
+  self = [super initWithWindow: windowController.window];
   if (self != nil) {
     // use the supplied auth and OAuth endpoint URLs
     Class signInClass = [[self class] signInClass];
@@ -140,6 +141,20 @@ const char *kKeychainAccountName = "OAuth";
     cookieStorage_ = [[GTMOAuth2CookieStorage alloc] init];
   }
   return self;
+}
+
+- (instancetype)initWithWindow:(NSWindow *)window {
+  GTMOAuth2Authentication *auth = [[GTMOAuth2Authentication alloc] init];
+  NSURL *url = [[NSURL alloc] init];
+  
+  return [self initWithAuthentication:auth authorizationURL:url keychainItemName:nil resourceBundle:nil];
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder {
+  GTMOAuth2Authentication *auth = [[GTMOAuth2Authentication alloc] init];
+  NSURL *url = [[NSURL alloc] init];
+  
+  return [self initWithAuthentication:auth authorizationURL:url keychainItemName:nil resourceBundle:nil];
 }
 
 - (void)dealloc {
@@ -168,24 +183,24 @@ const char *kKeychainAccountName = "OAuth";
 
 - (void)awakeFromNib {
   // load the requested initial sign-in page
-  [self.webView setResourceLoadDelegate:self];
-  [self.webView setPolicyDelegate:self];
+  (self.webView).resourceLoadDelegate = self;
+  (self.webView).policyDelegate = self;
 
   // the app may prefer some html other than blank white to be displayed
   // before the sign-in web page loads
   NSString *html = self.initialHTMLString;
-  if ([html length] > 0) {
-    [[self.webView mainFrame] loadHTMLString:html baseURL:nil];
+  if (html.length > 0) {
+    [(self.webView).mainFrame loadHTMLString:html baseURL:nil];
   }
 
   // hide the keychain checkbox if we're not supporting keychain
   BOOL hideKeychainCheckbox = ![self shouldUseKeychain];
 
   const NSTimeInterval kJanuary2011 = 1293840000;
-  BOOL isDateValid = ([[NSDate date] timeIntervalSince1970] > kJanuary2011);
+  BOOL isDateValid = ([NSDate date].timeIntervalSince1970 > kJanuary2011);
   if (isDateValid) {
     // start the asynchronous load of the sign-in web page
-    [[self.webView mainFrame] performSelector:@selector(loadRequest:)
+    [(self.webView).mainFrame performSelector:@selector(loadRequest:)
                                    withObject:self.initialRequest
                                    afterDelay:0.01
                                       inModes:@[NSRunLoopCommonModes]];
@@ -203,17 +218,17 @@ const char *kKeychainAccountName = "OAuth";
       @"</font></div></body></html>";
     NSString *errHTML = [NSString stringWithFormat:htmlTemplate, [NSDate date]];
 
-    [[webView_ mainFrame] loadHTMLString:errHTML baseURL:nil];
+    [webView_.mainFrame loadHTMLString:errHTML baseURL:nil];
     hideKeychainCheckbox = YES;
   }
 
 #if DEBUG
   // Verify that Javascript is enabled
-  BOOL hasJS = [[webView_ preferences] isJavaScriptEnabled];
+  BOOL hasJS = webView_.preferences.javaScriptEnabled;
   NSAssert(hasJS, @"GTMOAuth2: Javascript is required");
 #endif
 
-  [keychainCheckbox_ setHidden:hideKeychainCheckbox];
+  keychainCheckbox_.hidden = hideKeychainCheckbox;
 }
 
 + (NSString *)authNibName {
@@ -251,7 +266,7 @@ const char *kKeychainAccountName = "OAuth";
   hasDoneFinalRedirect_ = NO;
   hasCalledFinished_ = NO;
   
-  [self.signIn startSigningIn];
+  [(self.signIn) startSigningIn];
 }
 
 - (void)cancelSigningIn {
@@ -289,7 +304,7 @@ const char *kKeychainAccountName = "OAuth";
 #if DEBUG
   if ((isWindowShown_ && request != nil)
       || (!isWindowShown_ && request == nil)) {
-    NSLog(@"Window state unexpected for request %@", [request URL]);
+    NSLog(@"Window state unexpected for request %@", request.URL);
     return;
   }
 #endif
@@ -303,7 +318,7 @@ const char *kKeychainAccountName = "OAuth";
       [self setupSheetTerminationHandling];
 
 #if GTM_USE_BEGIN_SHEET
-      NSWindow *sheet = [self window];
+      NSWindow *sheet = self.window;
       [parentWindow beginSheet:sheet completionHandler:^(NSModalResponse returnCode) {
         [sheet orderOut:self];
 
@@ -339,7 +354,7 @@ const char *kKeychainAccountName = "OAuth";
 #endif
 
 - (void)setupSheetTerminationHandling {
-  NSWindow *sheet = [self window];
+  NSWindow *sheet = self.window;
 
   SEL sel = @selector(setPreventsApplicationTerminationWhenModal:);
   if ([sheet respondsToSelector:sel]) {
@@ -348,8 +363,8 @@ const char *kKeychainAccountName = "OAuth";
     BOOL boolVal = !self.shouldAllowApplicationTermination;
     NSMethodSignature *sig = [sheet methodSignatureForSelector:sel];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:sig];
-    [invocation setSelector:sel];
-    [invocation setTarget:sheet];
+    invocation.selector = sel;
+    invocation.target = sheet;
     [invocation setArgument:&boolVal atIndex:2];
     [invocation invoke];
   }
@@ -365,13 +380,13 @@ const char *kKeychainAccountName = "OAuth";
   NSWindow *parentWindow = self.sheetModalForWindow;
   if (parentWindow) {
 #if GTM_USE_BEGIN_SHEET
-    [parentWindow endSheet:[self window]];
+    [parentWindow endSheet:self.window];
 #else
     [NSApp endSheet:[self window]];
 #endif
   } else {
     // defer closing the window, in case we're responding to some window event
-    [[self window] performSelector:@selector(close)
+    [self.window performSelector:@selector(close)
                         withObject:nil
                         afterDelay:0.1
                            inModes:@[NSRunLoopCommonModes]];
@@ -397,7 +412,7 @@ const char *kKeychainAccountName = "OAuth";
       BOOL shouldUseKeychain = [self shouldUseKeychain];
       if (shouldUseKeychain) {
         BOOL canAuthorize = auth.canAuthorize;
-        BOOL isKeychainChecked = ([keychainCheckbox_ state] == NSOnState);
+        BOOL isKeychainChecked = (keychainCheckbox_.state == NSOnState);
 
         NSString *keychainItemName = self.keychainItemName;
 
@@ -416,8 +431,8 @@ const char *kKeychainAccountName = "OAuth";
       SEL sel = finishedSelector_;
       NSMethodSignature *sig = [delegate_ methodSignatureForSelector:sel];
       NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:sig];
-      [invocation setSelector:sel];
-      [invocation setTarget:delegate_];
+      invocation.selector = sel;
+      invocation.target = delegate_;
       [invocation setArgument:&self atIndex:2];
       [invocation setArgument:&auth atIndex:3];
       [invocation setArgument:&error atIndex:4];
@@ -485,7 +500,7 @@ static Class gSignInClass = Nil;
 
 - (void)webView:(WebView *)sender resource:(id)identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource {
   NSString *title = [sender stringByEvaluatingJavaScriptFromString:@"document.title"];
-  if ([title length] > 0) {
+  if (title.length > 0) {
     [self.signIn titleChanged:title];
   }
 
@@ -515,7 +530,7 @@ decisionListener:(id<WebPolicyDecisionListener>)listener {
                     withObject:request];
   } else {
     // default behavior is to open the URL in NSWorkspace's default browser
-    NSURL *url = [request URL];
+    NSURL *url = request.URL;
     [[NSWorkspace sharedWorkspace] openURL:url];
   }
   [listener ignore];
@@ -538,12 +553,12 @@ decisionListener:(id<WebPolicyDecisionListener>)listener {
 
   if ([response respondsToSelector:@selector(allHeaderFields)]) {
     // grab the cookies from the header as NSHTTPCookies and store them locally
-    NSDictionary *headers = [(NSHTTPURLResponse *)response allHeaderFields];
+    NSDictionary *headers = ((NSHTTPURLResponse *)response).allHeaderFields;
     if (headers) {
-      NSURL *url = [response URL];
+      NSURL *url = response.URL;
       NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:headers
                                                                 forURL:url];
-      if ([cookies count] > 0) {
+      if (cookies.count > 0) {
         [cookieStorage_ setCookies:cookies];
       }
     }
@@ -562,8 +577,8 @@ decisionListener:(id<WebPolicyDecisionListener>)listener {
   [mutableRequest setHTTPShouldHandleCookies:NO];
 
   // add our locally-stored cookies for this URL, if any
-  NSArray *cookies = [cookieStorage_ cookiesForURL:[request URL]];
-  if ([cookies count] > 0) {
+  NSArray *cookies = [cookieStorage_ cookiesForURL:request.URL];
+  if (cookies.count > 0) {
     NSDictionary *headers = [NSHTTPCookie requestHeaderFieldsWithCookies:cookies];
     NSString *cookieHeader = headers[@"Cookie"];
     if (cookieHeader) {
@@ -589,12 +604,12 @@ decisionListener:(id<WebPolicyDecisionListener>)listener {
   if (!auth.canAuthorize) return NO;
 
   // make a response string containing the values we want to save
-  NSString *password = [auth persistenceResponseString];
+  NSString *password = auth.persistenceResponseString;
 
   SecKeychainRef defaultKeychain = NULL;
   SecKeychainItemRef *dontWantItemRef= NULL;
-  const char *utf8ServiceName = [keychainItemName UTF8String];
-  const char *utf8Password = [password UTF8String];
+  const char *utf8ServiceName = keychainItemName.UTF8String;
+  const char *utf8Password = password.UTF8String;
 
   OSStatus err = SecKeychainAddGenericPassword(defaultKeychain,
                              (UInt32) strlen(utf8ServiceName), utf8ServiceName,
@@ -617,7 +632,7 @@ decisionListener:(id<WebPolicyDecisionListener>)listener {
 
   SecKeychainRef defaultKeychain = NULL;
   SecKeychainItemRef itemRef = NULL;
-  const char *utf8ServiceName = [keychainItemName UTF8String];
+  const char *utf8ServiceName = keychainItemName.UTF8String;
 
   // we don't really care about the password here, we just want to
   // get the SecKeychainItemRef so we can delete it.
@@ -681,7 +696,7 @@ decisionListener:(id<WebPolicyDecisionListener>)listener {
   BOOL didGetTokens = NO;
 
   SecKeychainRef defaultKeychain = NULL;
-  const char *utf8ServiceName = [keychainItemName UTF8String];
+  const char *utf8ServiceName = keychainItemName.UTF8String;
   SecKeychainItemRef *dontWantItemRef = NULL;
 
   void *passwordBuff = NULL;
@@ -718,7 +733,7 @@ decisionListener:(id<WebPolicyDecisionListener>)listener {
   } else {
     // Be sure the property dictionary exists
     if (properties_ == nil) {
-      [self setProperties:[NSMutableDictionary dictionary]];
+      self.properties = [NSMutableDictionary dictionary];
     }
     properties_[key] = obj;
   }
@@ -748,7 +763,7 @@ decisionListener:(id<WebPolicyDecisionListener>)listener {
 
 - (BOOL)shouldUseKeychain {
   NSString *name = self.keychainItemName;
-  return ([name length] > 0);
+  return (name.length > 0);
 }
 
 @end

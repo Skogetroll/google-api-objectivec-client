@@ -24,12 +24,12 @@
 #import "GTLUploadParameters.h"
 
 @protocol GTLQueryProtocol <NSObject, NSCopying>
-- (BOOL)isBatchQuery;
-- (BOOL)shouldSkipAuthorization;
+@property (NS_NONATOMIC_IOSONLY, getter=isBatchQuery, readonly) BOOL batchQuery;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldSkipAuthorization;
 - (void)executionDidStop;
-- (GTL_NSDictionaryOf(NSString *, NSString *) *)additionalHTTPHeaders;
-- (GTL_NSDictionaryOf(NSString *, NSString *) *)urlQueryParameters;
-- (GTLUploadParameters *)uploadParameters;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary<NSString *,NSString *> *additionalHTTPHeaders;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary<NSString *,NSString *> *urlQueryParameters;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) GTLUploadParameters *uploadParameters;
 @end
 
 @protocol GTLQueryCollectionProtocol

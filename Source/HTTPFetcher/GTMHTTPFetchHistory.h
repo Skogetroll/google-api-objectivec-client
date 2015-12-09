@@ -76,7 +76,7 @@ extern const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity;
 // the default ETag data cache capacity is kGTMDefaultETaggedDataCacheMemoryCapacity
 @property (assign) NSUInteger memoryCapacity;
 
-@property (retain) GTMCookieStorage *cookieStorage;
+@property (retain) id<GTMCookieStorageProtocol> cookieStorage;
 
 - (instancetype)initWithMemoryCapacity:(NSUInteger)totalBytes
       shouldCacheETaggedData:(BOOL)shouldCacheETaggedData NS_DESIGNATED_INITIALIZER;

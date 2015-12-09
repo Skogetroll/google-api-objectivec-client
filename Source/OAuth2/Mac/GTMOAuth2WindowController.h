@@ -83,7 +83,7 @@
 
 @class GTMOAuth2SignIn;
 
-@interface GTMOAuth2WindowController : NSWindowController {
+@interface GTMOAuth2WindowController : NSWindowController <WebResourceLoadDelegate, WebPolicyDelegate> {
  @private
   // IBOutlets
   NSButton *keychainCheckbox_;
@@ -250,7 +250,7 @@
 - (instancetype)initWithAuthentication:(GTMOAuth2Authentication *)auth
             authorizationURL:(NSURL *)authorizationURL
             keychainItemName:(NSString *)keychainItemName
-              resourceBundle:(NSBundle *)bundle;
+              resourceBundle:(NSBundle *)bundle NS_DESIGNATED_INITIALIZER;
 
 // Entry point to begin displaying the sign-in window
 //

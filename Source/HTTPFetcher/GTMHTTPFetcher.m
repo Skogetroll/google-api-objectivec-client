@@ -158,10 +158,10 @@ static NSString *const kCallbackError = @"error";
       // The user has compiled with the cookie storage class available;
       // default to static cookie storage, so our cookies are independent
       // of the cookies of other apps.
-      [self setCookieStorageMethod:kGTMHTTPFetcherCookieStorageMethodStatic];
+      self.cookieStorageMethod = kGTMHTTPFetcherCookieStorageMethodStatic;
     } else {
       // Default to system default cookie storage
-      [self setCookieStorageMethod:kGTMHTTPFetcherCookieStorageMethodSystemDefault];
+      self.cookieStorageMethod = kGTMHTTPFetcherCookieStorageMethodSystemDefault;
     }
 #if !STRIP_GTM_FETCH_LOGGING
     // Encourage developers to set the comment property or use
@@ -180,7 +180,7 @@ static NSString *const kCallbackError = @"error";
 
 - (NSString *)description {
   return [NSString stringWithFormat:@"%@ %p (%@)",
-          [self class], self, [self.mutableRequest URL]];
+          [self class], self, (self.mutableRequest).URL];
 }
 
 #if !GTM_IPHONE
@@ -255,7 +255,7 @@ static NSString *const kCallbackError = @"error";
   // to what Cocoa does with performSelectorOnMainThread:) and during
   // authorization or delays, since the app would crash
   // if the delegate was released before the fetch calls back
-  [self setDelegate:delegate];
+  self.delegate = delegate;
   finishedSel_ = finishedSelector;
 
   return [self beginFetchMayDelay:YES
@@ -272,7 +272,7 @@ static NSString *const kCallbackError = @"error";
     goto CannotBeginFetch;
   }
 
-  NSURL *requestURL = [request_ URL];
+  NSURL *requestURL = request_.URL;
   if (request_ == nil || requestURL == nil) {
     NSAssert(request_ != nil, @"beginFetchWithDelegate requires a request with a URL");
     goto CannotBeginFetch;
@@ -287,11 +287,11 @@ static NSString *const kCallbackError = @"error";
     // file: and data: schemes are usually safe if they are hardcoded in the client or provided
     // by a trusted source, but since it's fairly rare to need them, it's safest to make clients
     // explicitly whitelist them.
-    NSString *requestScheme = [requestURL scheme];
+    NSString *requestScheme = requestURL.scheme;
     BOOL isSecure = ([requestScheme caseInsensitiveCompare:@"https"] == NSOrderedSame);
     if (!isSecure) {
       BOOL allowRequest = NO;
-      NSString *host = [requestURL host];
+      NSString *host = requestURL.host;
       BOOL isLocalhost = ([host caseInsensitiveCompare:@"localhost"] == NSOrderedSame
                           || [host isEqual:@"::1"]
                           || [host isEqual:@"127.0.0.1"]);
@@ -348,25 +348,25 @@ static NSString *const kCallbackError = @"error";
 
   NSString *effectiveHTTPMethod = [request_ valueForHTTPHeaderField:@"X-HTTP-Method-Override"];
   if (effectiveHTTPMethod == nil) {
-    effectiveHTTPMethod = [request_ HTTPMethod];
+    effectiveHTTPMethod = request_.HTTPMethod;
   }
   BOOL isEffectiveHTTPGet = (effectiveHTTPMethod == nil
                              || [effectiveHTTPMethod isEqual:@"GET"]);
 
   if (postData_ || postStream_) {
     if (isEffectiveHTTPGet) {
-      [request_ setHTTPMethod:@"POST"];
+      request_.HTTPMethod = @"POST";
       isEffectiveHTTPGet = NO;
     }
 
     if (postData_) {
-      [request_ setHTTPBody:postData_];
+      request_.HTTPBody = postData_;
     } else {
       if ([self respondsToSelector:@selector(setupStreamLogging)]) {
         [self performSelector:@selector(setupStreamLogging)];
       }
 
-      [request_ setHTTPBodyStream:postStream_];
+      request_.HTTPBodyStream = postStream_;
     }
   }
 
@@ -386,9 +386,9 @@ static NSString *const kCallbackError = @"error";
   if (isRetryEnabled_
       && maxRetryInterval_ <= kUnsetMaxRetryInterval) {
     if (isEffectiveHTTPGet || [effectiveHTTPMethod isEqual:@"HEAD"]) {
-      [self setMaxRetryInterval:kDefaultMaxDownloadRetryInterval];
+      self.maxRetryInterval = kDefaultMaxDownloadRetryInterval;
     } else {
-      [self setMaxRetryInterval:kDefaultMaxUploadRetryInterval];
+      self.maxRetryInterval = kDefaultMaxUploadRetryInterval;
     }
   }
 
@@ -404,12 +404,12 @@ static NSString *const kCallbackError = @"error";
                                           error:&error];
     if (!didCreate) goto CannotBeginFetch;
 
-    [self setTemporaryDownloadPath:tempPath];
+    self.temporaryDownloadPath = tempPath;
 
     NSFileHandle *fh = [NSFileHandle fileHandleForWritingAtPath:tempPath];
     if (fh == nil) goto CannotBeginFetch;
 
-    [self setDownloadFileHandle:fh];
+    self.downloadFileHandle = fh;
   }
 
   // finally, start the connection
@@ -447,7 +447,7 @@ static NSString *const kCallbackError = @"error";
   }
 
   hasConnectionEnded_ = NO;
-  if ([runLoopModes_ count] == 0 && delegateQueue == nil) {
+  if (runLoopModes_.count == 0 && delegateQueue == nil) {
     // No custom callback modes or queue were specified, so start the connection
     // on the current run loop in the current mode
     connection_ = [[connectionClass connectionWithRequest:request_
@@ -641,7 +641,7 @@ CannotBeginFetch:
   // The user may have called setDelegate: earlier if they want to use other
   // delegate-style callbacks during the fetch; otherwise, the delegate is nil,
   // which is fine.
-  return [self beginFetchWithDelegate:[self delegate]
+  return [self beginFetchWithDelegate:self.delegate
                     didFinishSelector:nil];
 }
 #endif
@@ -671,7 +671,7 @@ CannotBeginFetch:
                                appropriateForURL:targetURL
                                           create:YES
                                            error:&error];
-    tempDir = [tempDirURL path];
+    tempDir = tempDirURL.path;
   }
 #endif
 
@@ -692,8 +692,8 @@ CannotBeginFetch:
   if (cookieStorageMethod_ != kGTMHTTPFetcherCookieStorageMethodSystemDefault
       && cookieStorageMethod_ != kGTMHTTPFetcherCookieStorageMethodNone) {
 
-    NSArray *cookies = [cookieStorage_ cookiesForURL:[request URL]];
-    if ([cookies count] > 0) {
+    NSArray *cookies = [cookieStorage_ cookiesForURL:request.URL];
+    if (cookies.count > 0) {
 
       NSDictionary *headerFields = [NSHTTPCookie requestHeaderFieldsWithCookies:cookies];
       NSString *cookieHeader = headerFields[@"Cookie"]; // key used in header dictionary
@@ -725,7 +725,7 @@ CannotBeginFetch:
   if (response_ != nil
     && [response_ respondsToSelector:@selector(statusCode)]) {
 
-    statusCode = [(NSHTTPURLResponse *)response_ statusCode];
+    statusCode = ((NSHTTPURLResponse *)response_).statusCode;
   } else {
     //  Default to zero, in hopes of hinting "Unknown" (we can't be
     //  sure that things are OK enough to use 200).
@@ -738,7 +738,7 @@ CannotBeginFetch:
   if (response_ != nil
       && [response_ respondsToSelector:@selector(allHeaderFields)]) {
 
-    NSDictionary *headers = [(NSHTTPURLResponse *)response_ allHeaderFields];
+    NSDictionary *headers = ((NSHTTPURLResponse *)response_).allHeaderFields;
     return headers;
   }
   return nil;
@@ -855,7 +855,7 @@ CannotBeginFetch:
           || completionBlock_ != nil
 #endif
           || delegate_ != nil)
-         && [giveUpDate timeIntervalSinceNow] > 0) {
+         && giveUpDate.timeIntervalSinceNow > 0) {
 
     // Run the current run loop 1/1000 of a second to give the networking
     // code a chance to work
@@ -896,13 +896,13 @@ CannotBeginFetch:
 
       NSMutableURLRequest *newRequest = [[request_ mutableCopy] autorelease];
       // copy the URL
-      NSURL *redirectURL = [redirectRequest URL];
-      NSURL *url = [newRequest URL];
+      NSURL *redirectURL = redirectRequest.URL;
+      NSURL *url = newRequest.URL;
 
       // disallow scheme changes (say, from https to http)
-      NSString *redirectScheme = [url scheme];
-      NSString *newScheme = [redirectURL scheme];
-      NSString *newResourceSpecifier = [redirectURL resourceSpecifier];
+      NSString *redirectScheme = url.scheme;
+      NSString *newScheme = redirectURL.scheme;
+      NSString *newResourceSpecifier = redirectURL.resourceSpecifier;
 
       if ([redirectScheme caseInsensitiveCompare:@"http"] == NSOrderedSame
           && newScheme != nil
@@ -916,10 +916,10 @@ CannotBeginFetch:
         redirectScheme, newResourceSpecifier];
 
       NSURL *newURL = [NSURL URLWithString:newUrlString];
-      [newRequest setURL:newURL];
+      newRequest.URL = newURL;
 
       // any headers in the redirect override headers in the original.
-      NSDictionary *redirectHeaders = [redirectRequest allHTTPHeaderFields];
+      NSDictionary *redirectHeaders = redirectRequest.allHTTPHeaderFields;
       for (NSString *key in redirectHeaders) {
         NSString *value = redirectHeaders[key];
         [newRequest setValue:value forHTTPHeaderField:key];
@@ -930,12 +930,12 @@ CannotBeginFetch:
       redirectRequest = newRequest;
 
       // log the response we just received
-      [self setResponse:redirectResponse];
+      self.response = redirectResponse;
       [self logNowWithError:nil];
 
       // update the request for future logging
       NSMutableURLRequest *mutable = [[redirectRequest mutableCopy] autorelease];
-      [self setMutableRequest:mutable];
+      self.mutableRequest = mutable;
     }
     return redirectRequest;
   }  // @synchronized(self)
@@ -947,11 +947,11 @@ CannotBeginFetch:
     // has enough information to create the NSURLResponse
     // it can be called multiple times, for example in the case of a
     // redirect, so each time we reset the data.
-    [downloadedData_ setLength:0];
+    downloadedData_.length = 0;
     [downloadFileHandle_ truncateFileAtOffset:0];
     downloadedLength_ = 0;
 
-    [self setResponse:response];
+    self.response = response;
 
     // Save cookies from the response
     [self handleCookiesForResponse:response];
@@ -974,12 +974,12 @@ CannotBeginFetch:
     // grab the cookies from the header as NSHTTPCookies and store them either
     // into our static array or into the fetchHistory
 
-    NSDictionary *responseHeaderFields = [(NSHTTPURLResponse *)response allHeaderFields];
+    NSDictionary *responseHeaderFields = ((NSHTTPURLResponse *)response).allHeaderFields;
     if (responseHeaderFields) {
 
       NSArray *cookies = [NSHTTPCookie cookiesWithResponseHeaderFields:responseHeaderFields
-                                                                forURL:[response URL]];
-      if ([cookies count] > 0) {
+                                                                forURL:response.URL];
+      if (cookies.count > 0) {
         [cookieStorage_ setCookies:cookies];
       }
     }
@@ -989,11 +989,11 @@ CannotBeginFetch:
 -(void)connection:(NSURLConnection *)connection
 didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
   @synchronized(self) {
-    if ([challenge previousFailureCount] <= 2) {
+    if (challenge.previousFailureCount <= 2) {
 
       NSURLCredential *credential = credential_;
 
-      if ([[challenge protectionSpace] isProxy] && proxyCredential_ != nil) {
+      if (challenge.protectionSpace.isProxy && proxyCredential_ != nil) {
         credential = proxyCredential_;
       }
 
@@ -1010,7 +1010,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
 
       if (credential) {
         // try the credential
-        [[challenge sender] useCredential:credential
+        [challenge.sender useCredential:credential
                forAuthenticationChallenge:challenge];
         return;
       }
@@ -1033,7 +1033,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
     // We'll use an ivar to make the indirect invocation of the
     // delegate method do nothing.
     isCancellingChallenge_ = YES;
-    [[challenge sender] cancelAuthenticationChallenge:challenge];
+    [challenge.sender cancelAuthenticationChallenge:challenge];
     isCancellingChallenge_ = NO;
 
     [self connection:connection didFailWithError:error];
@@ -1096,8 +1096,8 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
   if (target && sel) {
     NSMethodSignature *sig = [target methodSignatureForSelector:sel];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:sig];
-    [invocation setSelector:sel];
-    [invocation setTarget:target];
+    invocation.selector = sel;
+    invocation.target = target;
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&data atIndex:3];
     [invocation setArgument:&error atIndex:4];
@@ -1166,8 +1166,8 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
   if (target && sel) {
     NSMethodSignature *sig = [target methodSignatureForSelector:sel];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:sig];
-    [invocation setSelector:sel];
-    [invocation setTarget:target];
+    invocation.selector = sel;
+    invocation.target = target;
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&bytesWritten atIndex:3];
     [invocation setArgument:&totalBytesWritten atIndex:4];
@@ -1183,8 +1183,8 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
   if (target && sel) {
     NSMethodSignature *sig = [target methodSignatureForSelector:sel];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:sig];
-    [invocation setSelector:sel];
-    [invocation setTarget:target];
+    invocation.selector = sel;
+    invocation.target = target;
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&willRetry atIndex:3];
     [invocation setArgument:&error atIndex:4];
@@ -1200,7 +1200,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
  totalBytesWritten:(NSInteger)totalBytesWritten
 totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
   @synchronized(self) {
-    SEL sel = [self sentDataSelector];
+    SEL sel = self.sentDataSelector;
     [self invokeSentDataCallback:sel
                           target:delegate_
                  didSendBodyData:bytesWritten
@@ -1236,11 +1236,11 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
       @try {
         [downloadFileHandle_ writeData:data];
 
-        downloadedLength_ = [downloadFileHandle_ offsetInFile];
+        downloadedLength_ = downloadFileHandle_.offsetInFile;
       }
       @catch (NSException *exc) {
         // Couldn't write to file, probably due to a full disk
-        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: [exc reason]};
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: exc.reason};
         NSError *error = [NSError errorWithDomain:kGTMHTTPFetcherStatusDomain
                                              code:kGTMHTTPFetcherErrorFileHandleException
                                          userInfo:userInfo];
@@ -1251,7 +1251,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
       // append to mutable data
       [downloadedData_ appendData:data];
 
-      downloadedLength_ = [downloadedData_ length];
+      downloadedLength_ = downloadedData_.length;
     }
 
     if (receivedDataSel_) {
@@ -1274,7 +1274,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 //
 // For other errors or if there's no cached data, just return the actual status.
 - (NSData *)cachedDataForStatus {
-  if ([self statusCode] == kGTMHTTPFetcherStatusNotModified
+  if (self.statusCode == kGTMHTTPFetcherStatusNotModified
       && [fetchHistory_ shouldCacheETaggedData]) {
     NSData *cachedData = [fetchHistory_ cachedDataForRequest:request_];
     return cachedData;
@@ -1283,7 +1283,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 }
 
 - (NSInteger)statusAfterHandlingNotModifiedError {
-  NSInteger status = [self statusCode];
+  NSInteger status = self.statusCode;
   NSData *cachedData = [self cachedDataForStatus];
   if (cachedData) {
     // Forge the status to pass on to the delegate
@@ -1298,7 +1298,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
         // and the URL response was indeed present in the cache.
         [downloadFileHandle_ truncateFileAtOffset:0];
         [downloadFileHandle_ writeData:cachedData];
-        downloadedLength_ = [downloadFileHandle_ offsetInFile];
+        downloadedLength_ = downloadFileHandle_.offsetInFile;
       }
       @catch (NSException *) {
         // Failed to write data, likely due to lack of disk space
@@ -1306,7 +1306,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
       }
     } else {
       [downloadedData_ setData:cachedData];
-      downloadedLength_ = [cachedData length];
+      downloadedLength_ = cachedData.length;
     }
   }
   return status;
@@ -1337,7 +1337,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 
     [[self retain] autorelease]; // in case the callback releases us
 
-    NSInteger status = [self statusCode];
+    NSInteger status = self.statusCode;
     if ([self cachedDataForStatus] != nil) {
 #if !STRIP_GTM_FETCH_LOGGING
       // Log the pre-cache response.
@@ -1381,7 +1381,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
         shouldStopFetching = NO;
       } else {
         NSDictionary *userInfo = nil;
-        if ([downloadedData_ length] > 0) {
+        if (downloadedData_.length > 0) {
           userInfo = @{kGTMHTTPFetcherStatusDataKey: downloadedData_};
         }
         error = [NSError errorWithDomain:kGTMHTTPFetcherStatusDomain
@@ -1497,8 +1497,8 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 
   for (int idx = 0; retries[idx].domain != nil; idx++) {
 
-    if ([[error domain] isEqual:retries[idx].domain]
-        && [error code] == retries[idx].code) {
+    if ([error.domain isEqual:retries[idx].domain]
+        && error.code == retries[idx].code) {
 
       return YES;
     }
@@ -1532,8 +1532,8 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
   }
 
   // Determine if we're doing exponential backoff retries
-  BOOL shouldDoIntervalRetry = [self isRetryEnabled]
-    && ([self nextRetryInterval] < [self maxRetryInterval]);
+  BOOL shouldDoIntervalRetry = self.retryEnabled
+    && (self.nextRetryInterval < self.maxRetryInterval);
 
   if (shouldDoIntervalRetry) {
     // If an explicit max retry interval was set, we expect repeated backoffs to take
@@ -1543,7 +1543,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
     // unexpectedly unresponsive.
     if (maxRetryInterval_ > kUnsetMaxRetryInterval) {
       NSTimeInterval maxAllowedIntervalBeforeRetry = maxRetryInterval_ * 3;
-      NSTimeInterval timeSinceInitialRequest = -[initialRequestDate_ timeIntervalSinceNow];
+      NSTimeInterval timeSinceInitialRequest = -initialRequestDate_.timeIntervalSinceNow;
       if (timeSinceInitialRequest > maxAllowedIntervalBeforeRetry) {
         shouldDoIntervalRetry = NO;
       }
@@ -1557,7 +1557,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
     if (error == nil) {
       // Make an error for the status
       NSDictionary *userInfo = nil;
-      if ([downloadedData_ length] > 0) {
+      if (downloadedData_.length > 0) {
         userInfo = @{kGTMHTTPFetcherStatusDataKey: downloadedData_};
       }
       error = [NSError errorWithDomain:kGTMHTTPFetcherStatusDomain
@@ -1596,8 +1596,8 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
     }
   }
 
-  NSTimeInterval nextInterval = [self nextRetryInterval];
-  NSTimeInterval maxInterval = [self maxRetryInterval];
+  NSTimeInterval nextInterval = self.nextRetryInterval;
+  NSTimeInterval maxInterval = self.maxRetryInterval;
   NSTimeInterval newInterval = MIN(nextInterval, maxInterval);
 
   [self primeRetryTimerWithNewTimeInterval:newInterval];
@@ -1683,9 +1683,9 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
     // as a side effect of calling setRetryEnabled.
     //
     // Make an initial retry interval random between 1.0 and 2.0 seconds
-    [self setMinRetryInterval:0.0];
-    [self setMaxRetryInterval:kUnsetMaxRetryInterval];
-    [self setRetryFactor:2.0];
+    self.minRetryInterval = 0.0;
+    self.maxRetryInterval = kUnsetMaxRetryInterval;
+    self.retryFactor = 2.0;
     lastRetryInterval_ = 0.0;
   }
   isRetryEnabled_ = flag;
@@ -1833,13 +1833,13 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 
   if (fetchHistory_ != nil) {
     // set the fetch history's cookie array to be the cookie store
-    [self setCookieStorageMethod:kGTMHTTPFetcherCookieStorageMethodFetchHistory];
+    self.cookieStorageMethod = kGTMHTTPFetcherCookieStorageMethodFetchHistory;
 
   } else {
     // The fetch history was removed
     if (cookieStorageMethod_ == kGTMHTTPFetcherCookieStorageMethodFetchHistory) {
       // Fall back to static storage
-      [self setCookieStorageMethod:kGTMHTTPFetcherCookieStorageMethodStatic];
+      self.cookieStorageMethod = kGTMHTTPFetcherCookieStorageMethodStatic;
     }
   }
 }
@@ -1876,7 +1876,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 - (void)setProperty:(id)obj forKey:(NSString *)key {
   @synchronized(self) {
     if (properties_ == nil && obj != nil) {
-      [self setProperties:[NSMutableDictionary dictionary]];
+      self.properties = [NSMutableDictionary dictionary];
     }
     [properties_ setValue:obj forKey:key];
   }
@@ -1891,7 +1891,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 - (void)addPropertiesFromDictionary:(NSDictionary *)dict {
   @synchronized(self) {
     if (properties_ == nil && dict != nil) {
-      [self setProperties:[[dict mutableCopy] autorelease]];
+      self.properties = [[dict mutableCopy] autorelease];
     } else {
       [properties_ addEntriesFromDictionary:dict];
     }
@@ -1917,7 +1917,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
                                      arguments:argList] autorelease];
     va_end(argList);
   }
-  [self setComment:result];
+  self.comment = result;
 #endif
 }
 
@@ -1966,7 +1966,7 @@ void GTMAssertSelectorNilOrImplementedWithArgs(id obj, SEL sel, ...) {
       // Check that each expected argument is present and of the correct type
       while ((expectedArgType = va_arg(argList, const char*)) != 0) {
 
-        if ([sig numberOfArguments] > argCount) {
+        if (sig.numberOfArguments > argCount) {
           const char *foundArgType = [sig getArgumentTypeAtIndex:argCount];
 
           if(0 != strncmp(foundArgType, expectedArgType, strlen(expectedArgType))) {
@@ -1980,7 +1980,7 @@ void GTMAssertSelectorNilOrImplementedWithArgs(id obj, SEL sel, ...) {
       }
 
       // Check that the proper number of arguments are present in the selector
-      if (argCount != [sig numberOfArguments]) {
+      if (argCount != sig.numberOfArguments) {
         NSLog( @"\"%@\" selector \"%@\" should have %d arguments",
                        NSStringFromClass([obj class]),
                        NSStringFromSelector(sel), (argCount - 2));
@@ -2005,11 +2005,11 @@ NSString *GTMCleanedUserAgentString(NSString *str) {
   [result replaceOccurrencesOfString:@" "
                           withString:@"_"
                              options:0
-                               range:NSMakeRange(0, [result length])];
+                               range:NSMakeRange(0, result.length)];
   [result replaceOccurrencesOfString:@","
                           withString:@"_"
                              options:0
-                               range:NSMakeRange(0, [result length])];
+                               range:NSMakeRange(0, result.length)];
 
   // Delete http token separators and remaining whitespace
   static NSCharacterSet *charsToDelete = nil;
@@ -2045,7 +2045,7 @@ NSString *GTMSystemVersionString(void) {
     NSString *const kPath = @"/System/Library/CoreServices/SystemVersion.plist";
     NSDictionary *plist = [NSDictionary dictionaryWithContentsOfFile:kPath];
     NSString *versString = plist[@"ProductVersion"];
-    if ([versString length] == 0) {
+    if (versString.length == 0) {
       versString = @"10.?.?";
     }
     savedSystemString = [[NSString alloc] initWithFormat:@"MacOSX/%@", versString];
@@ -2108,7 +2108,7 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle) {
     if (bundle == nil) {
       bundle = [NSBundle mainBundle];
     }
-    NSString *bundleID = [bundle bundleIdentifier];
+    NSString *bundleID = bundle.bundleIdentifier;
     if (bundleID == nil) {
       bundleID = @"";
     }
@@ -2118,13 +2118,13 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle) {
 
     // Apps may add a string to the info.plist to uniquely identify different builds.
     identifier = [bundle objectForInfoDictionaryKey:@"GTMUserAgentID"];
-    if ([identifier length] == 0) {
-      if ([bundleID length] > 0) {
+    if (identifier.length == 0) {
+      if (bundleID.length > 0) {
         identifier = bundleID;
       } else {
         // Fall back on the procname, prefixed by "proc" to flag that it's
         // autogenerated and perhaps unreliable
-        NSString *procName = [[NSProcessInfo processInfo] processName];
+        NSString *procName = [NSProcessInfo processInfo].processName;
         identifier = [NSString stringWithFormat:@"proc_%@", procName];
       }
     }
@@ -2134,7 +2134,7 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle) {
 
     // If there's a version number, append that
     NSString *version = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-    if ([version length] == 0) {
+    if (version.length == 0) {
       version = [bundle objectForInfoDictionaryKey:@"CFBundleVersion"];
     }
 
@@ -2143,7 +2143,7 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle) {
 
     // Glue the two together (cleanup done above or else cleanup would strip the
     // slash)
-    if ([version length] > 0) {
+    if (version.length > 0) {
       identifier = [identifier stringByAppendingFormat:@"/%@", version];
     }
 

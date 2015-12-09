@@ -402,9 +402,9 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle);
 // This protocol allows us to call the fetch history object without requiring
 // GTMHTTPFetchHistory sources in this project
 - (void)updateRequest:(NSMutableURLRequest *)request isHTTPGet:(BOOL)isHTTPGet;
-- (BOOL)shouldCacheETaggedData;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldCacheETaggedData;
 - (NSData *)cachedDataForRequest:(NSURLRequest *)request;
-- (id <GTMCookieStorageProtocol>)cookieStorage;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) id<GTMCookieStorageProtocol> cookieStorage;
 - (void)updateFetchHistoryWithRequest:(NSURLRequest *)request
                              response:(NSURLResponse *)response
                        downloadedData:(NSData *)downloadedData;
@@ -429,7 +429,7 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle);
 
 @optional
 // Unimplemented in GTMHTTPFetcherService, but checked by GTMOAuth2Authentication.
-- (dispatch_queue_t)callbackQueue;
+@property (NS_NONATOMIC_IOSONLY, readonly) dispatch_queue_t callbackQueue;
 
 @end
 
@@ -474,7 +474,7 @@ NSString *GTMApplicationIdentifier(NSBundle *bundle);
 @property (assign) id<GTMHTTPFetcherServiceProtocol> fetcherService; // WEAK
 #endif
 
-- (BOOL)primeForRefresh;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL primeForRefresh;
 
 @end
 #endif  // !defined(GTM_FETCHER_AUTHORIZATION_PROTOCOL)

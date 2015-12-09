@@ -26,13 +26,13 @@ static char gWebSafeEncodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmno
 static NSString *EncodeBase64StringCommon(NSData *data, const char *table) {
   if (data == nil) return nil;
 
-  const uint8_t* input = [data bytes];
-  NSUInteger length = [data length];
+  const uint8_t* input = data.bytes;
+  NSUInteger length = data.length;
 
   NSUInteger bufferSize = ((length + 2) / 3) * 4;
   NSMutableData* buffer = [NSMutableData dataWithLength:bufferSize];
 
-  int8_t *output = [buffer mutableBytes];
+  int8_t *output = buffer.mutableBytes;
 
   for (NSUInteger i = 0; i < length; i += 3) {
     NSUInteger value = 0;
@@ -90,7 +90,7 @@ static NSData *DecodeBase64StringCommon(NSString *base64Str,
 
   NSInteger outputLength = inputLength * 3 / 4;
   NSMutableData* data = [NSMutableData dataWithLength:(NSUInteger)outputLength];
-  uint8_t *output = [data mutableBytes];
+  uint8_t *output = data.mutableBytes;
 
   NSInteger inputPoint = 0;
   NSInteger outputPoint = 0;

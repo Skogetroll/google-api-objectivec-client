@@ -55,7 +55,7 @@
   } else if ([json isKindOfClass:[NSArray class]]) {
     NSArray *jsonArray = json;
     // make an object for each JSON dictionary in the array
-    NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:[jsonArray count]];
+    NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:jsonArray.count];
     for (id jsonItem in jsonArray) {
       id item = [self objectFromJSON:jsonItem
                         defaultClass:defaultClass
@@ -115,7 +115,7 @@
     checkExpected = NO;
     NSArray *array = obj;
     // get the JSON for each thing in the array
-    NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:[array count]];
+    NSMutableArray *resultArray = [NSMutableArray arrayWithCapacity:array.count];
     for (id item in array) {
       id itemJSON = [self jsonFromAPIObject:item
                               expectedClass:expectedClass
@@ -126,7 +126,7 @@
   } else if ([obj isKindOfClass:[GTLDateTime class]]) {
     // DateTimes live in JSON as strings, so convert.
     GTLDateTime *dateTime = obj;
-    result = [dateTime stringValue];
+    result = dateTime.stringValue;
   } else {
     checkExpected = NO;
     if (obj) {
@@ -530,7 +530,7 @@ static IMP GTLRuntimeGetterIMP(SEL sel,
       resultIMP = imp_implementationWithBlock(^(id obj) {
         NSNumber *num = [obj JSONValueForKey:jsonKey];
         num = GTL_EnsureNSNumber(num);
-        long long result = [num longLongValue];
+        long long result = num.longLongValue;
         return result;
       });
       break;
@@ -539,7 +539,7 @@ static IMP GTLRuntimeGetterIMP(SEL sel,
       resultIMP = imp_implementationWithBlock(^(id obj) {
         NSNumber *num = [obj JSONValueForKey:jsonKey];
         num = GTL_EnsureNSNumber(num);
-        unsigned long long result = [num unsignedLongLongValue];
+        unsigned long long result = num.unsignedLongLongValue;
         return result;
       });
       break;
@@ -549,7 +549,7 @@ static IMP GTLRuntimeGetterIMP(SEL sel,
       resultIMP = imp_implementationWithBlock(^(id obj) {
         NSNumber *num = [obj JSONValueForKey:jsonKey];
         num = GTL_EnsureNSNumber(num);
-        float result = [num floatValue];
+        float result = num.floatValue;
         return result;
       });
       break;
@@ -558,7 +558,7 @@ static IMP GTLRuntimeGetterIMP(SEL sel,
       resultIMP = imp_implementationWithBlock(^(id obj) {
         NSNumber *num = [obj JSONValueForKey:jsonKey];
         num = GTL_EnsureNSNumber(num);
-        double result = [num doubleValue];
+        double result = num.doubleValue;
         return result;
       });
       break;
@@ -566,7 +566,7 @@ static IMP GTLRuntimeGetterIMP(SEL sel,
     case GTLPropertyTypeBool:
       resultIMP = imp_implementationWithBlock(^(id obj) {
         NSNumber *num = [obj JSONValueForKey:jsonKey];
-        BOOL flag = [num boolValue];
+        BOOL flag = num.boolValue;
         return flag;
       });
       break;
@@ -778,7 +778,7 @@ static IMP GTLRuntimeSetterIMP(SEL sel,
                                                 GTLDateTime *val) {
         id cacheValue, jsonValue;
         if (![val isKindOfClass:[NSNull class]]) {
-          jsonValue = [val stringValue];
+          jsonValue = val.stringValue;
           cacheValue = val;
         } else {
           jsonValue = [NSNull null];
@@ -801,7 +801,7 @@ static IMP GTLRuntimeSetterIMP(SEL sel,
                                                 GTLObject *val) {
         id cacheValue, jsonValue;
         if (![val isKindOfClass:[NSNull class]]) {
-          NSMutableDictionary *dict = [val JSON];
+          NSMutableDictionary *dict = val.JSON;
           if (dict == nil && val != nil) {
             // adding an empty object; it should have a JSON dictionary so it
             // can hold future assignments

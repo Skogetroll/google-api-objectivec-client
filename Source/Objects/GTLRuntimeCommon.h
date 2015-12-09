@@ -34,7 +34,7 @@
 - (void)setCacheChild:(id)obj forKey:(NSString *)key;
 - (id)cacheChildForKey:(NSString *)key;
 // Surrogate class mappings.
-- (NSDictionary *)surrogates;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary *surrogates;
 // Key map
 + (NSDictionary *)propertyToJSONKeyMapForClass:(Class<GTLRuntimeCommon>)aClass;
 // Array item types

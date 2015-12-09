@@ -91,7 +91,7 @@
 
   if (data_) {
     str = [NSString stringWithFormat:@"data:%llu bytes",
-           (unsigned long long)[data_ length]];
+           (unsigned long long)data_.length];
     [array addObject:str];
   }
 
@@ -101,13 +101,13 @@
   }
 
   if (fileURL_) {
-    str = [NSString stringWithFormat:@"file:%@", [fileURL_ path]];
+    str = [NSString stringWithFormat:@"file:%@", fileURL_.path];
     [array addObject:str];
   }
 
   if (uploadLocationURL_) {
     str = [NSString stringWithFormat:@"uploadLocation:%@",
-           [uploadLocationURL_ absoluteString]];
+           uploadLocationURL_.absoluteString];
     [array addObject:str];
   }
 

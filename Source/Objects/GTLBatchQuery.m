@@ -62,11 +62,11 @@
 - (NSString *)description {
   NSArray *queries = self.queries;
   NSArray *methodNames = [queries valueForKey:@"methodName"];
-  NSArray *dedupedNames = [[NSSet setWithArray:methodNames] allObjects];
+  NSArray *dedupedNames = [NSSet setWithArray:methodNames].allObjects;
   NSString *namesStr = [dedupedNames componentsJoinedByString:@","];
 
   return [NSString stringWithFormat:@"%@ %p (queries:%lu methods:%@)",
-          [self class], self, (unsigned long) [queries count], namesStr];
+          [self class], self, (unsigned long) queries.count, namesStr];
 }
 
 #pragma mark -

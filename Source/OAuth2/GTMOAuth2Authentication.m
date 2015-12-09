@@ -478,7 +478,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
     NSArray *pendingAuthQueue = [NSArray arrayWithArray:authorizationQueue_];
     [authorizationQueue_ removeAllObjects];
 
-    BOOL hasAccessToken = ([self.accessToken length] > 0);
+    BOOL hasAccessToken = ((self.accessToken).length > 0);
 
     NSString *noteName;
     NSDictionary *userInfo = nil;
@@ -493,8 +493,8 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
       // JSON error key's value for easy inspection by the observer.
       noteName = kGTMOAuth2AccessTokenRefreshFailed;
       NSString *jsonErr = nil;
-      if ([error code] == kGTMOAuth2StatusBadRequest) {
-        NSDictionary *json = [error userInfo][kGTMOAuth2ErrorJSONKey];
+      if (error.code == kGTMOAuth2StatusBadRequest) {
+        NSDictionary *json = error.userInfo[kGTMOAuth2ErrorJSONKey];
         jsonErr = json[kGTMOAuth2ErrorMessageKey];
       }
       // error and jsonErr may be nil
@@ -521,7 +521,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   BOOL wasFound = NO;
   @synchronized(authorizationQueue_) {
     for (GTMOAuth2AuthorizationArgs *args in authorizationQueue_) {
-      if ([args request] == request) {
+      if (args.request == request) {
         wasFound = YES;
         break;
       }
@@ -532,7 +532,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
 - (BOOL)isAuthorizedRequest:(NSURLRequest *)request {
   NSString *authStr = [request valueForHTTPHeaderField:@"Authorization"];
-  return ([authStr length] > 0);
+  return (authStr.length > 0);
 }
 
 - (void)stopAuthorization {
@@ -549,7 +549,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
     NSUInteger argIndex = 0;
     BOOL found = NO;
     for (GTMOAuth2AuthorizationArgs *args in authorizationQueue_) {
-      if ([args request] == request) {
+      if (args.request == request) {
         found = YES;
         break;
       }
@@ -560,7 +560,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
       [authorizationQueue_ removeObjectAtIndex:argIndex];
 
       // If the queue is now empty, go ahead and stop the fetcher.
-      if ([authorizationQueue_ count] == 0) {
+      if (authorizationQueue_.count == 0) {
         [self stopAuthorization];
       }
     }
@@ -573,11 +573,11 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
   NSMutableURLRequest *request = args.request;
 
-  NSURL *requestURL = [request URL];
-  NSString *scheme = [requestURL scheme];
+  NSURL *requestURL = request.URL;
+  NSString *scheme = requestURL.scheme;
   BOOL isAuthorizableRequest = (requestURL == nil)
     || (scheme != nil && [scheme caseInsensitiveCompare:@"https"] == NSOrderedSame)
-    || [requestURL isFileURL]
+    || requestURL.fileURL
     || self.shouldAuthorizeAllRequests;
   if (!isAuthorizableRequest) {
     // Request is not https, a local file, or nil, so may be insecure
@@ -590,7 +590,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
   // Get the access token.
   NSString *accessToken = self.authorizationToken;
-  if (isAuthorizableRequest && [accessToken length] > 0) {
+  if (isAuthorizableRequest && accessToken.length > 0) {
     if (request) {
       // we have a likely valid access token
       NSString *value = [NSString stringWithFormat:@"%s %@",
@@ -674,8 +674,8 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
     NSMethodSignature *sig = [delegate methodSignatureForSelector:sel];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:sig];
-    [invocation setSelector:sel];
-    [invocation setTarget:delegate];
+    invocation.selector = sel;
+    invocation.target = delegate;
     [invocation setArgument:&self atIndex:2];
     [invocation setArgument:&request atIndex:3];
     [invocation setArgument:&error atIndex:4];
@@ -709,7 +709,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
     // the access token.
     token = self.authorizationToken;
   }
-  BOOL canAuth = [token length] > 0;
+  BOOL canAuth = token.length > 0;
   return canAuth;
 }
 
@@ -722,10 +722,10 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   NSString *assertion = self.assertion;
   NSString *code = self.code;
 
-  BOOL hasRefreshToken = ([refreshToken length] > 0);
-  BOOL hasAccessToken = ([accessToken length] > 0);
-  BOOL hasAssertion = ([assertion length] > 0);
-  BOOL hasCode = ([code length] > 0);
+  BOOL hasRefreshToken = (refreshToken.length > 0);
+  BOOL hasAccessToken = (accessToken.length > 0);
+  BOOL hasAssertion = (assertion.length > 0);
+  BOOL hasCode = (code.length > 0);
 
   // Determine if we need to refresh the access token
   if (hasRefreshToken || hasAssertion || hasCode) {
@@ -735,7 +735,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
       // We'll consider the token expired if it expires 60 seconds from now
       // or earlier
       NSDate *expirationDate = self.expirationDate;
-      NSTimeInterval timeToExpire = [expirationDate timeIntervalSinceNow];
+      NSTimeInterval timeToExpire = expirationDate.timeIntervalSinceNow;
       if (expirationDate == nil || timeToExpire < 60.0) {
         // access token has expired, or will in a few seconds
         shouldRefresh = YES;
@@ -757,7 +757,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
 - (NSString *)userAgent {
   NSBundle *bundle = [NSBundle mainBundle];
-  NSString *appID = [bundle bundleIdentifier];
+  NSString *appID = bundle.bundleIdentifier;
 
   NSString *version = [bundle objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
   if (version == nil) {
@@ -793,7 +793,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
     paramsDict[@"refresh_token"] = refreshToken;
 
     NSString *refreshScope = self.refreshScope;
-    if ([refreshScope length] > 0) {
+    if (refreshScope.length > 0) {
       paramsDict[@"scope"] = refreshScope;
     }
 
@@ -804,12 +804,12 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
     paramsDict[@"code"] = code;
 
     NSString *redirectURI = self.redirectURI;
-    if ([redirectURI length] > 0) {
+    if (redirectURI.length > 0) {
       paramsDict[@"redirect_uri"] = redirectURI;
     }
     
     NSString *scope = self.scope;
-    if ([scope length] > 0) {
+    if (scope.length > 0) {
       paramsDict[@"scope"] = scope;
     }
     
@@ -828,12 +828,12 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   paramsDict[@"grant_type"] = grantType;
 
   NSString *clientID = self.clientID;
-  if ([clientID length] > 0) {
+  if (clientID.length > 0) {
     paramsDict[@"client_id"] = clientID;
   }
 
   NSString *clientSecret = self.clientSecret;
-  if ([clientSecret length] > 0) {
+  if (clientSecret.length > 0) {
     paramsDict[@"client_secret"] = clientSecret;
   }
 
@@ -856,7 +856,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   [request setValue:@"application/x-www-form-urlencoded"
  forHTTPHeaderField:@"Content-Type"];
 
-  NSString *userAgent = [self userAgent];
+  NSString *userAgent = self.userAgent;
   [request setValue:userAgent forHTTPHeaderField:@"User-Agent"];
 
   GTMOAuth2Fetcher *fetcher;
@@ -872,9 +872,9 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
 #if !STRIP_GTM_FETCH_LOGGING
   // The user email address is known at token refresh time, not during the initial code exchange.
-  NSString *userEmail = [self userEmail];
+  NSString *userEmail = self.userEmail;
   NSString *forStr = userEmail ? [NSString stringWithFormat:@"for \"%@\"", userEmail] : @"";
-  [fetcher setCommentWithFormat:@"GTMOAuth2 %@ fetch to %@ %@", fetchType, [tokenURL host], forStr];
+  [fetcher setCommentWithFormat:@"GTMOAuth2 %@ fetch to %@ %@", fetchType, tokenURL.host, forStr];
 #endif
 
   fetcher.bodyData = paramData;
@@ -901,10 +901,10 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
                error:(NSError *)error {
   [self notifyFetchIsRunning:NO fetcher:fetcher type:nil];
 
-  NSDictionary *responseHeaders = [fetcher responseHeaders];
+  NSDictionary *responseHeaders = fetcher.responseHeaders;
   NSString *responseType = [responseHeaders valueForKey:@"Content-Type"];
   BOOL isResponseJSON = [responseType hasPrefix:@"application/json"];
-  BOOL hasData = ([data length] > 0);
+  BOOL hasData = (data.length > 0);
 
   if (error) {
     // Failed. If the error body is JSON, parse it and add it to the error's
@@ -912,7 +912,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
     if (hasData) {
       if (isResponseJSON) {
         NSDictionary *errorJson = [[self class] dictionaryWithJSONData:data];
-        if ([errorJson count] > 0) {
+        if (errorJson.count > 0) {
 #if DEBUG
           NSLog(@"Error %@\nError data:\n%@", error, errorJson);
 #endif
@@ -920,12 +920,12 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
           NSMutableDictionary *userInfo;
           userInfo = [NSMutableDictionary dictionaryWithObject:errorJson
                                                         forKey:kGTMOAuth2ErrorJSONKey];
-          NSDictionary *prevUserInfo = [error userInfo];
+          NSDictionary *prevUserInfo = error.userInfo;
           if (prevUserInfo) {
             [userInfo addEntriesFromDictionary:prevUserInfo];
           }
-          error = [NSError errorWithDomain:[error domain]
-                                      code:[error code]
+          error = [NSError errorWithDomain:error.domain
+                                      code:error.code
                                   userInfo:userInfo];
         }
       }
@@ -948,7 +948,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
 #if DEBUG
       // Watch for token exchanges that return a non-bearer or unlabeled token
-      NSString *tokenType = [self tokenType];
+      NSString *tokenType = self.tokenType;
       if (tokenType == nil
           || [tokenType caseInsensitiveCompare:@"bearer"] != NSOrderedSame) {
         NSLog(@"GTMOAuth2: Unexpected token type: %@", tokenType);
@@ -1150,7 +1150,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   NSDate *date = nil;
   NSNumber *expiresIn = self.expiresIn;
   if (expiresIn) {
-    unsigned long deltaSeconds = [expiresIn unsignedLongValue];
+    unsigned long deltaSeconds = expiresIn.unsignedLongValue;
     if (deltaSeconds > 0) {
       date = [NSDate dateWithTimeIntervalSinceNow:deltaSeconds];
     }
@@ -1203,7 +1203,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   } else {
     // Be sure the property dictionary exists
     if (properties_ == nil) {
-      [self setProperties:[NSMutableDictionary dictionary]];
+      self.properties = [NSMutableDictionary dictionary];
     }
     properties_[key] = obj;
   }
@@ -1253,7 +1253,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 + (NSString *)encodedQueryParametersForDictionary:(NSDictionary *)dict {
   // Make a string like "cat=fluffy@dog=spot"
   NSMutableString *result = [NSMutableString string];
-  NSArray *sortedKeys = [[dict allKeys] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+  NSArray *sortedKeys = [dict.allKeys sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
   NSString *joiner = @"";
   for (NSString *key in sortedKeys) {
     NSString *value = dict[key];
@@ -1273,8 +1273,8 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
   if (delegate && sel) {
     NSMethodSignature *sig = [delegate methodSignatureForSelector:sel];
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:sig];
-    [invocation setSelector:sel];
-    [invocation setTarget:delegate];
+    invocation.selector = sel;
+    invocation.target = delegate;
     [invocation setArgument:&obj1 atIndex:2];
     [invocation setArgument:&obj2 atIndex:3];
     [invocation setArgument:&obj3 atIndex:4];
@@ -1286,9 +1286,9 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 #if (!TARGET_OS_IPHONE && defined(MAC_OS_X_VERSION_10_9) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_9) \
     || (TARGET_OS_IPHONE && defined(__IPHONE_7_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
   // On iOS 7, -stringByRemovingPercentEncoding incorrectly returns nil for an empty string.
-  if (str != nil && [str length] == 0) return @"";
+  if (str != nil && str.length == 0) return @"";
 
-  NSString *plainStr = [str stringByRemovingPercentEncoding];
+  NSString *plainStr = str.stringByRemovingPercentEncoding;
   return plainStr;
 #else
   NSString *plainStr = [str stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -1304,7 +1304,7 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 
   NSArray *items = [responseStr componentsSeparatedByString:@"&"];
 
-  NSMutableDictionary *responseDict = [NSMutableDictionary dictionaryWithCapacity:[items count]];
+  NSMutableDictionary *responseDict = [NSMutableDictionary dictionaryWithCapacity:items.count];
 
   for (NSString *item in items) {
     NSString *key = nil;

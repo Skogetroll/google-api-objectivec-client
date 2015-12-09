@@ -297,12 +297,12 @@
 		4F697FA6131C1A4100A5AB6A /* GTMOAuth2SignIn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GTMOAuth2SignIn.m; path = OAuth2/GTMOAuth2SignIn.m; sourceTree = "<group>"; };
 		4F697FB3131C1A5800A5AB6A /* GTMOAuth2Window.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = GTMOAuth2Window.xib; path = OAuth2/Mac/GTMOAuth2Window.xib; sourceTree = "<group>"; };
 		4F697FB4131C1A5800A5AB6A /* GTMOAuth2WindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMOAuth2WindowController.h; path = OAuth2/Mac/GTMOAuth2WindowController.h; sourceTree = "<group>"; };
-		4F697FB5131C1A5800A5AB6A /* GTMOAuth2WindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GTMOAuth2WindowController.m; path = OAuth2/Mac/GTMOAuth2WindowController.m; sourceTree = "<group>"; };
+		4F697FB5131C1A5800A5AB6A /* GTMOAuth2WindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; name = GTMOAuth2WindowController.m; path = OAuth2/Mac/GTMOAuth2WindowController.m; sourceTree = "<group>"; tabWidth = 2; };
 		4F697FBB131C1A6800A5AB6A /* GTMOAuth2ViewControllerTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMOAuth2ViewControllerTouch.h; path = OAuth2/Touch/GTMOAuth2ViewControllerTouch.h; sourceTree = "<group>"; };
 		4F697FBC131C1A6800A5AB6A /* GTMOAuth2ViewControllerTouch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GTMOAuth2ViewControllerTouch.m; path = OAuth2/Touch/GTMOAuth2ViewControllerTouch.m; sourceTree = "<group>"; };
 		4F697FBD131C1A6800A5AB6A /* GTMOAuth2ViewTouch.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = GTMOAuth2ViewTouch.xib; path = OAuth2/Touch/GTMOAuth2ViewTouch.xib; sourceTree = "<group>"; };
 		4F69804B131C1F1D00A5AB6A /* GTMGatherInputStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMGatherInputStream.h; path = HTTPFetcher/GTMGatherInputStream.h; sourceTree = "<group>"; };
-		4F69804C131C1F1D00A5AB6A /* GTMGatherInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GTMGatherInputStream.m; path = HTTPFetcher/GTMGatherInputStream.m; sourceTree = "<group>"; };
+		4F69804C131C1F1D00A5AB6A /* GTMGatherInputStream.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; name = GTMGatherInputStream.m; path = HTTPFetcher/GTMGatherInputStream.m; sourceTree = "<group>"; tabWidth = 2; };
 		4F69804D131C1F1D00A5AB6A /* GTMHTTPFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMHTTPFetcher.h; path = HTTPFetcher/GTMHTTPFetcher.h; sourceTree = "<group>"; };
 		4F69804E131C1F1D00A5AB6A /* GTMHTTPFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GTMHTTPFetcher.m; path = HTTPFetcher/GTMHTTPFetcher.m; sourceTree = "<group>"; };
 		4F69804F131C1F1D00A5AB6A /* GTMHTTPFetcherLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMHTTPFetcherLogging.h; path = HTTPFetcher/GTMHTTPFetcherLogging.h; sourceTree = "<group>"; };
@@ -425,8 +425,10 @@
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 				4F5A6FA914081D6200019FCD /* ReleaseNotes.txt */,
 			);
+			indentWidth = 2;
 			name = GoogleBundle;
 			sourceTree = "<group>";
+			tabWidth = 2;
 		};
 		089C1671FE841209C02AAC07 /* Frameworks and Libraries */ = {
 			isa = PBXGroup;
@@ -1043,6 +1045,8 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DDEBUG=1";
 				SDKROOT = macosx;
@@ -1081,6 +1085,8 @@
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				SDKROOT = macosx;
 				WARNING_CFLAGS = (
 					"-Wall",

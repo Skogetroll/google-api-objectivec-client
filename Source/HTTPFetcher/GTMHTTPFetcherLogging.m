@@ -113,7 +113,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
                                               NSUserDomainMask, YES);
 #endif
 
-    if ([arr count] > 0) {
+    if (arr.count > 0) {
       NSString *const kGTMLogFolderName = @"GTMHTTPDebugLogs";
 
       NSString *desktopPath = arr[0];
@@ -194,14 +194,14 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   // get the process name (once per run) replacing spaces with underscores
   if (!gLoggingProcessName) {
 
-    NSString *procName = [[NSProcessInfo processInfo] processName];
+    NSString *procName = [NSProcessInfo processInfo].processName;
     NSMutableString *loggingProcessName;
     loggingProcessName = [[NSMutableString alloc] initWithString:procName];
 
     [loggingProcessName replaceOccurrencesOfString:@" "
                                         withString:@"_"
                                            options:0
-                                             range:NSMakeRange(0, [loggingProcessName length])];
+                                             range:NSMakeRange(0, loggingProcessName.length)];
     gLoggingProcessName = loggingProcessName;
   }
   return gLoggingProcessName;
@@ -219,8 +219,8 @@ static NSString *gLogDirectoryForCurrentRun = nil;
     // produce a string like 08-21_01-41-23PM
 
     NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-    [formatter setFormatterBehavior:NSDateFormatterBehavior10_4];
-    [formatter setDateFormat:@"M-dd_hh-mm-ssa"];
+    formatter.formatterBehavior = NSDateFormatterBehavior10_4;
+    formatter.dateFormat = @"M-dd_hh-mm-ssa";
 
     gLoggingDateStamp = [[formatter stringFromDate:[NSDate date]] retain] ;
   }
@@ -254,7 +254,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   // if the content type is JSON and we have the parsing class available,
   // use that
   if ([contentType hasPrefix:@"application/json"]
-      && [inputData length] > 5) {
+      && inputData.length > 5) {
     // convert from JSON string to NSObjects and back to a formatted string
     NSMutableDictionary *obj = [[self class] JSONObjectWithData:inputData];
     if (obj) {
@@ -287,34 +287,34 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   }
 
   if (isXMLLintAvailable
-      && [inputData length] > 5
-      && strncmp([inputData bytes], "<?xml", 5) == 0) {
+      && inputData.length > 5
+      && strncmp(inputData.bytes, "<?xml", 5) == 0) {
 
     // call xmllint to format the data
     NSTask *task = [[[NSTask alloc] init] autorelease];
-    [task setLaunchPath:kXMLLintPath];
+    task.launchPath = kXMLLintPath;
 
     // use the dash argument to specify stdin as the source file
-    [task setArguments:@[@"--format", @"-"]];
-    [task setEnvironment:@{}];
+    task.arguments = @[@"--format", @"-"];
+    task.environment = @{};
 
     NSPipe *inputPipe = [NSPipe pipe];
     NSPipe *outputPipe = [NSPipe pipe];
-    [task setStandardInput:inputPipe];
-    [task setStandardOutput:outputPipe];
+    task.standardInput = inputPipe;
+    task.standardOutput = outputPipe;
 
     [task launch];
 
-    [[inputPipe fileHandleForWriting] writeData:inputData];
-    [[inputPipe fileHandleForWriting] closeFile];
+    [inputPipe.fileHandleForWriting writeData:inputData];
+    [inputPipe.fileHandleForWriting closeFile];
 
     // drain the stdout before waiting for the task to exit
-    NSData *formattedData = [[outputPipe fileHandleForReading] readDataToEndOfFile];
+    NSData *formattedData = [outputPipe.fileHandleForReading readDataToEndOfFile];
 
     [task waitUntilExit];
 
-    int status = [task terminationStatus];
-    if (status == 0 && [formattedData length] > 0) {
+    int status = task.terminationStatus;
+    if (status == 0 && formattedData.length > 0) {
       // success
       inputData = formattedData;
     }
@@ -337,7 +337,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
       && postStream_ != nil) {
     loggedStreamData_ = [[NSMutableData alloc] init];
 
-    BOOL didCapture = [self logCapturePostStream];
+    BOOL didCapture = self.logCapturePostStream;
     if (!didCapture) {
       // upload stream logging requires the class
       // GTMReadMonitorInputStream be available
@@ -417,9 +417,9 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   // and turn that munged buffer an NSString.  That gives us a string
   // we can use with NSScanner.
   NSMutableData *mutableData = [NSMutableData dataWithData:data];
-  unsigned char *bytes = (unsigned char *)[mutableData mutableBytes];
+  unsigned char *bytes = (unsigned char *)mutableData.mutableBytes;
 
-  for (unsigned int idx = 0; idx < [mutableData length]; idx++) {
+  for (unsigned int idx = 0; idx < mutableData.length; idx++) {
     if (bytes[idx] > 0x7F || bytes[idx] == 0) {
       bytes[idx] = '_';
     }
@@ -444,7 +444,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
       NSMutableArray *origParts = [NSMutableArray array];
       NSUInteger offset = 0;
       for (NSString *mungedPart in mungedParts) {
-        NSUInteger partSize = [mungedPart length];
+        NSUInteger partSize = mungedPart.length;
 
         NSRange range = NSMakeRange(offset, partSize);
         NSData *origPartData = [data subdataWithRange:range];
@@ -465,10 +465,10 @@ static NSString *gLogDirectoryForCurrentRun = nil;
 
           // make a part string with the header and <<n bytes>>
           NSString *binStr = [NSString stringWithFormat:@"\r%@\r<<%lu bytes>>\r",
-            header, (long)(partSize - [header length])];
+            header, (long)(partSize - header.length)];
           [origParts addObject:binStr];
         }
-        offset += partSize + [boundary length];
+        offset += partSize + boundary.length;
       }
 
       // rejoin the original parts
@@ -479,7 +479,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   if (!streamDataStr) {
     // give up; just make a string showing the uploaded bytes
     streamDataStr = [NSString stringWithFormat:@"<<%u bytes>>",
-                     (unsigned int)[data length]];
+                     (unsigned int)data.length];
   }
   return streamDataStr;
 }
@@ -514,13 +514,13 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   NSString *responseDataFileName = nil;
   NSUInteger responseDataLength;
   if (downloadFileHandle_) {
-    responseDataLength = (NSUInteger) [downloadFileHandle_ offsetInFile];
+    responseDataLength = (NSUInteger) downloadFileHandle_.offsetInFile;
   } else {
-    responseDataLength = [downloadedData_ length];
+    responseDataLength = downloadedData_.length;
   }
 
-  NSURLResponse *response = [self response];
-  NSDictionary *responseHeaders = [self responseHeaders];
+  NSURLResponse *response = self.response;
+  NSDictionary *responseHeaders = self.responseHeaders;
 
   NSString *responseBaseName = nil;
   NSString *responseDataStr = nil;
@@ -528,7 +528,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
 
   // if there's response data, decide what kind of file to put it in based
   // on the first bytes of the file or on the mime type supplied by the server
-  NSString *responseMIMEType = [response MIMEType];
+  NSString *responseMIMEType = response.MIMEType;
   BOOL isResponseImage = NO;
   NSData *dataToWrite = nil;
 
@@ -592,7 +592,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   BOOL didFileExist = [[self class] fileOrDirExistsAtPath:htmlPath];
 
   NSMutableString* outputHTML = [NSMutableString string];
-  NSURLRequest *request = [self mutableRequest];
+  NSURLRequest *request = self.mutableRequest;
 
   // we need a header to say we'll have UTF-8 text
   if (!didFileExist) {
@@ -610,7 +610,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   NSString *const dateLineFormat = @"<b>%@ &nbsp;&nbsp;&nbsp;&nbsp; ";
   [outputHTML appendFormat:dateLineFormat, [NSDate date]];
 
-  NSString *comment = [self comment];
+  NSString *comment = self.comment;
   if (comment) {
     NSString *const commentFormat = @"%@ &nbsp;&nbsp;&nbsp;&nbsp; ";
     [outputHTML appendFormat:commentFormat, comment];
@@ -620,10 +620,10 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   [outputHTML appendFormat:reqRespFormat, copyableFileName];
 
   // write the request URL
-  NSString *requestMethod = [request HTTPMethod];
-  NSURL *requestURL = [request URL];
+  NSString *requestMethod = request.HTTPMethod;
+  NSURL *requestURL = request.URL;
 
-  NSURL *redirectedFromHost = [[[redirectedFromURL_ host] copy] autorelease];
+  NSURL *redirectedFromHost = [[redirectedFromURL_.host copy] autorelease];
   // Save the request URL for next time in case this redirects.
   [redirectedFromURL_ release];
   redirectedFromURL_ = [requestURL copy];
@@ -636,8 +636,8 @@ static NSString *gLogDirectoryForCurrentRun = nil;
    requestMethod, requestURL];
 
   // write the request headers
-  NSDictionary *requestHeaders = [request allHTTPHeaderFields];
-  NSUInteger numberOfRequestHeaders = [requestHeaders count];
+  NSDictionary *requestHeaders = request.allHTTPHeaderFields;
+  NSUInteger numberOfRequestHeaders = requestHeaders.count;
   if (numberOfRequestHeaders > 0) {
     // Indicate if the request is authorized; warn if the request is
     // authorized but non-SSL
@@ -645,7 +645,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
     NSString *headerDetails = @"";
     if (auth) {
       headerDetails = @"&nbsp;&nbsp;&nbsp;<i>authorized</i>";
-      BOOL isInsecure = [[requestURL scheme] isEqual:@"http"];
+      BOOL isInsecure = [requestURL.scheme isEqual:@"http"];
       if (isInsecure) {
         headerDetails = @"&nbsp;&nbsp;&nbsp;<i>authorized, non-SSL</i>"
           "<FONT COLOR='#FF00FF'> &#x26A0;</FONT> "; // 26A0 = ⚠
@@ -679,11 +679,11 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   } else if (postData_) {
     postData = postData_;
   } else {
-    postData = [request_ HTTPBody];
+    postData = request_.HTTPBody;
   }
 
   NSString *postDataStr = nil;
-  NSUInteger postDataLength = [postData length];
+  NSUInteger postDataLength = postData.length;
   NSString *postType = [requestHeaders valueForKey:@"Content-Type"];
 
   if (postDataLength > 0) {
@@ -718,7 +718,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   }
 
   // write the response status, MIME type, URL
-  NSInteger status = [self statusCode];
+  NSInteger status = self.statusCode;
   if (response) {
     NSString *statusString = @"";
     if (status != 0) {
@@ -751,20 +751,20 @@ static NSString *gLogDirectoryForCurrentRun = nil;
 
     // show the response URL only if it's different from the request URL
     NSString *responseURLStr =  @"";
-    NSURL *responseURL = [response URL];
+    NSURL *responseURL = response.URL;
 
-    if (responseURL && ![responseURL isEqual:[request URL]]) {
+    if (responseURL && ![responseURL isEqual:request.URL]) {
       NSString *const responseURLFormat = @"<FONT COLOR='#FF00FF'>response URL:"
         "</FONT> <code>%@</code><br>\n";
       responseURLStr = [NSString stringWithFormat:responseURLFormat,
-        [responseURL absoluteString]];
+        responseURL.absoluteString];
     }
 
     [outputHTML appendFormat:@"<b>response:</b>&nbsp;&nbsp;status %@<br>\n%@",
       statusString, responseURLStr];
 
     // Write the response headers
-    NSUInteger numberOfResponseHeaders = [responseHeaders count];
+    NSUInteger numberOfResponseHeaders = responseHeaders.count;
     if (numberOfResponseHeaders > 0) {
       // Indicate if the server is setting cookies
       NSString *cookiesSet = [responseHeaders valueForKey:@"Set-Cookie"];
@@ -785,7 +785,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
 
   // error
   if (error) {
-    [outputHTML appendFormat:@"<b>Error:</b> %@ <br>\n", [error description]];
+    [outputHTML appendFormat:@"<b>Error:</b> %@ <br>\n", error.description];
   }
 
   // Write the response data
@@ -805,7 +805,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
         "%@</code>&nbsp;&nbsp;&nbsp;<i><a href=\"%@\">%@</a></i>\n";
       [outputHTML appendFormat:fmt,
        (int)responseDataLength, responseMIMEType,
-       escapedResponseFile, [escapedResponseFile pathExtension]];
+       escapedResponseFile, escapedResponseFile.pathExtension];
     }
   } else {
     // The response data was not an image; just show the length and MIME type
@@ -824,7 +824,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
     [copyable appendFormat:@"Redirected from %@\n", redirectedFromHost];
   }
   [copyable appendFormat:@"Request: %@ %@\n", requestMethod, requestURL];
-  if ([requestHeaders count] > 0) {
+  if (requestHeaders.count > 0) {
     [copyable appendFormat:@"Request headers:\n%@\n",
      [[self class] headersStringForDictionary:requestHeaders]];
   }
@@ -852,14 +852,14 @@ static NSString *gLogDirectoryForCurrentRun = nil;
       }
       if (responseDataStr != nil) {
         [copyable appendFormat:@"%@\n", responseDataStr];
-      } else if (status >= 400 && [temporaryDownloadPath_ length] > 0) {
+      } else if (status >= 400 && temporaryDownloadPath_.length > 0) {
         // Try to read in the saved data, which is probably a server error
         // message
         NSStringEncoding enc;
         responseDataStr = [NSString stringWithContentsOfFile:temporaryDownloadPath_
                                                 usedEncoding:&enc
                                                        error:NULL];
-        if ([responseDataStr length] > 0) {
+        if (responseDataStr.length > 0) {
           [copyable appendFormat:@"%@\n", responseDataStr];
         } else {
           [copyable appendFormat:@"<<%u bytes to file>>\n",
@@ -906,7 +906,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
     [outputHTML appendString:@"<br><hr><p>"];
 
     // Append the HTML to the main output file
-    const char* htmlBytes = [outputHTML UTF8String];
+    const char* htmlBytes = outputHTML.UTF8String;
     NSOutputStream *stream = [NSOutputStream outputStreamToFileAtPath:htmlPath
                                                                append:YES];
     [stream open];
@@ -951,11 +951,11 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   postStream_ = [monitorClass inputStreamWithStream:postStream_];
   [postStream_ retain];
 
-  [(GTMReadMonitorInputStream *)postStream_ setReadDelegate:self];
-  [(GTMReadMonitorInputStream *)postStream_ setRunLoopModes:[self runLoopModes]];
+  ((GTMReadMonitorInputStream *)postStream_).readDelegate = self;
+  ((GTMReadMonitorInputStream *)postStream_).runLoopModes = self.runLoopModes;
 
   SEL readSel = @selector(inputStream:readIntoBuffer:length:);
-  [(GTMReadMonitorInputStream *)postStream_ setReadSelector:readSel];
+  ((GTMReadMonitorInputStream *)postStream_).readSelector = readSel;
 
   return YES;
 }
@@ -978,7 +978,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
 
 + (BOOL)fileOrDirExistsAtPath:(NSString *)path {
   struct stat buffer;
-  int result = stat([path fileSystemRepresentation], &buffer);
+  int result = stat(path.fileSystemRepresentation, &buffer);
   return (result == 0);
 }
 
@@ -986,27 +986,27 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   int result = 0;
 
   // Recursively create the parent directory of the requested path
-  NSString *parent = [path stringByDeletingLastPathComponent];
+  NSString *parent = path.stringByDeletingLastPathComponent;
   if (![self fileOrDirExistsAtPath:parent]) {
     result = [self makeDirectoryUpToPath:parent];
   }
 
   // Make the leaf directory
   if (result == 0 && ![self fileOrDirExistsAtPath:path]) {
-    result = mkdir([path fileSystemRepresentation], S_IRWXU); // RWX for owner
+    result = mkdir(path.fileSystemRepresentation, S_IRWXU); // RWX for owner
   }
   return (result == 0);
 }
 
 + (BOOL)removeItemAtPath:(NSString *)path {
-  int result = unlink([path fileSystemRepresentation]);
+  int result = unlink(path.fileSystemRepresentation);
   return (result == 0);
 }
 
 + (BOOL)createSymbolicLinkAtPath:(NSString *)newPath
              withDestinationPath:(NSString *)targetPath {
-  int result = symlink([targetPath fileSystemRepresentation],
-                       [newPath fileSystemRepresentation]);
+  int result = symlink(targetPath.fileSystemRepresentation,
+                       newPath.fileSystemRepresentation);
   return (result == 0);
 }
 
@@ -1026,7 +1026,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   if (startRange.location == NSNotFound) return originalStr;
 
   // We found the start string
-  NSUInteger originalLength = [originalStr length];
+  NSUInteger originalLength = originalStr.length;
   NSUInteger startOfTarget = NSMaxRange(startRange);
   NSRange targetAndRest = NSMakeRange(startOfTarget,
                                       originalLength - startOfTarget);
@@ -1057,7 +1057,7 @@ static NSString *gLogDirectoryForCurrentRun = nil;
   //
   // Pad the key names, but not beyond 16 chars, since long custom header
   // keys just create too much whitespace
-  NSArray *keys = [[dict allKeys] sortedArrayUsingSelector:@selector(compare:)];
+  NSArray *keys = [dict.allKeys sortedArrayUsingSelector:@selector(compare:)];
 
   NSMutableString *str = [NSMutableString string];
   for (NSString *key in keys) {

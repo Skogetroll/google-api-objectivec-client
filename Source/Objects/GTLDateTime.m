@@ -117,7 +117,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   BOOL hasTimeZone = [components respondsToSelector:@selector(timeZone)];
 #endif
   if (hasTimeZone) {
-    tz = [components timeZone];
+    tz = components.timeZone;
   }
 #endif  // GTL_IPHONE
   return [self dateTimeWithDate:date timeZone:tz];
@@ -212,7 +212,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
 }
 
 - (NSUInteger)hash {
-  return [[self date] hash];
+  return self.date.hash;
 }
 
 - (NSString *)description {
@@ -271,7 +271,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
 #endif
       cal = [[[NSCalendar alloc] initWithCalendarIdentifier:calendarID] autorelease];
       if (tz) {
-        [cal setTimeZone:tz];
+        cal.timeZone = tz;
       }
       gCalendarsForTimeZones[tzKey] = cal;
     }
@@ -303,9 +303,9 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
     // copy to noon GMT, since that ensures the date renders correctly for
     // any time zone.
     NSDateComponents *noonDateComponents = [[dateComponents copy] autorelease];
-    [noonDateComponents setHour:12];
-    [noonDateComponents setMinute:0];
-    [noonDateComponents setSecond:0];
+    noonDateComponents.hour = 12;
+    noonDateComponents.minute = 0;
+    noonDateComponents.second = 0;
     dateComponents = noonDateComponents;
 
     NSTimeZone *gmt = [NSTimeZone timeZoneWithName:@"Universal"];
@@ -375,14 +375,14 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
     }
 
     timeString = [NSString stringWithFormat:@"T%02ld:%02ld:%02ld%@%@",
-      (long)[dateComponents hour], (long)[dateComponents minute],
-      (long)[dateComponents second], fractionalSecondsString, timeOffsetString];
+      (long)dateComponents.hour, (long)dateComponents.minute,
+      (long)dateComponents.second, fractionalSecondsString, timeOffsetString];
   }
 
   // full dateString like "2006-11-17T15:10:46-08:00"
   NSString *dateString = [NSString stringWithFormat:@"%04ld-%02ld-%02ld%@",
-    (long)[dateComponents year], (long)[dateComponents month],
-    (long)[dateComponents day], timeString];
+    (long)dateComponents.year, (long)dateComponents.month,
+    (long)dateComponents.day, timeString];
 
   @synchronized(self) {
     [cachedRFC3339String_ release];
@@ -408,7 +408,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   self.dateComponents = components;
 
   // Extract the fractional seconds.
-  NSTimeInterval asTimeInterval = [date timeIntervalSince1970];
+  NSTimeInterval asTimeInterval = date.timeIntervalSince1970;
   NSTimeInterval worker = asTimeInterval - trunc(asTimeInterval);
   self.milliseconds = (NSInteger)round(worker * 1000.0);
 
@@ -456,7 +456,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   NSInteger offsetHour = 0;
   NSInteger offsetMinute = 0;
 
-  if ([str length] > 0) {
+  if (str.length > 0) {
     NSScanner* scanner = [NSScanner scannerWithString:str];
     // There should be no whitespace, so no skip characters.
     [scanner setCharactersToBeSkipped:nil];
@@ -493,12 +493,12 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   }
 
   NSDateComponents *dateComponents = [[[NSDateComponents alloc] init] autorelease];
-  [dateComponents setYear:year];
-  [dateComponents setMonth:month];
-  [dateComponents setDay:day];
-  [dateComponents setHour:hour];
-  [dateComponents setMinute:minute];
-  [dateComponents setSecond:sec];
+  dateComponents.year = year;
+  dateComponents.month = month;
+  dateComponents.day = day;
+  dateComponents.hour = hour;
+  dateComponents.minute = minute;
+  dateComponents.second = sec;
 
   self.dateComponents = dateComponents;
   self.milliseconds = milliseconds;
@@ -536,8 +536,8 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
 - (BOOL)hasTime {
   NSDateComponents *dateComponents = self.dateComponents;
 
-  BOOL hasTime = ([dateComponents hour] != kGTLUndefinedDateComponent
-                  && [dateComponents minute] != kGTLUndefinedDateComponent);
+  BOOL hasTime = (dateComponents.hour != kGTLUndefinedDateComponent
+                  && dateComponents.minute != kGTLUndefinedDateComponent);
 
   return hasTime;
 }
@@ -548,17 +548,17 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   BOOL hadTime = self.hasTime;
 
   if (shouldHaveTime && !hadTime) {
-    [dateComponents_ setHour:0];
-    [dateComponents_ setMinute:0];
-    [dateComponents_ setSecond:0];
+    dateComponents_.hour = 0;
+    dateComponents_.minute = 0;
+    dateComponents_.second = 0;
     milliseconds_ = 0;
     offsetSeconds_ = kGTLUndefinedDateComponent;
     isUniversalTime_ = NO;
 
   } else if (hadTime && !shouldHaveTime) {
-    [dateComponents_ setHour:kGTLUndefinedDateComponent];
-    [dateComponents_ setMinute:kGTLUndefinedDateComponent];
-    [dateComponents_ setSecond:kGTLUndefinedDateComponent];
+    dateComponents_.hour = kGTLUndefinedDateComponent;
+    dateComponents_.minute = kGTLUndefinedDateComponent;
+    dateComponents_.second = kGTLUndefinedDateComponent;
     milliseconds_ = 0;
     offsetSeconds_ = kGTLUndefinedDateComponent;
     isUniversalTime_ = NO;

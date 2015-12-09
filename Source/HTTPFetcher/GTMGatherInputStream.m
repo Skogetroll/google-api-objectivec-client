@@ -17,75 +17,83 @@
 
 @implementation GTMGatherInputStream
 
-+ (NSInputStream *)streamWithArray:(NSArray *)dataArray {
-  return [[[self alloc] initWithArray:dataArray] autorelease];
++ (instancetype)streamWithArray:(NSArray<NSData *> *)dataArray {
+  GTMGatherInputStream *stream = [[[GTMGatherInputStream alloc] initWithArray:dataArray] autorelease];
+  return stream;
 }
 
-- (id)initWithArray:(NSArray *)dataArray {
-  self = [super init];
+- (instancetype)initWithArray:(NSArray *)dataArray {
+  // We use a dummy input stream to handle all the various undocumented
+  // messages the system sends to an input stream.
+  //
+  // Contrary to documentation, inputStreamWithData neither copies nor
+  // retains the data in Mac OS X 10.4, so we must retain it.
+  // (Radar 5167591)
+  
+  dummyData_ = [[NSData alloc] initWithBytes:"x" length:1];
+  self = [super initWithData:dummyData_];
+  dummyStream_ = self;
   if (self) {
     dataArray_ = [dataArray retain];
     arrayIndex_ = 0;
     dataOffset_ = 0;
-
-    [self setDelegate:self];  // An NSStream's default delegate should be self.
-
-    // We use a dummy input stream to handle all the various undocumented
-    // messages the system sends to an input stream.
-    //
-    // Contrary to documentation, inputStreamWithData neither copies nor
-    // retains the data in Mac OS X 10.4, so we must retain it.
-    // (Radar 5167591)
-
-    dummyData_ = [[NSData alloc] initWithBytes:"x" length:1];
-    dummyStream_ = [[NSInputStream alloc] initWithData:dummyData_];
+    
+    self.delegate = self;  // An NSStream's default delegate should be self.
   }
   return self;
+}
+
+- (instancetype)initWithData:(NSData *)data {
+  return [self initWithArray:@[data]];
+}
+
+- (instancetype)initWithURL:(NSURL *)url {
+  return [self initWithArray:@[]];
 }
 
 - (void)dealloc {
   [dataArray_ release];
   [dummyStream_ release];
   [dummyData_ release];
-
+  
   [super dealloc];
 }
 
 - (NSInteger)read:(uint8_t *)buffer maxLength:(NSUInteger)len {
-
+  
   NSInteger bytesRead = 0;
   NSUInteger bytesRemaining = len;
-
+  
   // read bytes from the currently-indexed array
-  while ((bytesRemaining > 0) && (arrayIndex_ < [dataArray_ count])) {
-
-    NSData* data = [dataArray_ objectAtIndex:arrayIndex_];
-
-    NSUInteger dataLen = [data length];
+  while ((bytesRemaining > 0) && (arrayIndex_ < dataArray_.count)) {
+    
+    NSData* data = dataArray_[arrayIndex_];
+    
+    NSUInteger dataLen = data.length;
     NSUInteger dataBytesLeft = dataLen - (NSUInteger)dataOffset_;
-
+    
     NSUInteger bytesToCopy = MIN(bytesRemaining, dataBytesLeft);
     NSRange range = NSMakeRange((NSUInteger) dataOffset_, bytesToCopy);
-
+    
     [data getBytes:(buffer + bytesRead) range:range];
-
+    
     bytesRead += bytesToCopy;
     dataOffset_ += bytesToCopy;
     bytesRemaining -= bytesToCopy;
-
+    
     if (dataOffset_ == (long long)dataLen) {
       dataOffset_ = 0;
       arrayIndex_++;
     }
   }
-
+  
   if (bytesRead == 0) {
     // We are at the end our our stream, so we read all of the data on our
     // dummy input stream to make sure it is in the "fully read" state.
     uint8_t leftOverBytes[2];
     (void) [dummyStream_ read:leftOverBytes maxLength:sizeof(leftOverBytes)];
   }
-
+  
   return bytesRead;
 }
 
@@ -109,7 +117,7 @@
 
 - (void)close {
   [dummyStream_ close];
-
+  
   // 10.4's NSURLConnection tends to retain streams needlessly,
   // so we'll free up the data array right away
   [dataArray_ release];
@@ -132,7 +140,7 @@
     [dummyStream_ setDelegate:nil];
   } else {
     delegate_ = delegate;
-    [dummyStream_ setDelegate:self];
+    dummyStream_.delegate = self;
   }
 }
 
@@ -153,10 +161,10 @@
 }
 
 - (NSStreamStatus)streamStatus {
-  return [dummyStream_ streamStatus];
+  return dummyStream_.streamStatus;
 }
 - (NSError *)streamError {
-  return [dummyStream_ streamError];
+  return dummyStream_.streamError;
 }
 
 #pragma mark -
@@ -180,17 +188,17 @@
 }
 
 - (void)forwardInvocation:(NSInvocation*)invocation {
-
+  
 #if 0
   // uncomment this section to see the messages the NSInputStream receives
   SEL selector;
   NSString *selName;
-
+  
   selector=[invocation selector];
   selName=NSStringFromSelector(selector);
   NSLog(@"-forwardInvocation: %@",selName);
 #endif
-
+  
   [invocation invokeWithTarget:dummyStream_];
 }
 

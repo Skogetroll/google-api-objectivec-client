@@ -120,13 +120,13 @@
 }
 
 - (void)invokeReadSelectorWithBuffer:(NSData *)data {
-  const void *buffer = [data bytes];
-  NSUInteger length = [data length];
+  const void *buffer = data.bytes;
+  NSUInteger length = data.length;
 
   NSMethodSignature *signature = [readDelegate_ methodSignatureForSelector:readSelector_];
   NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
-  [invocation setSelector:readSelector_];
-  [invocation setTarget:readDelegate_];
+  invocation.selector = readSelector_;
+  invocation.target = readDelegate_;
   [invocation setArgument:&self atIndex:2];
   [invocation setArgument:&buffer atIndex:3];
   [invocation setArgument:&length atIndex:4];
@@ -138,7 +138,7 @@
 }
 
 - (BOOL)hasBytesAvailable {
-  return [inputStream_ hasBytesAvailable];
+  return inputStream_.hasBytesAvailable;
 }
 
 #pragma mark Standard messages
@@ -156,11 +156,11 @@
 }
 
 - (id)delegate {
-  return [inputStream_ delegate];
+  return inputStream_.delegate;
 }
 
 - (void)setDelegate:(id)delegate {
-  [inputStream_ setDelegate:delegate];
+  inputStream_.delegate = delegate;
 }
 
 - (id)propertyForKey:(NSString *)key {
@@ -179,11 +179,11 @@
 }
 
 - (NSStreamStatus)streamStatus {
-  return [inputStream_ streamStatus];
+  return inputStream_.streamStatus;
 }
 
 - (NSError *)streamError {
-  return [inputStream_ streamError];
+  return inputStream_.streamError;
 }
 
 @end

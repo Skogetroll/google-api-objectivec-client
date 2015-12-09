@@ -60,7 +60,7 @@ static BOOL memsrch(const unsigned char* needle, NSUInteger needle_len,
     // sort the header keys so we have a deterministic order for
     // unit testing
     SEL sortSel = @selector(caseInsensitiveCompare:);
-    NSArray *sortedKeys = [[headers allKeys] sortedArrayUsingSelector:sortSel];
+    NSArray *sortedKeys = [headers.allKeys sortedArrayUsingSelector:sortSel];
 
     for (NSString *key in sortedKeys) {
       NSString* value = headers[key];
@@ -104,8 +104,8 @@ static BOOL memsrch(const unsigned char* needle, NSUInteger needle_len,
 
   // This uses custom memsrch() rather than strcpy because the encoded data may
   // contain null values.
-  return memsrch(bytes, length, [headerData_ bytes], [headerData_ length]) ||
-         memsrch(bytes, length, [bodyData_ bytes],   [bodyData_ length]);
+  return memsrch(bytes, length, headerData_.bytes, headerData_.length) ||
+         memsrch(bytes, length, bodyData_.bytes,   bodyData_.length);
 }
 
 - (NSData *)header {
@@ -117,7 +117,7 @@ static BOOL memsrch(const unsigned char* needle, NSUInteger needle_len,
 }
 
 - (NSUInteger)length {
-  return [headerData_ length] + [bodyData_ length];
+  return headerData_.length + bodyData_.length;
 }
 @end
 
@@ -185,8 +185,8 @@ static BOOL memsrch(const unsigned char* needle, NSUInteger needle_len,
   for (int tries = 0; tries < maxTries; ++tries) {
 
     NSData *data = [boundary dataUsingEncoding:NSUTF8StringEncoding];
-    const void *dataBytes = [data bytes];
-    NSUInteger dataLen = [data length];
+    const void *dataBytes = data.bytes;
+    NSUInteger dataLen = data.length;
 
     for (GTMMIMEPart *part in parts_) {
       didCollide = [part containsBytes:dataBytes length:dataLen];
@@ -240,11 +240,11 @@ static BOOL memsrch(const unsigned char* needle, NSUInteger needle_len,
     [dataArray addObject:[part header]];
     [dataArray addObject:[part body]];
 
-    length += [part length] + [mainBoundaryData length];
+    length += [part length] + mainBoundaryData.length;
   }
 
   [dataArray addObject:endBoundaryData];
-  length += [endBoundaryData length];
+  length += endBoundaryData.length;
 
   if (outLength)   *outLength = length;
   if (outStream)   *outStream = [GTMGatherInputStream streamWithArray:dataArray];

@@ -58,12 +58,16 @@
     requestID_ = [[[self class] nextRequestID] retain];
 
     methodName_ = [methodName copy];
-    if ([methodName_ length] == 0) {
+    if (methodName_.length == 0) {
       [self release];
       self = nil;
     }
   }
   return self;
+}
+
+- (instancetype)init {
+  return [self initWithMethodName:@""];
 }
 
 - (void)dealloc {
@@ -86,7 +90,7 @@
   GTLQuery *query =
     [[[self class] allocWithZone:zone] initWithMethodName:self.methodName];
 
-  if ([json_ count] > 0) {
+  if (json_.count > 0) {
     // Deep copy the parameters
     CFPropertyListRef ref = CFPropertyListCreateDeepCopy(kCFAllocatorDefault,
                                                          json_, kCFPropertyListMutableContainers);
@@ -105,18 +109,18 @@
 }
 
 - (NSString *)description {
-  NSArray *keys = [self.JSON allKeys];
+  NSArray *keys = (self.JSON).allKeys;
   NSArray *params = [keys sortedArrayUsingSelector:@selector(compare:)];
   NSString *paramsSummary = @"";
-  if ([params count] > 0) {
+  if (params.count > 0) {
     paramsSummary = [NSString stringWithFormat:@" params:(%@)",
                      [params componentsJoinedByString:@","]];
   }
 
-  keys = [self.urlQueryParameters allKeys];
+  keys = (self.urlQueryParameters).allKeys;
   NSArray *urlQParams = [keys sortedArrayUsingSelector:@selector(compare:)];
   NSString *urlQParamsSummary = @"";
-  if ([urlQParams count] > 0) {
+  if (urlQParams.count > 0) {
     urlQParamsSummary = [NSString stringWithFormat:@" urlQParams:(%@)",
                         [urlQParams componentsJoinedByString:@","]];
   }

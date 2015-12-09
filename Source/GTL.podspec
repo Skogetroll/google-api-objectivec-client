@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
                   This is the recommended library for accessing JSON-based Google APIs for iOS and Mac OS X applications. The library is compatible with applications built for iOS 3 and later, and Mac OS X 10.5 and later.                   
                       DESC
 
-  s.homepage     = "https://code.google.com/p/google-api-objectivec-client/"
+  s.homepage     = "https://github.com/Skogetroll/google-api-objectivec-client.git"
 
   s.license      = { :type => "Apache License, Version 2.0", :file => "Source/LICENSE.txt" }
 

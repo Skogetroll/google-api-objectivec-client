@@ -158,11 +158,11 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected;
   NSAssert(chunkSize > 0,@"chunk size is zero");
   NSAssert(chunkSize != NSUIntegerMax, @"chunk size is sentinel value");
 #endif
-  [self setLocationURL:location];
-  [self setUploadData:data];
-  [self setUploadFileHandle:fileHandle];
-  [self setUploadMIMEType:uploadMIMEType];
-  [self setChunkSize:chunkSize];
+  self.locationURL = location;
+  self.uploadData = data;
+  self.uploadFileHandle = fileHandle;
+  self.uploadMIMEType = uploadMIMEType;
+  self.chunkSize = chunkSize;
 
   // indicate that we've not yet determined the file handle's length
   uploadFileHandleLength_ = -1;
@@ -176,10 +176,10 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected;
 
   // add our custom headers to the initial request indicating the data
   // type and total size to be delivered later in the chunk requests
-  NSMutableURLRequest *mutableReq = [self mutableRequest];
+  NSMutableURLRequest *mutableReq = self.mutableRequest;
 
   NSNumber *lengthNum = @([self fullUploadLength]);
-  [mutableReq setValue:[lengthNum stringValue]
+  [mutableReq setValue:lengthNum.stringValue
     forHTTPHeaderField:@"X-Upload-Content-Length"];
 
   [mutableReq setValue:uploadMIMEType
@@ -205,7 +205,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected;
 
 - (NSUInteger)fullUploadLength {
   if (uploadData_) {
-    return [uploadData_ length];
+    return uploadData_.length;
   } else {
     if (uploadFileHandleLength_ == -1) {
       // first time through, seek to end to determine file length
@@ -252,12 +252,12 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected;
   // to us during uploads
   needsManualProgress_ = ![GTMHTTPFetcher doesSupportSentDataCallback];
 
-  initialBodyLength_ = [[self postData] length];
+  initialBodyLength_ = self.postData.length;
 
   if (isRestartedUpload_) {
-    if (![self isPaused]) {
+    if (!self.paused) {
       if (delegate) {
-        [self setDelegate:delegate];
+        self.delegate = delegate;
         finishedSel_ = finishedSEL;
       }
       [self uploadNextChunkWithOffset:kQueryServerForOffset];
@@ -376,13 +376,13 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
   // let the superclass end its connection
   [super connectionDidFinishLoading:connection];
 
-  NSInteger statusCode = [super statusCode];
-  [self setStatusCode:statusCode];
+  NSInteger statusCode = super.statusCode;
+  self.statusCode = statusCode;
 
-  NSData *downloadedData = [self downloadedData];
+  NSData *downloadedData = self.downloadedData;
 
   // we need to get the upload URL from the location header to continue
-  NSDictionary *responseHeaders = [self responseHeaders];
+  NSDictionary *responseHeaders = self.responseHeaders;
   NSString *locationURLStr = responseHeaders[@"Location"];
 
   NSError *error = nil;
@@ -393,7 +393,7 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
     error = [NSError errorWithDomain:kGTMHTTPFetcherStatusDomain
                                 code:statusCode
                             userInfo:nil];
-  } else if ([downloadedData length] > 0) {
+  } else if (downloadedData.length > 0) {
     // The initial response of the resumable upload protocol should have an
     // empty body
     //
@@ -414,7 +414,7 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
     NSAssert([locationURLStr length] > 0, @"need upload location hdr");
 #endif
 
-    if ([locationURLStr length] == 0) {
+    if (locationURLStr.length == 0) {
       // we cannot continue since we do not know the location to use
       // as our upload destination
       //
@@ -432,7 +432,7 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
     return;
   }
 
-  [self setLocationURL:[NSURL URLWithString:locationURLStr]];
+  self.locationURL = [NSURL URLWithString:locationURLStr];
 
   // we've now sent all of the initial post body data, so we need to include
   // its size in future progress indicator callbacks
@@ -443,7 +443,7 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
   }
 
   // just in case the user paused us during the initial fetch...
-  if (![self isPaused]) {
+  if (!self.paused) {
     [self uploadNextChunkWithOffset:0];
   }
 }
@@ -460,7 +460,7 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
 
 - (void)uploadNextChunkWithOffset:(NSUInteger)offset {
   // use the properties in each chunk fetcher
-  NSMutableDictionary *props = [self properties];
+  NSMutableDictionary *props = self.properties;
 
   [self uploadNextChunkWithOffset:offset
                 fetcherProperties:props];
@@ -469,7 +469,7 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
 - (void)uploadNextChunkWithOffset:(NSUInteger)offset
                 fetcherProperties:(NSMutableDictionary *)props {
   // upload another chunk
-  NSUInteger chunkSize = [self chunkSize];
+  NSUInteger chunkSize = self.chunkSize;
 
   NSString *rangeStr, *lengthStr;
   NSData *chunkData;
@@ -524,29 +524,29 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
   }
 
   // track the current offset for progress reporting
-  [self setCurrentOffset:offset];
+  self.currentOffset = offset;
 
   //
   // make the request for fetching
   //
 
   // the chunk upload URL requires no authentication header
-  NSURL *locURL = [self locationURL];
+  NSURL *locURL = self.locationURL;
   NSMutableURLRequest *chunkRequest = [NSMutableURLRequest requestWithURL:locURL];
 
-  [chunkRequest setHTTPMethod:@"PUT"];
+  chunkRequest.HTTPMethod = @"PUT";
 
   // copy the user-agent from the original connection
-  NSURLRequest *origRequest = [self mutableRequest];
+  NSURLRequest *origRequest = self.mutableRequest;
   NSString *userAgent = [origRequest valueForHTTPHeaderField:@"User-Agent"];
-  if ([userAgent length] > 0) {
+  if (userAgent.length > 0) {
     [chunkRequest setValue:userAgent forHTTPHeaderField:@"User-Agent"];
   }
 
   [chunkRequest setValue:rangeStr forHTTPHeaderField:@"Content-Range"];
   [chunkRequest setValue:lengthStr forHTTPHeaderField:@"Content-Length"];
 
-  NSString *uploadMIMEType = [self uploadMIMEType];
+  NSString *uploadMIMEType = self.uploadMIMEType;
   [chunkRequest setValue:uploadMIMEType forHTTPHeaderField:@"Content-Type"];
 
   //
@@ -555,37 +555,37 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
   GTMHTTPFetcher *chunkFetcher;
 
   chunkFetcher = [GTMHTTPFetcher fetcherWithRequest:chunkRequest];
-  [chunkFetcher setDelegateQueue:[self delegateQueue]];
-  [chunkFetcher setRunLoopModes:[self runLoopModes]];
-  [chunkFetcher setAllowedInsecureSchemes:[self allowedInsecureSchemes]];
-  [chunkFetcher setAllowLocalhostRequest:[self allowLocalhostRequest]];
+  chunkFetcher.delegateQueue = self.delegateQueue;
+  chunkFetcher.runLoopModes = self.runLoopModes;
+  chunkFetcher.allowedInsecureSchemes = self.allowedInsecureSchemes;
+  chunkFetcher.allowLocalhostRequest = self.allowLocalhostRequest;
 
   // if the upload fetcher has a comment, use the same comment for chunks
-  NSString *baseComment = [self comment];
+  NSString *baseComment = self.comment;
   if (baseComment) {
     [chunkFetcher setCommentWithFormat:@"%@ (%@)", baseComment, rangeStr];
   }
 
   // give the chunk fetcher the same properties as the previous chunk fetcher
-  [chunkFetcher setProperties:props];
+  chunkFetcher.properties = props;
 
   // post the appropriate subset of the full data
-  [chunkFetcher setPostData:chunkData];
+  chunkFetcher.postData = chunkData;
 
   // copy other fetcher settings to the new fetcher
-  [chunkFetcher setRetryEnabled:[self isRetryEnabled]];
-  [chunkFetcher setMaxRetryInterval:[self maxRetryInterval]];
-  [chunkFetcher setSentDataSelector:[self sentDataSelector]];
-  [chunkFetcher setCookieStorageMethod:[self cookieStorageMethod]];
+  chunkFetcher.retryEnabled = self.retryEnabled;
+  chunkFetcher.maxRetryInterval = self.maxRetryInterval;
+  chunkFetcher.sentDataSelector = self.sentDataSelector;
+  chunkFetcher.cookieStorageMethod = self.cookieStorageMethod;
 
-  if ([self isRetryEnabled]) {
+  if (self.retryEnabled) {
     // we interpose our own retry method both so the sender is the upload
     // fetcher, and so we can change the request to ask the server to
     // tell us where to resume the chunk
-    [chunkFetcher setRetrySelector:@selector(chunkFetcher:willRetry:forError:)];
+    chunkFetcher.retrySelector = @selector(chunkFetcher:willRetry:forError:);
   }
 
-  [self setMutableRequest:chunkRequest];
+  self.mutableRequest = chunkRequest;
 
   // when fetching chunks, a 308 status means "upload more chunks", but
   // success (200 or 201 status) and other failures are no different than
@@ -604,7 +604,7 @@ totalBytesExpectedToSend:totalBytesExpectedToWrite];
     [self destroyChunkFetcher];
   } else {
     // hang on to the fetcher in case we need to cancel it
-    [self setChunkFetcher:chunkFetcher];
+    self.chunkFetcher = chunkFetcher;
   }
 }
 
@@ -624,11 +624,11 @@ totalBytesExpectedToSend:0];
 }
 
 - (void)chunkFetcher:(GTMHTTPFetcher *)chunkFetcher finishedWithData:(NSData *)data error:(NSError *)error {
-  [self setStatusCode:[chunkFetcher statusCode]];
-  [self setResponseHeaders:[chunkFetcher responseHeaders]];
+  self.statusCode = chunkFetcher.statusCode;
+  self.responseHeaders = chunkFetcher.responseHeaders;
 
   if (error) {
-    int status = (int)[error code];
+    int status = (int)error.code;
 
     // status 308 is "resume incomplete", meaning we should get the offset
     // from the Range header and upload the next chunk
@@ -652,7 +652,7 @@ totalBytesExpectedToSend:0];
   } else {
     // the final chunk has uploaded successfully
   #if DEBUG && !defined(NS_BLOCK_ASSERTIONS)
-    NSInteger status = [chunkFetcher statusCode];
+    NSInteger status = chunkFetcher.statusCode;
     NSAssert1(status == 200 || status == 201,
               @"unexpected chunks status %d", (int)status);
   #endif  // DEBUG && !defined(NS_BLOCK_ASSERTIONS)
@@ -664,7 +664,7 @@ totalBytesExpectedToSend:0];
       // do a final upload progress report, indicating all of the chunk data
       // has been sent
       NSUInteger fullDataLength = [self fullUploadLength] + initialBodyLength_;
-      [self setCurrentOffset:fullDataLength];
+      self.currentOffset = fullDataLength;
 
       [self reportProgressManually];
     }
@@ -680,7 +680,7 @@ totalBytesExpectedToSend:0];
 
 - (void)handleResumeIncompleteStatusForChunkFetcher:(GTMHTTPFetcher *)chunkFetcher {
 
-  NSDictionary *responseHeaders = [chunkFetcher responseHeaders];
+  NSDictionary *responseHeaders = chunkFetcher.responseHeaders;
 
   // parse the Range header from the server, since that tells us where we really
   // want the next chunk to begin.
@@ -702,7 +702,7 @@ totalBytesExpectedToSend:0];
     }
   }
 
-  [self setCurrentOffset:newOffset];
+  self.currentOffset = newOffset;
 
   if (needsManualProgress_) {
     [self reportProgressManually];
@@ -710,13 +710,13 @@ totalBytesExpectedToSend:0];
 
   // if the response specifies a location, use that for future chunks
   NSString *locationURLStr = responseHeaders[@"Location"];
-  if ([locationURLStr length] > 0) {
-    [self setLocationURL:[NSURL URLWithString:locationURLStr]];
+  if (locationURLStr.length > 0) {
+    self.locationURL = [NSURL URLWithString:locationURLStr];
   }
 
   // we want to destroy this chunk fetcher before creating the next one, but
   // we want to pass on its properties
-  NSMutableDictionary *props = [[[chunkFetcher properties] retain] autorelease];
+  NSMutableDictionary *props = [[chunkFetcher.properties retain] autorelease];
 
   // we no longer need to be able to cancel this chunkFetcher
   [self destroyChunkFetcher];
@@ -727,8 +727,8 @@ totalBytesExpectedToSend:0];
 
 
 -(BOOL)chunkFetcher:(GTMHTTPFetcher *)chunkFetcher willRetry:(BOOL)willRetry forError:(NSError *)error {
-  if ([error code] == 308
-      && [[error domain] isEqual:kGTMHTTPFetcherStatusDomain]) {
+  if (error.code == 308
+      && [error.domain isEqual:kGTMHTTPFetcherStatusDomain]) {
     // 308 is a normal chunk fethcher response, not an error
     // that needs to be retried
     return NO;
@@ -753,7 +753,7 @@ totalBytesExpectedToSend:0];
   if (willRetry) {
     // change the request being retried into a query to the server to
     // tell us where to resume
-    NSMutableURLRequest *chunkRequest = [chunkFetcher mutableRequest];
+    NSMutableURLRequest *chunkRequest = chunkFetcher.mutableRequest;
 
     NSUInteger dataLen = [self fullUploadLength];
     NSString *rangeStr = [NSString stringWithFormat:@"bytes */%llu",
@@ -761,11 +761,11 @@ totalBytesExpectedToSend:0];
 
     [chunkRequest setValue:rangeStr forHTTPHeaderField:@"Content-Range"];
     [chunkRequest setValue:@"0" forHTTPHeaderField:@"Content-Length"];
-    [chunkFetcher setPostData:[NSData data]];
+    chunkFetcher.postData = [NSData data];
 
     // we don't know what our actual offset is anymore, but the server
     // will tell us
-    [self setCurrentOffset:0];
+    self.currentOffset = 0;
   }
 
   return willRetry;
@@ -871,7 +871,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
   } else {
     // no chunk fetcher yet completed, so return whatever we have from the
     // initial fetch
-    return [super responseHeaders];
+    return super.responseHeaders;
   }
 }
 
@@ -886,7 +886,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
     // or latest chunk fetch
     return statusCode_;
   } else {
-    return [super statusCode];
+    return super.statusCode;
   }
 }
 

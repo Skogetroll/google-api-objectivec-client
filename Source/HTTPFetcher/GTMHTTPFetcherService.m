@@ -94,7 +94,7 @@
   fetcher.service = self;
 
   NSString *userAgent = self.userAgent;
-  if ([userAgent length] > 0
+  if (userAgent.length > 0
       && [request valueForHTTPHeaderField:@"User-Agent"] == nil) {
     [fetcher.mutableRequest setValue:userAgent
                   forHTTPHeaderField:@"User-Agent"];
@@ -102,7 +102,7 @@
 
   NSTimeInterval timeout = self.timeout;
   if (timeout > 0.0) {
-    [fetcher.mutableRequest setTimeoutInterval:timeout];
+    (fetcher.mutableRequest).timeoutInterval = timeout;
   }
 
   return fetcher;
@@ -151,7 +151,7 @@
 
 - (BOOL)isDelayingFetcher:(GTMHTTPFetcher *)fetcher {
   @synchronized(self) {
-    NSString *host = [[[fetcher mutableRequest] URL] host];
+    NSString *host = fetcher.mutableRequest.URL.host;
     NSArray *delayedForHost = delayedHosts_[host];
     NSUInteger idx = [delayedForHost indexOfObjectIdenticalTo:fetcher];
     BOOL isDelayed = (delayedForHost != nil) && (idx != NSNotFound);
@@ -162,15 +162,15 @@
 - (BOOL)fetcherShouldBeginFetching:(GTMHTTPFetcher *)fetcher {
   // Entry point from the fetcher
   @synchronized(self) {
-    NSURL *requestURL = [[fetcher mutableRequest] URL];
-    NSString *host = [requestURL host];
+    NSURL *requestURL = fetcher.mutableRequest.URL;
+    NSString *host = requestURL.host;
 
     // Addresses "file:///path" case where localhost is the implicit host.
-    if ([host length] == 0 && [requestURL isFileURL]) {
+    if (host.length == 0 && requestURL.fileURL) {
       host = @"localhost";
     }
 
-    if ([host length] == 0) {
+    if (host.length == 0) {
 #if DEBUG
       // Data URIs legitimately have no host, reject other hostless URLs.
       NSAssert1([[requestURL scheme] isEqual:@"data"], @"%@ lacks host", fetcher);
@@ -194,7 +194,7 @@
     fetcher.thread = [NSThread currentThread];
 
     if (maxRunningFetchersPerHost_ == 0
-        || maxRunningFetchersPerHost_ > [runningForHost count]) {
+        || maxRunningFetchersPerHost_ > runningForHost.count) {
       [self addRunningFetcher:fetcher forHost:host];
       return YES;
     } else {
@@ -259,8 +259,8 @@
     NSMutableArray *delayedForHost = delayedHosts_[host];
     [delayedForHost removeObject:fetcher];
 
-    while ([delayedForHost count] > 0
-           && [runningForHost count] < maxRunningFetchersPerHost_) {
+    while (delayedForHost.count > 0
+           && runningForHost.count < maxRunningFetchersPerHost_) {
       // Start another delayed fetcher running, scanning for the minimum
       // priority value, defaulting to FIFO for equal priorities
       GTMHTTPFetcher *nextFetcher = nil;
@@ -280,12 +280,12 @@
       }
     }
 
-    if ([runningForHost count] == 0) {
+    if (runningForHost.count == 0) {
       // None left; remove the empty array
       [runningHosts_ removeObjectForKey:host];
     }
 
-    if ([delayedForHost count] == 0) {
+    if (delayedForHost.count == 0) {
       [delayedHosts_ removeObjectForKey:host];
     }
 
@@ -298,8 +298,8 @@
 
 - (NSUInteger)numberOfFetchers {
   @synchronized(self) {
-    NSUInteger running = [self numberOfRunningFetchers];
-    NSUInteger delayed = [self numberOfDelayedFetchers];
+    NSUInteger running = self.numberOfRunningFetchers;
+    NSUInteger delayed = self.numberOfDelayedFetchers;
     return running + delayed;
   }
 }
@@ -309,7 +309,7 @@
     NSUInteger sum = 0;
     for (NSString *host in runningHosts_) {
       NSArray *fetchers = runningHosts_[host];
-      sum += [fetchers count];
+      sum += fetchers.count;
     }
     return sum;
   }
@@ -320,7 +320,7 @@
     NSUInteger sum = 0;
     for (NSString *host in delayedHosts_) {
       NSArray *fetchers = delayedHosts_[host];
-      sum += [fetchers count];
+      sum += fetchers.count;
     }
     return sum;
   }
@@ -329,14 +329,14 @@
 - (NSArray *)issuedFetchersWithRequestURL:(NSURL *)requestURL {
   @synchronized(self) {
     NSMutableArray *array = nil;
-    NSString *host = [requestURL host];
-    if ([host length] == 0) return nil;
+    NSString *host = requestURL.host;
+    if (host.length == 0) return nil;
 
-    NSURL *absRequestURL = [requestURL absoluteURL];
+    NSURL *absRequestURL = requestURL.absoluteURL;
 
     NSArray *runningForHost = runningHosts_[host];
     for (GTMHTTPFetcher *fetcher in runningForHost) {
-      NSURL *fetcherURL = [[[fetcher mutableRequest] URL] absoluteURL];
+      NSURL *fetcherURL = fetcher.mutableRequest.URL.absoluteURL;
       if ([fetcherURL isEqual:absRequestURL]) {
         if (array == nil) {
           array = [NSMutableArray array];
@@ -347,7 +347,7 @@
 
     NSArray *delayedForHost = delayedHosts_[host];
     for (GTMHTTPFetcher *fetcher in delayedForHost) {
-      NSURL *fetcherURL = [[[fetcher mutableRequest] URL] absoluteURL];
+      NSURL *fetcherURL = fetcher.mutableRequest.URL.absoluteURL;
       if ([fetcherURL isEqual:absRequestURL]) {
         if (array == nil) {
           array = [NSMutableArray array];
@@ -363,7 +363,7 @@
   @synchronized(self) {
     // Remove fetchers from the delayed list to avoid fetcherDidStop: from
     // starting more fetchers running as a side effect of stopping one
-    NSArray *delayedForHosts = [delayedHosts_ allValues];
+    NSArray *delayedForHosts = delayedHosts_.allValues;
     [delayedHosts_ removeAllObjects];
 
     for (NSArray *delayedForHost in delayedForHosts) {
@@ -372,7 +372,7 @@
       }
     }
 
-    NSArray *runningForHosts = [runningHosts_ allValues];
+    NSArray *runningForHosts = runningHosts_.allValues;
     [runningHosts_ removeAllObjects];
 
     for (NSArray *runningForHost in runningForHosts) {
@@ -428,8 +428,8 @@
   NSDate* giveUpDate = [NSDate dateWithTimeIntervalSinceNow:timeoutInSeconds];
   BOOL isMainThread = [NSThread isMainThread];
 
-  while ([self numberOfFetchers] > 0
-         && [giveUpDate timeIntervalSinceNow] > 0) {
+  while (self.numberOfFetchers > 0
+         && giveUpDate.timeIntervalSinceNow > 0) {
     // Run the current run loop 1/1000 of a second to give the networking
     // code a chance to work
     if (isMainThread || delegateQueue_ == nil) {
@@ -480,7 +480,7 @@
 #if GTM_USE_SESSION_FETCHER
     [authorizer_ setFetcherService:(id)self];
 #else
-    [authorizer_ setFetcherService:self];
+    authorizer_.fetcherService = self;
 #endif
   }
 }
@@ -497,7 +497,7 @@
   // the authorizer's dependence on the fetcher service.  Authorizers can still
   // function without a fetcher service.
   if ([authorizer_ respondsToSelector:@selector(fetcherService)]) {
-    id authFetcherService = [authorizer_ fetcherService];
+    id authFetcherService = authorizer_.fetcherService;
     if (authFetcherService == self) {
       [authorizer_ setFetcherService:nil];
     }

@@ -77,7 +77,7 @@
   //
   // We avoid creating an encoding string unless we encounter some characters
   // that require it
-  const char* utf8 = [inputStr UTF8String];
+  const char* utf8 = inputStr.UTF8String;
   if (utf8 == NULL) {
     return nil;
   }
@@ -166,8 +166,8 @@
   NSScanner* scanner1 = [NSScanner scannerWithString:ver1];
   NSScanner* scanner2 = [NSScanner scannerWithString:ver2];
 
-  [scanner1 setCharactersToBeSkipped:dotSet];
-  [scanner2 setCharactersToBeSkipped:dotSet];
+  scanner1.charactersToBeSkipped = dotSet;
+  scanner2.charactersToBeSkipped = dotSet;
 
   int partA1 = 0, partA2 = 0, partB1 = 0, partB2 = 0;
   int partC1 = 0, partC2 = 0, partD1 = 0, partD2 = 0;
@@ -190,15 +190,15 @@
 
 + (NSURL *)URLWithString:(NSString *)urlString
          queryParameters:(NSDictionary *)queryParameters {
-  if ([urlString length] == 0) return nil;
+  if (urlString.length == 0) return nil;
 
   NSString *fullURLString;
-  if ([queryParameters count] > 0) {
-    NSMutableArray *queryItems = [NSMutableArray arrayWithCapacity:[queryParameters count]];
+  if (queryParameters.count > 0) {
+    NSMutableArray *queryItems = [NSMutableArray arrayWithCapacity:queryParameters.count];
 
     // sort the custom parameter keys so that we have deterministic parameter
     // order for unit tests
-    NSArray *queryKeys = [queryParameters allKeys];
+    NSArray *queryKeys = queryParameters.allKeys;
     NSArray *sortedQueryKeys = [queryKeys sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
 
     for (NSString *paramKey in sortedQueryKeys) {
@@ -315,9 +315,9 @@ NSNumber *GTL_EnsureNSNumber(NSNumber *num) {
       // does not correctly create an NSNumber for large values like
       // 71100000000007780.
       if ([str hasPrefix:@"-"]) {
-        newNum = @([str longLongValue]);
+        newNum = @(str.longLongValue);
       } else {
-        const char *utf8 = [str UTF8String];
+        const char *utf8 = str.UTF8String;
         unsigned long long ull = strtoull(utf8, NULL, 10);
         newNum = @(ull);
       }

@@ -43,8 +43,8 @@
 - (NSString *)description {
   return [NSString stringWithFormat:@"%@ %p (successes:%lu failures:%lu)",
           [self class], self,
-          (unsigned long) [self.successes count],
-          (unsigned long) [self.failures count]];
+          (unsigned long) (self.successes).count,
+          (unsigned long) (self.failures).count];
 }
 
 #pragma mark -
