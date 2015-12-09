@@ -68,7 +68,7 @@
 + (nonnull instancetype)object;
 + (nonnull instancetype)objectWithJSON:(NSMutableDictionary *__nonnull)dict;
 
-- (nullable id)copyWithZone:(NSZone *__nullable)zone;
+- (nonnull id)copyWithZone:(NSZone *__nullable)zone;
 
 @property (NS_NONATOMIC_IOSONLY, readonly, copy) NSString *__nullable JSONString;
 
