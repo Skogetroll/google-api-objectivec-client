@@ -70,13 +70,13 @@ extern const NSUInteger kGTMDefaultETaggedDataCacheMemoryCapacity;
 // With caching enabled, previously-cached data will be returned instead of
 // 304 Not Modified responses when repeating a fetch of an URL that previously
 // included an ETag header in its response
-@property (assign) BOOL shouldRememberETags;     // default: NO
-@property (assign) BOOL shouldCacheETaggedData;  // default: NO
+@property (NS_NONATOMIC_IOSONLY, assign) BOOL shouldRememberETags;     // default: NO
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldCacheETaggedData;  // default: NO
 
 // the default ETag data cache capacity is kGTMDefaultETaggedDataCacheMemoryCapacity
 @property (assign) NSUInteger memoryCapacity;
 
-@property (retain) id<GTMCookieStorageProtocol> cookieStorage;
+@property (NS_NONATOMIC_IOSONLY, readonly, strong) id<GTMCookieStorageProtocol> cookieStorage;
 
 - (instancetype)initWithMemoryCapacity:(NSUInteger)totalBytes
       shouldCacheETaggedData:(BOOL)shouldCacheETaggedData NS_DESIGNATED_INITIALIZER;

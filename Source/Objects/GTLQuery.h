@@ -88,25 +88,25 @@ typedef void (^GTLQueryTestBlock)(GTLServiceTicket *testTicket, GTLQueryTestResp
 
 // For queries which support file upload, the MIME type and file handle
 // or data must be provided.
-@property (copy) GTLUploadParameters *uploadParameters;
+@property (NS_NONATOMIC_IOSONLY, copy) GTLUploadParameters *uploadParameters;
 
 // Any URL query parameters to add to the query (useful for debugging with some
 // services).
-@property (copy) GTL_NSDictionaryOf(NSString *, NSString *) *urlQueryParameters;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary<NSString *,NSString *> *urlQueryParameters;
 
 // Any additional HTTP headers for this query.  Not valid when this query
 // is added to a batch.
 //
 // These headers override the same keys from the service object's
 // additionalHTTPHeaders.
-@property (copy) GTL_NSDictionaryOf(NSString *, NSString *) *additionalHTTPHeaders;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary<NSString *,NSString *> *additionalHTTPHeaders;
 
 // The GTLObject subclass expected for results (used if the result doesn't
 // include a kind attribute).
 @property (assign) Class expectedObjectClass;
 
 // Clients may set this to YES to disallow authorization. Defaults to NO.
-@property (assign) BOOL shouldSkipAuthorization;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldSkipAuthorization;
 
 // Clients may provide an optional callback block to be called immediately
 // before the executeQuery: callback.

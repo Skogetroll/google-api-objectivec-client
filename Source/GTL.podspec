@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "GTL"
-  s.version      = "2.0.7"
+  s.version      = "2.0.8"
   s.summary      = "Google APIs Client Library for Objective-C"
 
   s.description  = <<-DESC
@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
 
   s.author       = { "grobbins" => "grobbins@google.com" }
 
-  s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.7" }
+  s.source       = { :git => "https://github.com/Skogetroll/google-api-objectivec-client.git", :tag => "2.0.8" }
 
   s.default_subspec = "Core", "OAuth2", "YouTube", "Plus"
   

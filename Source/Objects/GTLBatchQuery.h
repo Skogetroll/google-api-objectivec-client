@@ -36,17 +36,17 @@
 @property (retain) GTL_NSArrayOf(GTLQuery *) *queries;
 
 // Clients may set this to YES to disallow authorization. Defaults to NO.
-@property (assign) BOOL shouldSkipAuthorization;
+@property (NS_NONATOMIC_IOSONLY, readonly) BOOL shouldSkipAuthorization;
 
 // Any additional HTTP headers for this batch.
 //
 // These headers override the same keys from the service object's
 // additionalHTTPHeaders.
-@property (copy) GTL_NSDictionaryOf(NSString *, NSString *) *additionalHTTPHeaders;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary<NSString *,NSString *> *additionalHTTPHeaders;
 
 // Any URL query parameters to add to the query (useful for debugging with some
 // services).
-@property (copy) GTL_NSDictionaryOf(NSString *, NSString *) *urlQueryParameters;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSDictionary<NSString *,NSString *> *urlQueryParameters;
 
 // Apps may provide a test block on the query or service to avoid network activity
 // during testing.
