@@ -1139,7 +1139,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
                 forKey:kFetcherParsingNotificationKey];
 
   id<GTLQueryProtocol> executingQuery = ticket.executingQuery;
-  if ([executingQuery isBatchQuery]) {
+  if (executingQuery.batchQuery) {
     // build a dictionary of expected classes for the batch responses
     GTLBatchQuery *batchQuery = (GTLBatchQuery *)executingQuery;
     NSArray *queries = batchQuery.queries;
@@ -1378,7 +1378,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
       // requested is large enough to rarely need to follow next links.
       NSUInteger pageCount = ticket.pagesFetchedCounter;
       if (pageCount > 2) {
-        NSString *queryLabel = [executingQuery isBatchQuery] ?
+        NSString *queryLabel = executingQuery.batchQuery ?
           @"batch query" : executingQuery.methodName;
         NSLog(@"Executing %@ required fetching %u pages; use a query with a"
               @" larger maxResults for faster results",
@@ -1398,7 +1398,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
     // fetch callback to let applications do any final clean-up (or update
     // their UI) in the fetch callback.
     GTLQuery *originalQuery = (GTLQuery *)ticket.originalQuery;
-    if (![originalQuery isBatchQuery]) {
+    if (!originalQuery.batchQuery) {
       // Single query
       GTLServiceCompletionHandler completionBlock = originalQuery.completionBlock;
       if (completionBlock) {
@@ -1526,7 +1526,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
         }
       }
 
-      if (![originalQuery isBatchQuery]) {
+      if (!originalQuery.batchQuery) {
         // Single query
         GTLServiceCompletionHandler completionBlock = originalQuery.completionBlock;
         if (completionBlock) {
@@ -1863,7 +1863,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
 - (GTLServiceTicket *)executeQuery:(id<GTLQueryProtocol>)queryObj
                           delegate:(id)delegate
                  didFinishSelector:(SEL)finishedSelector {
-  if ([queryObj isBatchQuery]) {
+  if (queryObj.batchQuery) {
    return [self executeBatchQuery:(GTLBatchQuery *)queryObj
                          delegate:delegate
                 didFinishSelector:finishedSelector
@@ -1891,7 +1891,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
 
 - (GTLServiceTicket *)executeQuery:(id<GTLQueryProtocol>)queryObj
                  completionHandler:(void (^)(GTLServiceTicket *ticket, id object, NSError *error))handler {
-  if ([queryObj isBatchQuery]) {
+  if (queryObj.batchQuery) {
     return [self executeBatchQuery:(GTLBatchQuery *)queryObj
                           delegate:nil
                  didFinishSelector:NULL
@@ -2680,7 +2680,7 @@ totalBytesExpectedToSend:(NSInteger)totalBytesExpected {
 
 - (GTLQuery *)queryForRequestID:(NSString *)requestID {
   id<GTLQueryProtocol> queryObj = self.executingQuery;
-  if ([queryObj isBatchQuery]) {
+  if (queryObj.batchQuery) {
     GTLBatchQuery *batch = (GTLBatchQuery *)queryObj;
     GTLQuery *result = [batch queryForRequestID:requestID];
     return result;

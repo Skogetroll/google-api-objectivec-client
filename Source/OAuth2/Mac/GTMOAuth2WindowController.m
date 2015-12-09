@@ -266,7 +266,7 @@ const char *kKeychainAccountName = "OAuth";
   hasDoneFinalRedirect_ = NO;
   hasCalledFinished_ = NO;
   
-  [(self.signIn) startSigningIn];
+  [self.signIn startSigningIn];
 }
 
 - (void)cancelSigningIn {
@@ -325,7 +325,7 @@ const char *kKeychainAccountName = "OAuth";
         self.sheetModalForWindow = nil;
       }];
 #else
-      NSWindow *sheet = [self window];
+      NSWindow *sheet = self.window;
       [NSApp beginSheet:sheet
          modalForWindow:parentWindow
           modalDelegate:self
@@ -382,7 +382,7 @@ const char *kKeychainAccountName = "OAuth";
 #if GTM_USE_BEGIN_SHEET
     [parentWindow endSheet:self.window];
 #else
-    [NSApp endSheet:[self window]];
+    [NSApp endSheet:self.window];
 #endif
   } else {
     // defer closing the window, in case we're responding to some window event

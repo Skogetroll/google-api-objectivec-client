@@ -1275,7 +1275,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 // For other errors or if there's no cached data, just return the actual status.
 - (NSData *)cachedDataForStatus {
   if (self.statusCode == kGTMHTTPFetcherStatusNotModified
-      && [fetchHistory_ shouldCacheETaggedData]) {
+      && fetchHistory_.shouldCacheETaggedData) {
     NSData *cachedData = [fetchHistory_ cachedDataForRequest:request_];
     return cachedData;
   }
@@ -1522,7 +1522,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
 
   if (isFirstAuthError) {
     if ([authorizer_ respondsToSelector:@selector(primeForRefresh)]) {
-      BOOL hasPrimed = [authorizer_ primeForRefresh];
+      BOOL hasPrimed = authorizer_.primeForRefresh;
       if (hasPrimed) {
         shouldRetryForAuthRefresh = YES;
         hasAttemptedAuthRefresh_ = YES;
@@ -1797,7 +1797,7 @@ totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite {
       self.cookieStorage = gGTMFetcherStaticCookieStorage;
     } else if (method == kGTMHTTPFetcherCookieStorageMethodFetchHistory) {
       // store cookies in the fetch history
-      self.cookieStorage = [fetchHistory_ cookieStorage];
+      self.cookieStorage = fetchHistory_.cookieStorage;
     } else {
       // kGTMHTTPFetcherCookieStorageMethodNone - ignore cookies
       self.cookieStorage = nil;

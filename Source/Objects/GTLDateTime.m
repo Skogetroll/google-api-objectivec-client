@@ -168,23 +168,23 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
 - (BOOL)doesDateComponents:(NSDateComponents *)dc1
        equalDateComponents:(NSDateComponents *)dc2 {
 
-  return [dc1 era] == [dc2 era]
-          && [dc1 year] == [dc2 year]
-          && [dc1 month] == [dc2 month]
-          && [dc1 day] == [dc2 day]
-          && [dc1 hour] == [dc2 hour]
-          && [dc1 minute] == [dc2 minute]
-          && [dc1 second] == [dc2 second]
+  return dc1.era == dc2.era
+          && dc1.year == dc2.year
+          && dc1.month == dc2.month
+          && dc1.day == dc2.day
+          && dc1.hour == dc2.hour
+          && dc1.minute == dc2.minute
+          && dc1.second == dc2.second
 #if GTL_HAS_WEEK_OF_MONTH
-          && [dc1 weekOfMonth] == [dc2 weekOfMonth]
-          && [dc1 weekOfYear] == [dc2 weekOfYear]
+          && dc1.weekOfMonth == dc2.weekOfMonth
+          && dc1.weekOfYear == dc2.weekOfYear
 #endif
 #if GTL_HAS_WEEK
           && [dc1 week] == [dc2 week]
 #endif
-          && [dc1 weekday] == [dc2 weekday]
+          && dc1.weekday == dc2.weekday
 
-          && [dc1 weekdayOrdinal] == [dc2 weekdayOrdinal];
+          && dc1.weekdayOrdinal == dc2.weekdayOrdinal;
 
 }
 #endif  // !GTL_CAN_TRUST_DATE_COMPONENTS_ISEQUAL
