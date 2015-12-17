@@ -96,15 +96,16 @@
                                                          json_, kCFPropertyListMutableContainers);
     query.JSON = [NSMakeCollectable(ref) autorelease];
   }
-  query -> bodyObject_ = self.bodyObject;
-  query -> requestID_ = self.requestID;
-  query -> uploadParameters_ = self.uploadParameters;
-  query -> urlQueryParameters_ = self.urlQueryParameters;
-  query -> additionalHTTPHeaders_ = self.additionalHTTPHeaders;
-  query -> expectedObjectClass_ = self.expectedObjectClass;
-  query -> skipAuthorization_ = self.shouldSkipAuthorization;
-  query -> completionBlock_ = self.completionBlock;
-  query -> testBlock_ = self.testBlock;
+    
+  query -> bodyObject_ = [self -> bodyObject_ copy];
+  query -> requestID_ = [self -> requestID_ copy];
+  query -> uploadParameters_ = [self -> uploadParameters_ copy];
+  query -> urlQueryParameters_ = [self -> urlQueryParameters_ copy];
+  query -> additionalHTTPHeaders_ = [self -> additionalHTTPHeaders_ copy];
+  query -> expectedObjectClass_ = [self -> expectedObjectClass_ copy];
+  query -> skipAuthorization_ = self -> skipAuthorization_;
+  query -> completionBlock_ = [self -> completionBlock_ copy];
+  query -> testBlock_ = [self -> testBlock_ copy];
   return query;
 }
 
